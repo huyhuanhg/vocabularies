@@ -1,6 +1,6 @@
 import { auth } from "@/configs/firebase";
 import { useSignInWithGoogle, useAuthState } from "react-firebase-hooks/auth";
-import { Container } from "./Login.style";
+import Container from "./Login.style";
 import { Button } from "antd";
 import { useEffect } from "react";
 import Loading from "@/components/common/Loading";
