@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { db } from "@/configs/firebase";
-import { doc, getDoc, increment, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, increment, serverTimestamp, setDoc } from "firebase/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const addVocabulary = async (data: any) => {
@@ -9,6 +9,7 @@ const addVocabulary = async (data: any) => {
       doc(db, "vocabularies", data.id.toString()),
       {
         id: data.id.toString(),
+        content: data.content.toLowerCase(),
         type: data.type,
         ipa_us: data.ipa_us,
         audio_us: data.audio_us,
