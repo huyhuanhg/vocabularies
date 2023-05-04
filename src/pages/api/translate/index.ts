@@ -4,7 +4,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type RequestData = {
-  origTxt: string;
+  origTxt?: string;
   user?: string;
 };
 
@@ -168,9 +168,13 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const requestData: RequestData = req.body;
-  console.log('requestData :>> ', requestData);
+  const requestData: RequestData = req.query;
+
   let result = "";
+
+  if (! requestData.origTxt) {
+    return res.end();
+  }
 
   if (requestData.origTxt.length >= 30) {
     const responseData = await fetchGGTrans(requestData.origTxt);
