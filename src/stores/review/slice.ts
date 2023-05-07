@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchReviewData } from "./action";
+import { fetchReviewCount, fetchReviewData } from "./action";
 
 const initialState: any = {
   count: [
@@ -37,7 +37,8 @@ const initialState: any = {
 
   review: {
     count: 0,
-    data: [],
+    ids: [],
+    loading: false
   },
 };
 
@@ -83,6 +84,28 @@ const review = createSlice({
         review: {
           ...state.review,
           count: review,
+        },
+      };
+    });
+    builder.addCase(fetchReviewCount.fulfilled, (state, { payload }) => {
+      const { count, ids } = payload.review;
+
+      return {
+        ...state,
+        review: {
+          ...state.review,
+          count: count,
+          ids: ids,
+          loading: false
+        },
+      };
+    });
+    builder.addCase(fetchReviewCount.pending, (state) => {
+      return {
+        ...state,
+        review: {
+          ...state.review,
+          loading: true
         },
       };
     });
