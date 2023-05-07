@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { db } from "@/configs/firebase";
-import { doc, increment, serverTimestamp, setDoc } from "firebase/firestore";
+import { collection, doc, increment, serverTimestamp, setDoc } from "firebase/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const addVocabulary = async (data: any) => {
@@ -29,7 +29,7 @@ const addVocabulary = async (data: any) => {
 const addWordStorage = async (data: any) => {
   try {
     return await setDoc(
-      doc(db, "word_storages", `${data.user}_${data.id}`),
+      doc(collection(db, "word_storages", data.user), `${data.user}_${data.id}`),
       {
         id: `${data.user}_${data.id}`,
         vocabulary_id: data.id,
@@ -59,8 +59,8 @@ export default async function handler(
   const data = JSON.parse(q as string)
 
   // add vocabulary
-  addVocabulary(data);
-  addWordStorage(data)
+  await addVocabulary(data);
+  await addWordStorage(data)
 
   // if (! requestData.user) {
   //   return res.status(401).end();
