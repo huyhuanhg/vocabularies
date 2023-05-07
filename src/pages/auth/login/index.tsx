@@ -1,15 +1,17 @@
 import { auth } from "@/configs/firebase";
 import { useSignInWithGoogle, useAuthState } from "react-firebase-hooks/auth";
-import Container from "./Login.style";
 import { Button } from "antd";
 import { useEffect } from "react";
 import Loading from "@/components/common/Loading";
+import { fetchLogin } from "@/stores/auth/action";
 import { useDispatch } from "react-redux";
 import { ThunkDispatch } from "@reduxjs/toolkit";
-import { fetchLogin } from "@/stores/auth/action";
+import Container from "./Login.style";
+import { useRouter } from "next/router";
 
 const Login = () => {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const router = useRouter();
   const [singInWithGoogle, _user, _loading, _err] = useSignInWithGoogle(auth);
   const [loggedInUser, loading] = useAuthState(auth);
 
@@ -17,15 +19,10 @@ const Login = () => {
     if (loggedInUser) {
       const { email, displayName, photoURL } = loggedInUser;
       dispatch(fetchLogin({ email, displayName, photoURL })).then(() => {
-        dispatchEvent(
-          new StorageEvent("storage", {
-            key: "userinfo",
-            newValue: JSON.stringify(loggedInUser),
-          })
-        );
+        router.push("/");
       });
     }
-  }, [loggedInUser]);
+  }, [dispatch, loggedInUser]);
 
   const handleGoogleLogin = () => {
     singInWithGoogle();
