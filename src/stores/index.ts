@@ -5,7 +5,7 @@ import reviewReducer from "./review/slice";
 
 const reducer = combineReducers({
   authReducer,
-  reviewReducer
+  reviewReducer,
 });
 
 const store = configureStore({

@@ -12,7 +12,7 @@ const Home = ({ user }: any) => {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const {
-    count: defaultChartValue,
+    count: chartData,
     review: { count: reviewCount },
   } = useSelector(({ reviewReducer }: Record<string, any>) => reviewReducer);
 
@@ -20,10 +20,14 @@ const Home = ({ user }: any) => {
     dispatch(fetchReviewData({ user: user.email }));
   }, []);
 
+  useEffect(() => {
+    console.log('reviewCount :>> ', reviewCount);
+  }, [reviewCount]);
+
   return (
     <Layout>
       <Container>
-        <Chart data={defaultChartValue} unit="từ" />
+        <Chart data={chartData} unit="từ" />
         {reviewCount === 0 ? (
           <Style.Message>Không có từ nào để ôn tập</Style.Message>
         ) : (

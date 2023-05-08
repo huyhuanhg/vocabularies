@@ -30,10 +30,14 @@ const Chart: FC<ChartProps> = ({ height, data, defaultData, unit }) => {
     }
   }, [data]);
 
+  useEffect(() => {
+    console.log('resources :>> ', resources);
+  }, [resources]);
+
   return (
     <Container height={height ?? 305}>
       {resources.map((resource, index) => (
-        <Style.Item key={index} color={resource.color} mt={resource.mt}>
+        <Style.Item key={`star_${index + 1}`} color={resource.color} mt={resource.mt}>
           <span className="chart-item-label">{resource.label}</span>
           {resource.isShowValue && (
             <span className="chart-item-value">
