@@ -1,6 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { db } from "@/configs/firebase";
-import { doc, increment, serverTimestamp, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  increment,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const addVocabulary = async (data: any) => {
@@ -22,14 +28,16 @@ const addVocabulary = async (data: any) => {
     );
   } catch (error) {
     console.error("ERROR SET VOCABULARY IN DB", error);
-    return Promise.reject("ERROR SET VOCABULARY IN DB")
+    return Promise.reject("ERROR SET VOCABULARY IN DB");
   }
-}
+};
 
 const addWordStorage = async (data: any) => {
   try {
+    const wordStorageRef = collection(db, "word_storages");
+
     return await setDoc(
-      doc(db, "word_storages",  `${data.user}_${data.id}`),
+      doc(collection(wordStorageRef, data.id.toString(), `words__${data.user}`), data.id.toString()),
       {
         id: `${data.user}_${data.id}`,
         vocabulary_id: data.id,
@@ -39,16 +47,13 @@ const addWordStorage = async (data: any) => {
       },
       { merge: true }
     );
-
   } catch (error: any) {
-    if (error?.code !== 'unavailable') {
-      console.error("ERROR GET WORD STORAGE IN DB", error);
-      return Promise.reject("ERROR SET WORD STORAGE IN DB")
+    if (error?.code !== "unavailable") {
+      console.error("ERROR SET WORD STORAGE IN DB", error);
+      return Promise.reject("ERROR SET WORD STORAGE IN DB");
     }
   }
-
-
-}
+};
 
 export default async function handler(
   req: NextApiRequest,
@@ -56,15 +61,15 @@ export default async function handler(
 ) {
   const { q } = req.query;
 
-  const data = JSON.parse(q as string)
+  const data = JSON.parse(q as string);
 
   // add vocabulary
   await addVocabulary(data);
-  await addWordStorage(data)
+  await addWordStorage(data);
 
   // if (! requestData.user) {
   //   return res.status(401).end();
   // }
 
-  res.status(200).json({ status: 'success' })
+  res.status(200).json({ status: "success" });
 }
