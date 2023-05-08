@@ -18,7 +18,7 @@ const random = (array: number[]) => {
       randIndex = Math.floor(Math.random() * array.length)
     }
 
-    result[`key_${randIndex}`] = array[randIndex]
+    result[`key_${randIndex}`] = `${array[randIndex]}`
   }
 
   return Object.values(result)
@@ -43,7 +43,8 @@ export default async function handler(
         data: {
           count: 0,
           ids: [],
-          reviewed_at: reviewedAt.format("DD/MM/YYYY HH:mm:ss")
+          reviewed_at: reviewedAt.format("DD/MM/YYYY HH:mm:ss"),
+          vocabularies: []
         },
       });
 
@@ -65,12 +66,22 @@ export default async function handler(
 
     reviewCount += reviewIds.length;
 
+    const ids = random(reviewIds)
+
+    const vocabularies = await getDocs(
+      query(
+        collection(db, "vocabularies"),
+        where("id", "in", ids)
+      )
+    );
+
     res.status(200).json({
       status: "success",
       data: {
         count: reviewCount,
-        ids: random(reviewIds),
-        reviewed_at: reviewedAt ? reviewedAt.format("DD/MM/YYYY HH:mm:ss") : null
+        ids,
+        reviewed_at: reviewedAt ? reviewedAt.format("DD/MM/YYYY HH:mm:ss") : null,
+        vocabularies: vocabularies.docs.map((vocabulary) => vocabulary.data())
       },
     });
   } catch (error) {

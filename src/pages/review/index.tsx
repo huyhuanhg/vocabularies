@@ -6,13 +6,14 @@ import { fetchReviewCount } from "@/stores/review/action";
 import { Button, Loading } from "@/components/common";
 import { useRouter } from "next/router";
 import Question from "@/components/Question";
+import Progress from "@/components/Progress";
 
 const Review = ({ user }: any) => {
   const router = useRouter();
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const {
-    review: { ids: reviewIds, loading, count: reviewCount },
+    review: { ids: reviewIds, loading, count: reviewCount, vocabularies },
   } = useSelector(({ reviewReducer }: Record<string, any>) => reviewReducer);
 
   const [result, setResult] = useState({});
@@ -21,6 +22,10 @@ const Review = ({ user }: any) => {
   useEffect(() => {
     dispatch(fetchReviewCount({ user: user.email }));
   }, []);
+
+  useEffect(() => {
+    console.log("vocabularies :>> ", vocabularies);
+  }, [vocabularies]);
 
   return (
     <Container>
@@ -33,8 +38,17 @@ const Review = ({ user }: any) => {
       )}
       {!loading && reviewCount > 0 && (
         <Style.Question>
-          <Style.Process />
-          <Question reviewId={reviewIds[reviewIndex]} total={reviewCount} />
+          <Style.Header>
+            <Progress total={reviewCount} current={reviewIndex + 1} />
+            <Style.BtnClose />
+          </Style.Header>
+          <Question
+            index={reviewIndex}
+            reviewId={reviewIds[reviewIndex]}
+            total={reviewCount}
+            type={3}
+            vocabularies={vocabularies}
+          />
         </Style.Question>
       )}
     </Container>

@@ -27,9 +27,23 @@ export const Empty = styled.div`
 `;
 
 export const Question = styled.div`
+  height: 100vh;
 `;
 
-export const Process = styled.div`
+export const Header = styled.div`
+  margin: 0;
+  padding: 10px 0;
+  display: flex;
+  padding-right: 10px;
+`;
+
+export const BtnClose = styled.div`
+  background: url('/btn_close.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
 `;
 
 export default Container;
