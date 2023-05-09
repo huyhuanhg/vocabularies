@@ -9,20 +9,7 @@ import {
 import { db } from "@/configs/firebase";
 import type { NextApiRequest, NextApiResponse } from "next";
 import moment from "moment";
-
-const random = (array: number[]) => {
-  const result: any = {};
-  for(let i = 0; i < array.length; i++) {
-    let randIndex = Math.floor(Math.random() * array.length);
-    while(result.hasOwnProperty(`key_${randIndex}`)) {
-      randIndex = Math.floor(Math.random() * array.length)
-    }
-
-    result[`key_${randIndex}`] = `${array[randIndex]}`
-  }
-
-  return Object.values(result)
-}
+import { Arr } from "@/helpers";
 
 export default async function handler(
   req: NextApiRequest,
@@ -66,7 +53,7 @@ export default async function handler(
 
     reviewCount += reviewIds.length;
 
-    const ids = random(reviewIds)
+    const ids = Arr.randomOrder(reviewIds).map((id) => `${id}`)
 
     const vocabularies = await getDocs(
       query(

@@ -1,32 +1,35 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import Container, * as Style from "./ObjectiveTest.style";
 import ObjectiveTestProps from "./ObjectiveTest.props";
 
 const ObjectiveTest: FC<ObjectiveTestProps> = ({
-  title
+  title,
+  question,
+  answers,
+  setAnswer,
 }) => {
+  const renderQuizAnswerItem = () => {
+    return (
+      <Style.QuizAnswer>
+        {answers.map((answer) => (
+          <Style.QuizAnswerItem
+            key={answer.id}
+            onClick={() => setAnswer(answer.isTrue)}
+          >
+            <div className="content">{answer.label}</div>
+          </Style.QuizAnswerItem>
+        ))}
+      </Style.QuizAnswer>
+    );
+  };
+
   return (
     <Container>
-      <Style.QuizHeader>
-        {title}
-      </Style.QuizHeader>
+      <Style.QuizHeader>{title}</Style.QuizHeader>
       <Style.QuizContent>
-        <div className="content">
-          Success always <span className="word_primary">smiles</span> upon
-          people who are diligent.
-        </div>
+        <div className="content">{question}</div>
       </Style.QuizContent>
-      <Style.QuizAnswer>
-        <Style.QuizAnswerItem>
-          <div className="content active">Sự hiến máu</div>
-        </Style.QuizAnswerItem>
-        <Style.QuizAnswerItem>
-          <div className="content">Sự hiến máu</div>
-        </Style.QuizAnswerItem>
-        <Style.QuizAnswerItem>
-          <div className="content">Sự hiến máu</div>
-        </Style.QuizAnswerItem>
-      </Style.QuizAnswer>
+      {renderQuizAnswerItem()}
     </Container>
   );
 };

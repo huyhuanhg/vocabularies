@@ -17,7 +17,7 @@ const Container = styled.div`
   }
 `;
 
-export const Progress = styled.div<{value: number, max: number}>`
+export const Progress = styled.div<{ value: number; max: number }>`
   width: calc(100% - 30px);
   height: 15px;
   background: #c3c3c3;
@@ -27,16 +27,15 @@ export const Progress = styled.div<{value: number, max: number}>`
   transform: translateY(-50%);
   z-index: 1;
   &::after {
-    content: '';
+    content: "";
     display: block;
     position: absolute;
-    width: ${(props) => props.value / props.max * 100}%;
+    width: ${(props) => (props.value / props.max) * 100}%;
     height: 15px;
     border-radius: 17px;
-    background: linear-gradient(83.47deg, #58CC02 9.02%, #23AC38 90.81%);
+    background: linear-gradient(83.47deg, #58cc02 9.02%, #23ac38 90.81%);
     z-index: 2;
   }
-
-`
+`;
 
 export default Container;
