@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import FillListenWordQuizProps from "./FillListenWordQuiz.props";
 import Container, * as Style from "./FillCharacterQuiz.style";
 import Image from "next/image";
@@ -10,21 +10,24 @@ const FillListenWordQuiz: FC<FillListenWordQuizProps> = ({
   setAnswer,
 }) => {
   const [answerState, setAnswerState] = useState("");
+  const soundRef = useRef<HTMLButtonElement>(null)
+
   useEffect(() => {
-    if (answerState && vocabulary) {
+    if (answerState) {
       setAnswer(
         vocabulary.content.toLowerCase() ===
           answerState.trim().replace(/\s\s+/, " ").toLowerCase()
       );
     }
-  }, [answerState]);
+  }, [answerState, setAnswer, vocabulary]);
 
   useEffect(() => {
-    if (vocabulary) {
-      playAudio();
-      setAnswerState("");
-    }
+    setAnswerState("");
   }, [vocabulary]);
+
+  useEffect(() => {
+    soundRef.current?.click()
+  }, [soundRef]);
 
   const handleChangeAnswer = (e: ChangeEvent<HTMLInputElement>) => {
     setAnswerState(e.target.value);
@@ -34,7 +37,7 @@ const FillListenWordQuiz: FC<FillListenWordQuizProps> = ({
     <Container>
       <Style.QuizHeader>Nghe và viết lại</Style.QuizHeader>
       <Style.QuizContent>
-        <ButtonEffect space={4} click={() => playAudio()}>
+        <ButtonEffect btnRef={soundRef} space={4} click={() => playAudio()}>
           <Image
             src={"/sound-answer.svg"}
             alt="play_sound"

@@ -9,7 +9,7 @@ const SentenceEngQuiz: FC<SentenceEngQuizProps> = ({
   vocabularies,
   setAnswer,
   getQuestionStr,
-  currentVocabulary,
+  vocabulary,
 }) => {
   const [quizState, setQuizState] = useState<{
     question: string;
@@ -19,25 +19,20 @@ const SentenceEngQuiz: FC<SentenceEngQuizProps> = ({
     answers: [],
   });
 
-  const currentId = useMemo(
-    () => ((reviewId) => reviewId)(reviewId),
-    [reviewId]
-  );
-
   useEffect(() => {
-    if (currentVocabulary) {
+    if (vocabulary) {
       const vocabularyQuizIndex = vocabularies.findIndex(
         (vocabulary) => vocabulary.id === reviewId
       );
 
-      const { en_sentence, content } = currentVocabulary;
+      const { en_sentence, content } = vocabulary;
       let questionText = getQuestionStr(en_sentence, content);
 
       const answers = [
         {
-          id: currentVocabulary.id,
-          label: currentVocabulary.translate,
-          value: currentVocabulary.content,
+          id: vocabulary.id,
+          label: vocabulary.translate,
+          value: vocabulary.content,
           isTrue: true,
         },
         ...Arr.randomItems(vocabularies, 3, [vocabularyQuizIndex]).map(
@@ -55,11 +50,11 @@ const SentenceEngQuiz: FC<SentenceEngQuizProps> = ({
         answers: Arr.randomOrder(answers),
       });
     }
-  }, [currentVocabulary]);
+  }, [vocabulary]);
 
   return (
     <ObjectiveTest
-      reviewId={currentId}
+      reviewId={reviewId}
       title="Chọn nghĩa của từ được gạch chân"
       question={parse(quizState.question)}
       answers={quizState.answers}

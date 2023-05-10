@@ -20,10 +20,6 @@ const Home = ({ user }: any) => {
     dispatch(fetchReviewData({ user: user.email }));
   }, []);
 
-  useEffect(() => {
-    console.log("reviewCount :>> ", reviewCount);
-  }, [reviewCount]);
-
   return (
     <Layout>
       <Container>

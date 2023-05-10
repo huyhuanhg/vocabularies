@@ -1,3 +1,5 @@
+import { RefObject } from "react";
+
 export default interface ButtonEffectProps
   extends React.HTMLProps<HTMLButtonElement> {
   cssType?: "text" | "btn";
@@ -6,4 +8,5 @@ export default interface ButtonEffectProps
   click?: Function;
   mouseDown?: Function;
   mouseUp?: Function;
+  btnRef?: RefObject<HTMLButtonElement>
 }

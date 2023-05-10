@@ -1,7 +1,9 @@
+import VocabularyType from "@/types/entities/VocabularyType";
+
 export default interface ChoiceMissingWordQuizProps {
-  reviewId: number;
-  vocabularies: any[];
+  reviewId: string;
+  vocabularies: VocabularyType[];
   setAnswer: Function;
   getQuestionStr: Function;
-  currentVocabulary: any;
+  vocabulary: VocabularyType;
 }

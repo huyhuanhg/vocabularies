@@ -12,6 +12,7 @@ const ButtonEffect: FC<ButtonEffectProps> = ({
   cssType,
   state,
   space,
+  btnRef
 }) => {
   const [isEffect, setIsEffect] = useState(false);
 
@@ -41,6 +42,7 @@ const ButtonEffect: FC<ButtonEffectProps> = ({
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       isEffect={isEffect}
+      ref={btnRef}
     >
       <div className="ButtonEffect__btn">{children}</div>
     </Container>

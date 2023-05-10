@@ -1,4 +1,9 @@
-import { FC, useEffect, useState } from "react";
+import {
+  FC,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Container, * as Style from "./Question.style";
 import QuestionProps from "./Question.props";
 import SentenceEngQuiz from "./SentenceEngQuiz";
@@ -11,40 +16,22 @@ import parse from "html-react-parser";
 
 const Question: FC<QuestionProps> = ({
   index,
-  reviewId,
+  current,
   total,
   vocabularies,
   next,
 }) => {
-  const [quizType, setQuizType] = useState<number>(
-    Math.floor(Math.random() * 4 + 1)
-  );
-
-  const [audioUs, setAudioUs] = useState<HTMLAudioElement | null>(null);
+  const [quizType, setQuizType] = useState<number | null>(null);
   const [answerIsPass, setAnswerIsPass] = useState<null | boolean>(null);
   const [isShowResult, setIsShowResult] = useState(false);
   const [isShowTrans, setIsShowTrans] = useState(false);
-  const [currentVocabulary, setCurrentVocabulary] = useState<any>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     if (index < total) {
       setQuizType(Math.floor(Math.random() * 4 + 1));
     }
   }, [index, total]);
-
-  useEffect(() => {
-    let vocabulary = null;
-
-    if (reviewId && vocabularies.length > 0) {
-      const vocabularyIndex = vocabularies.findIndex(
-        (vocabularyItem) => vocabularyItem.id === reviewId
-      );
-      vocabulary = vocabularyIndex > -1 ? vocabularies[vocabularyIndex] : null;
-      const { audio_us } = vocabulary;
-      setAudioUs(new Audio(audio_us));
-    }
-    setCurrentVocabulary(vocabulary);
-  }, [reviewId, vocabularies]);
 
   const getEnSentence = (
     sentence?: string,
@@ -83,22 +70,22 @@ const Question: FC<QuestionProps> = ({
     return questionText;
   };
 
-  const playAudio = (speed: number = 1) => {
-    if (!audioUs) {
-      return;
-    }
-
-    audioUs.playbackRate = speed;
-    audioUs.play();
+  const playAudio = async (speed: number = 1) => {
+    audioRef.current!.playbackRate = speed;
+    audioRef.current?.play()
   };
 
-  const renderSwitchType = (type: number) => {
+  const renderSwitchType = (type: number | null) => {
+    if (null === type) {
+      return null;
+    }
+
     switch (type) {
       case 1: {
         return (
           <SentenceEngQuiz
-            reviewId={reviewId}
-            currentVocabulary={currentVocabulary}
+            reviewId={current.id}
+            vocabulary={current}
             vocabularies={vocabularies}
             setAnswer={setAnswerIsPass}
             getQuestionStr={getEnSentence}
@@ -108,8 +95,8 @@ const Question: FC<QuestionProps> = ({
       case 2: {
         return (
           <ChoiceMissingWordQuiz
-            reviewId={reviewId}
-            currentVocabulary={currentVocabulary}
+            reviewId={current.id}
+            vocabulary={current}
             vocabularies={vocabularies}
             setAnswer={setAnswerIsPass}
             getQuestionStr={getEnSentence}
@@ -119,7 +106,7 @@ const Question: FC<QuestionProps> = ({
       case 3: {
         return (
           <FillCharacterQuiz
-            vocabulary={currentVocabulary}
+            vocabulary={current}
             setAnswer={setAnswerIsPass}
           />
         );
@@ -127,7 +114,7 @@ const Question: FC<QuestionProps> = ({
     }
     return (
       <FillListenWordQuiz
-        vocabulary={currentVocabulary}
+        vocabulary={current}
         playAudio={playAudio}
         setAnswer={setAnswerIsPass}
       />
@@ -138,16 +125,6 @@ const Question: FC<QuestionProps> = ({
     setIsShowResult(false);
     setIsShowTrans(false);
     next(answerIsPass ? "trueCount" : "falseCount");
-    let vocabulary = null;
-
-    if (reviewId && vocabularies.length > 0) {
-      const vocabularyIndex = vocabularies.findIndex(
-        (vocabularyItem) => vocabularyItem.id === reviewId
-      );
-      vocabulary = vocabularyIndex > -1 ? vocabularies[vocabularyIndex] : null;
-    }
-
-    setCurrentVocabulary(vocabulary);
   };
 
   const handleCheck = () => {
@@ -184,25 +161,25 @@ const Question: FC<QuestionProps> = ({
           <div className="quiz-result-answer">
             <div className="quiz-result-answer-wrapper">
               <div className="quiz-result-answer-content">
-                <p className="word-content">{currentVocabulary?.content}</p>
-                <p className="word-phonetic">{currentVocabulary?.ipa_us}</p>
+                <p className="word-content">{current.content}</p>
+                <p className="word-phonetic">{current.ipa_us}</p>
                 <p className="en-hint">
-                  {currentVocabulary?.translate} ({currentVocabulary?.type})
+                  {current.translate} ({current.type})
                 </p>
                 <p className="sentence-en">
                   {parse(
-                    getEnSentence(
-                      currentVocabulary?.en_sentence,
-                      currentVocabulary?.content
-                    )
+                    getEnSentence(current.en_sentence, current.content)
                   )}
                 </p>
-                <p className="sentence-trans">
-                  {currentVocabulary?.vi_sentence}
-                </p>
+                <p className="sentence-trans">{current.vi_sentence}</p>
               </div>
               <div className="quiz-result-answer-action">
                 <div className="btn-wrapper btn-sound-answer">
+                  <audio
+                    ref={audioRef}
+                    preload="auto"
+                    src={current.audio_us}
+                  />
                   <ButtonEffect
                     space={4}
                     state={answerIsPass ? "active" : "error"}

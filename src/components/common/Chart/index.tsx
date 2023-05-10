@@ -33,10 +33,6 @@ const Chart: FC<ChartProps> = ({ height, data, defaultData, unit }) => {
     }
   }, [data]);
 
-  useEffect(() => {
-    console.log("resources :>> ", resources);
-  }, [resources]);
-
   return (
     <Container height={height ?? 305}>
       {resources.map((resource, index) => (

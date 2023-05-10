@@ -14,7 +14,7 @@ const Review = ({ user }: any) => {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const {
-    review: { ids: reviewIds, loading, count: reviewCount, vocabularies },
+    review: { loading, count: reviewCount, vocabularies },
   } = useSelector(({ reviewReducer }: Record<string, any>) => reviewReducer);
 
   const [progressInfo, setProgressInfo] = useState({
@@ -40,24 +40,16 @@ const Review = ({ user }: any) => {
   }, [progressInfo.current]);
 
   const nextQuiz = (key?: "trueCount" | "falseCount") => {
-    let data = {
+    const progressCloneData = {
       ...progressInfo,
     };
 
-    if (!key) {
-      data = {
-        ...data,
-        isFinish: true,
-      };
-    } else {
-      data = {
-        ...data,
-        current: data.current + 1,
-        ...(key && { [key]: data[key] + 1 }),
-      };
-    }
-
-    setProgressInfo(data);
+    setProgressInfo({
+      ...progressCloneData,
+      ...(key && { [key]: progressCloneData[key] + 1 }),
+      current: progressCloneData.current === reviewCount - 1 ? progressCloneData.current : progressCloneData.current + 1,
+      isFinish: !key || progressCloneData.current === reviewCount - 1,
+    });
   };
 
   const renderCongratulatoryMessage = (percent: number) => {
@@ -88,7 +80,7 @@ const Review = ({ user }: any) => {
           </Style.Header>
           <Question
             index={progressInfo.current}
-            reviewId={reviewIds[progressInfo.current]}
+            current={vocabularies[progressInfo.current]}
             total={reviewCount}
             vocabularies={vocabularies}
             next={nextQuiz}

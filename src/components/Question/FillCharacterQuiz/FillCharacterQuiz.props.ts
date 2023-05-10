@@ -1,4 +1,6 @@
+import VocabularyType from "@/types/entities/VocabularyType";
+
 export default interface FillCharacterQuizProps {
-  vocabulary: any;
+  vocabulary: VocabularyType;
   setAnswer: Function;
 }

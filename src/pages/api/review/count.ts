@@ -16,8 +16,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    let reviewCount = 0;
-
     const userInfo = await getDoc(doc(db, "users", req.query.user as string));
     const reviewedAt = userInfo.data()?.reviewed_at
       ? moment(userInfo.data()?.reviewed_at.toDate())
@@ -50,23 +48,24 @@ export default async function handler(
       .filter((doc) => doc.data().rate < 5)
       .map((item: any) => item.data().vocabulary_id);
 
-    reviewCount += reviewIds.length;
-
-    const ids = Arr.randomOrder(reviewIds).map((id) => `${id}`);
-
     const vocabularies = await getDocs(
-      query(collection(db, "vocabularies"), where("id", "in", ids))
+      query(collection(db, "vocabularies"), where("id", "in", reviewIds.map(id =>  `${id}`)))
     );
+
+    const randomVocabularies = Arr.randomOrder(vocabularies.docs.map((vocabulary) => {
+      const {id, content, translate, en_sentence, vi_sentence, audio_us, type, ipa_us} = vocabulary.data()
+      return { id, content, type, translate, ipa_us, audio_us, en_sentence, vi_sentence }
+    }))
 
     res.status(200).json({
       status: "success",
       data: {
-        count: reviewCount,
-        ids,
+        count: randomVocabularies.length,
+        ids: randomVocabularies.map((vocabulary: any) => vocabulary.id),
         reviewed_at: reviewedAt
           ? reviewedAt.format("DD/MM/YYYY HH:mm:ss")
           : null,
-        vocabularies: vocabularies.docs.map((vocabulary) => vocabulary.data()),
+        vocabularies: randomVocabularies,
       },
     });
   } catch (error) {

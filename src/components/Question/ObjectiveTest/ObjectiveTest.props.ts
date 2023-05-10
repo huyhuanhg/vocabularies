@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 
-export default interface QuestionProps {
+export default interface ObjectiveTestProps {
   title: string;
   question: ReactNode;
   answers: any[];
   setAnswer: Function;
-  reviewId: number;
+  reviewId: string;
 }

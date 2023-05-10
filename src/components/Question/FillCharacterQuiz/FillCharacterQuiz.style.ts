@@ -49,15 +49,15 @@ export const QuizAnswer = styled.div`
   }
 `;
 
-export const QuizAnswerItem = styled.input`
-  width: 25px;
+export const QuizAnswerItem = styled.input<{disabled: boolean}>`
+  width: ${props => props.disabled ? "10px" : "25px"};
   margin: 3px;
   height: 30px;
   border: none;
   font-size: 20px;
   padding-bottom: 10px;
   text-align: center;
-  border-bottom: 4px solid #b9b9b9;
+  border-bottom:  ${props => props.disabled ? "0" : "4px solid #b9b9b9"};
   font-family: inherit;
 
   &:focus {

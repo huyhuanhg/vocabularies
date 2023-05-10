@@ -7,7 +7,7 @@ import parse from "html-react-parser";
 const ChoiceMissingWordQuiz: FC<ChoiceMissingWordQuizProps> = ({
   reviewId,
   vocabularies,
-  currentVocabulary,
+  vocabulary,
   getQuestionStr,
   setAnswer,
 }) => {
@@ -19,25 +19,20 @@ const ChoiceMissingWordQuiz: FC<ChoiceMissingWordQuizProps> = ({
     answers: [],
   });
 
-  const currentId = useMemo(
-    () => ((reviewId) => reviewId)(reviewId),
-    [reviewId]
-  );
-
   useEffect(() => {
-    if (currentVocabulary) {
+    if (vocabulary) {
       const vocabularyQuizIndex = vocabularies.findIndex(
         (vocabulary) => vocabulary.id === reviewId
       );
 
-      const { en_sentence, content } = currentVocabulary;
+      const { en_sentence, content } = vocabulary;
       let questionText = getQuestionStr(en_sentence, content, "fill");
 
       const answers = [
         {
-          id: currentVocabulary.id,
-          label: currentVocabulary.content,
-          value: currentVocabulary.content,
+          id: vocabulary.id,
+          label: vocabulary.content,
+          value: vocabulary.content,
           isTrue: true,
         },
         ...Arr.randomItems(vocabularies, 3, [vocabularyQuizIndex]).map(
@@ -55,14 +50,14 @@ const ChoiceMissingWordQuiz: FC<ChoiceMissingWordQuizProps> = ({
         answers: Arr.randomOrder(answers),
       });
     }
-  }, [currentVocabulary]);
+  }, [vocabulary]);
   return (
     <ObjectiveTest
       title="Chọn từ thích hợp điền vào chỗ trống"
       question={parse(quizState.question)}
       answers={quizState.answers}
       setAnswer={setAnswer}
-      reviewId={currentId}
+      reviewId={reviewId}
     />
   );
 };

@@ -1,7 +1,9 @@
+import VocabularyType from "@/types/entities/VocabularyType";
+
 export default interface QuestionProps {
   index: number;
-  reviewId: number;
+  current: VocabularyType;
   total: number;
-  vocabularies: any[];
+  vocabularies: VocabularyType[];
   next: Function;
 }
