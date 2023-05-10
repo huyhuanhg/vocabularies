@@ -59,32 +59,32 @@ export const Congratulatory = styled.div`
       text-align: center;
     }
 
-    .submit-success {
-      position: relative;
-      width: 250px;
-      height: 50px;
-      border-radius: 50px;
-      background: #459724;
-      border: none;
-      margin: auto;
-      min-width: 250px;
-      margin-top: 3rem;
+    .Congratulatory__info {
+      text-align: center;
+    }
 
-      button {
-        cursor: pointer;
-        position: absolute;
-        background: #58bd2f;
-        height: 50px;
-        border-radius: 50px;
-        left: 0;
-        font-size: 20px;
-        top: -6px;
-        width: 250px;
-        color: #fff;
-        border: none;
-      }
+    .ButtonEffect {
+      width: 250px;
+      margin-top: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
     }
   }
+`;
+
+export const ModalCloseMsg = styled.p`
+  font-weight: bold;
+  font-size: 24px;
+  margin-bottom: 1rem;
+  text-align: center;
+`;
+
+export const ModalCloseBtnGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  max-width: 350px;
+  margin: 0 auto;
 `;
 
 export default Container;

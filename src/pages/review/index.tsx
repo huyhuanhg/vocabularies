@@ -3,7 +3,7 @@ import Container, * as Style from "./Review.style";
 import { useDispatch, useSelector } from "react-redux";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 import { fetchReviewCount } from "@/stores/review/action";
-import { Button, Loading } from "@/components/common";
+import { Button, ButtonEffect, Loading, Modal } from "@/components/common";
 import { useRouter } from "next/router";
 import Question from "@/components/Question";
 import Progress from "@/components/Progress";
@@ -24,13 +24,11 @@ const Review = ({ user }: any) => {
     isFinish: false,
   });
 
+  const [isShowModalClose, setIsShowModalClose] = useState(false);
+
   useEffect(() => {
     dispatch(fetchReviewCount({ user: user.email }));
   }, []);
-
-  useEffect(() => {
-    console.log('progressInfo :>> ', progressInfo);
-  }, [progressInfo]);
 
   useEffect(() => {
     if (progressInfo.current === reviewCount && progressInfo.current !== 0) {
@@ -86,7 +84,7 @@ const Review = ({ user }: any) => {
         <Style.Question>
           <Style.Header>
             <Progress total={reviewCount} current={progressInfo.current + 1} />
-            <Style.BtnClose onClick={() => nextQuiz()} />
+            <Style.BtnClose onClick={() => setIsShowModalClose(true)} />
           </Style.Header>
           <Question
             index={progressInfo.current}
@@ -95,6 +93,27 @@ const Review = ({ user }: any) => {
             vocabularies={vocabularies}
             next={nextQuiz}
           />
+          <Modal
+            open={isShowModalClose}
+            footer={null}
+            closable={false}
+            centered
+            onCancel={() => setIsShowModalClose(false)}
+          >
+            <Style.ModalCloseMsg>
+              Bạn có chắc chắn muốn thoát?
+              <br /> Kết quả ôn tập của bạn đã được lưu lại.
+            </Style.ModalCloseMsg>
+            <Style.ModalCloseBtnGroup>
+              <ButtonEffect
+                state="active"
+                click={() => setIsShowModalClose(false)}
+              >
+                ÔN TẬP TIẾP
+              </ButtonEffect>
+              <ButtonEffect click={() => nextQuiz()}>THOÁT</ButtonEffect>
+            </Style.ModalCloseBtnGroup>
+          </Modal>
         </Style.Question>
       )}
       {progressInfo.isFinish && (
@@ -111,9 +130,13 @@ const Review = ({ user }: any) => {
               total={progressInfo.trueCount + progressInfo.falseCount}
               value={progressInfo.trueCount}
             />
-            <div className="submit-success">
-              <button onClick={() => router.push('/')}>TRỞ LẠI</button>
-            </div>
+            <p className="Congratulatory__info">
+              Bạn đã trả lời đúng {progressInfo.trueCount}/
+              {progressInfo.trueCount + progressInfo.falseCount} câu
+            </p>
+            <ButtonEffect state="active" click={() => router.push("/")}>
+              TRỞ LẠI
+            </ButtonEffect>
           </div>
         </Style.Congratulatory>
       )}

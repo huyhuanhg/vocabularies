@@ -1,23 +1,39 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import Container, * as Style from "./ObjectiveTest.style";
 import ObjectiveTestProps from "./ObjectiveTest.props";
+import { ButtonEffect } from "@/components/common";
 
 const ObjectiveTest: FC<ObjectiveTestProps> = ({
+  reviewId,
   title,
   question,
   answers,
   setAnswer,
 }) => {
+  const [currentAnswer, setCurrentAnswer] = useState(null);
+
+  useEffect(() => {
+    if(reviewId) {
+      setCurrentAnswer(null)
+    }
+  }, [reviewId])
+
   const renderQuizAnswerItem = () => {
     return (
       <Style.QuizAnswer>
         {answers.map((answer) => (
-          <Style.QuizAnswerItem
+          <ButtonEffect
             key={answer.id}
-            onClick={() => setAnswer(answer.isTrue)}
+            click={() => {
+              setCurrentAnswer(answer.id);
+              setAnswer(answer.isTrue);
+            }}
+            cssType="text"
+            state={answer.id === currentAnswer ? "active" : "normal"}
+            style={{ marginTop: 20 }}
           >
-            <div className="content">{answer.label}</div>
-          </Style.QuizAnswerItem>
+            {answer.label}
+          </ButtonEffect>
         ))}
       </Style.QuizAnswer>
     );

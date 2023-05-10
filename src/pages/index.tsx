@@ -1,4 +1,4 @@
-import { Button, Chart } from "@/components/common";
+import { Button, ButtonEffect, Chart } from "@/components/common";
 import Layout from "@/layouts/VocabularyLayout";
 import { fetchReviewData } from "@/stores/review/action";
 import Container, * as Style from "@/styles/Home.style";
@@ -21,7 +21,7 @@ const Home = ({ user }: any) => {
   }, []);
 
   useEffect(() => {
-    console.log('reviewCount :>> ', reviewCount);
+    console.log("reviewCount :>> ", reviewCount);
   }, [reviewCount]);
 
   return (
@@ -34,9 +34,18 @@ const Home = ({ user }: any) => {
           <Style.Message>Có {reviewCount} từ cần ôn tập</Style.Message>
         )}
         {reviewCount > 0 && (
-          <Style.Review onClick={() => router.push("/review")}>
+          <ButtonEffect
+            style={{
+              marginTop: 20,
+              width: 250,
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+            state="active"
+            click={() => router.push("/review")}
+          >
             Ôn tập ngay
-          </Style.Review>
+          </ButtonEffect>
         )}
       </Container>
     </Layout>

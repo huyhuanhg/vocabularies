@@ -21,7 +21,7 @@ export const randomItems = (
   excepts: number[] = []
 ) => {
   const cloneArr = [...array];
-  excepts.forEach((exceptIndex) => {
+  excepts?.forEach((exceptIndex) => {
     cloneArr.splice(exceptIndex, 1);
   });
 

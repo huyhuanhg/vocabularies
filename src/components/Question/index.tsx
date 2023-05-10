@@ -6,6 +6,8 @@ import ChoiceMissingWordQuiz from "./ChoiceMissingWordQuiz";
 import FillCharacterQuiz from "./FillCharacterQuiz";
 import FillListenWordQuiz from "./FillListenWordQuiz";
 import Image from "next/image";
+import { ButtonEffect } from "../common";
+import parse from "html-react-parser";
 
 const Question: FC<QuestionProps> = ({
   index,
@@ -19,6 +21,9 @@ const Question: FC<QuestionProps> = ({
   );
 
   const [answerIsPass, setAnswerIsPass] = useState(null);
+  const [isShowResult, setIsShowResult] = useState(false);
+  const [isShowTrans, setIsShowTrans] = useState(false);
+  const [currentVocabulary, setCurrentVocabulary] = useState<any>(null);
 
   useEffect(() => {
     if (index < total) {
@@ -26,14 +31,77 @@ const Question: FC<QuestionProps> = ({
     }
   }, [index, total]);
 
+  useEffect(() => {
+    if (answerIsPass === null) {
+      document.removeEventListener("keypress", () => {});
+    } else
+    document.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        setIsShowResult(true);
+      }
+    });
+  }, [answerIsPass]);
+
+  useEffect(() => {
+    let vocabulary = null;
+
+    if (reviewId && vocabularies.length > 0) {
+      const vocabularyIndex = vocabularies.findIndex(
+        (vocabularyItem) => vocabularyItem.id === reviewId
+      );
+      vocabulary = vocabularyIndex > -1 ? vocabularies[vocabularyIndex] : null;
+    }
+
+    setCurrentVocabulary(vocabulary);
+  }, [reviewId, vocabularies]);
+
+  const getEnSentence = (
+    sentence?: string,
+    content?: string,
+    type: "fill" | "highlight" = "highlight"
+  ) => {
+    if (!sentence || !content) {
+      return "";
+    }
+
+    const searchReg = new RegExp(
+      `^(${content})\\W|\\W(${content})\\W|\\W(${content})$`
+    );
+
+    let questionText = sentence.replace(searchReg, (matches: string) =>
+      matches.replace(
+        content,
+        type === "highlight"
+          ? `<span className="word_primary">${content}</span>`
+          : "___"
+      )
+    );
+
+    if (
+      !new RegExp(`<span className="word_primary">${content}<\/span>`).test(
+        questionText
+      )
+    ) {
+      questionText = questionText.replace(
+        content,
+        type === "highlight"
+          ? `<span className="word_primary">${content}</span>`
+          : "___"
+      );
+    }
+    return questionText;
+  };
+
   const renderSwitchType = (type: number) => {
     switch (type) {
       case 1: {
         return (
           <SentenceEngQuiz
             reviewId={reviewId}
+            currentVocabulary={currentVocabulary}
             vocabularies={vocabularies}
             setAnswer={setAnswerIsPass}
+            getQuestionStr={getEnSentence}
           />
         );
       }
@@ -41,50 +109,90 @@ const Question: FC<QuestionProps> = ({
         return (
           <ChoiceMissingWordQuiz
             reviewId={reviewId}
+            currentVocabulary={currentVocabulary}
             vocabularies={vocabularies}
+            setAnswer={setAnswerIsPass}
+            getQuestionStr={getEnSentence}
           />
         );
       }
       case 3: {
-        return <FillCharacterQuiz vocabulary={vocabularies[index]} />;
+        return (
+          <FillCharacterQuiz
+            vocabulary={currentVocabulary}
+            setAnswer={setAnswerIsPass}
+          />
+        );
       }
     }
-    return <FillListenWordQuiz vocabulary={vocabularies[index]} />;
+    return <FillListenWordQuiz vocabulary={currentVocabulary} />;
   };
+
+  const handleNextQuiz = () => {
+    setIsShowResult(false);
+    setIsShowTrans(false);
+    next(answerIsPass ? "trueCount" : "falseCount");
+    let vocabulary = null;
+
+    if (reviewId && vocabularies.length > 0) {
+      const vocabularyIndex = vocabularies.findIndex(
+        (vocabularyItem) => vocabularyItem.id === reviewId
+      );
+      vocabulary = vocabularyIndex > -1 ? vocabularies[vocabularyIndex] : null;
+    }
+
+    setCurrentVocabulary(vocabulary);
+  };
+
   return (
     <Container>
       <Style.QuizWrapper>
         <div className="quiz-content">
-          {renderSwitchType(quizType - quizType + 1)}
+          {renderSwitchType(quizType - quizType + 3)}
         </div>
         <div className="quiz-control">
-          <div
-            className={`btn-confirm ${answerIsPass !== null ? "active" : ""}`}
+          <ButtonEffect
+            disabled={answerIsPass === null}
+            state="active"
+            click={() => setIsShowResult(true)}
           >
-            <button>KIỂM TRA</button>
-          </div>
+            KIỂM TRA
+          </ButtonEffect>
           <div className="btn-abort">
             <button>Mình không nhớ từ này</button>
           </div>
         </div>
-        <div className="quiz-result">
-          <div className="quiz-result-answer success">
+        <Style.QuizResult
+          isSuccess={answerIsPass}
+          open={isShowResult}
+          isShowTrans={isShowTrans}
+        >
+          <div className="quiz-result-answer">
             <div className="quiz-result-answer-wrapper">
               <div className="quiz-result-answer-content">
-                <p className="word-content">semester</p>
-                <p className="word-phonetic">/sɪˈmestər/</p>
-                <p className="en-hint">Kì học (n)</p>
+                <p className="word-content">{currentVocabulary?.content}</p>
+                <p className="word-phonetic">{currentVocabulary?.ipa_us}</p>
+                <p className="en-hint">
+                  {currentVocabulary?.translate} ({currentVocabulary?.type})
+                </p>
                 <p className="sentence-en">
-                  The fall <span className="word_primary">semester</span> will
-                  begin in September.
+                  {parse(
+                    getEnSentence(
+                      currentVocabulary?.en_sentence,
+                      currentVocabulary?.content
+                    )
+                  )}
                 </p>
                 <p className="sentence-trans">
-                  Học kì mùa thu sẽ bắt đầu vào tháng Chín.
+                  {currentVocabulary?.vi_sentence}
                 </p>
               </div>
               <div className="quiz-result-answer-action">
                 <div className="btn-wrapper btn-sound-answer">
-                  <button>
+                  <ButtonEffect
+                    space={4}
+                    state={answerIsPass ? "active" : "error"}
+                  >
                     <Image
                       className="icon-btn-answer"
                       src="/sound-answer.svg"
@@ -92,10 +200,14 @@ const Question: FC<QuestionProps> = ({
                       height={60}
                       alt="icon-btn-answer"
                     />
-                  </button>
+                  </ButtonEffect>
                 </div>
                 <div className="btn-wrapper btn-trans-answer">
-                  <button>
+                  <ButtonEffect
+                    space={4}
+                    state={answerIsPass ? "active" : "error"}
+                    click={() => setIsShowTrans(!isShowTrans)}
+                  >
                     <Image
                       className="icon-btn-answer"
                       src="/translate.svg"
@@ -103,17 +215,17 @@ const Question: FC<QuestionProps> = ({
                       height={60}
                       alt="icon-btn-translate"
                     />
-                  </button>
+                  </ButtonEffect>
                 </div>
               </div>
             </div>
           </div>
           <div className="quiz-result-answer-control">
-            <div className="btn-continue">
-              <button>TIẾP TỤC</button>
-            </div>
+            <ButtonEffect state="active" click={handleNextQuiz}>
+              TIẾP TỤC
+            </ButtonEffect>
           </div>
-        </div>
+        </Style.QuizResult>
       </Style.QuizWrapper>
     </Container>
   );

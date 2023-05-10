@@ -1,3 +1,4 @@
+import { ButtonEffect } from "@/components/common";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -46,25 +47,4 @@ export const QuizAnswer = styled.div`
   padding: 0 20px;
 `;
 
-export const QuizAnswerItem = styled.div`
-  background: #c9c6c6;
-  margin-top: 20px;
-  border-radius: 20px;
-  width: 100%;
-  text-align: center;
-
-  .content {
-    background: #fff;
-    border-radius: 20px;
-    padding: 12pt;
-    top: -5px;
-    position: relative;
-    cursor: pointer;
-
-    &.active {
-      background: #23AC38;
-      color: #fff;
-    }
-  }
-`;
 export default Container;

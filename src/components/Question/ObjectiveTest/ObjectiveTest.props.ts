@@ -5,4 +5,5 @@ export default interface QuestionProps {
   question: ReactNode
   answers: any[]
   setAnswer: Function
+  reviewId: number
 }

@@ -1,4 +1,4 @@
-import { FC, use, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import SentenceEngQuizProps from "./SentenceEngQuiz.props";
 import ObjectiveTest from "../ObjectiveTest";
 import parse from "html-react-parser";
@@ -8,6 +8,8 @@ const SentenceEngQuiz: FC<SentenceEngQuizProps> = ({
   reviewId,
   vocabularies,
   setAnswer,
+  getQuestionStr,
+  currentVocabulary,
 }) => {
   const [quizState, setQuizState] = useState<{
     question: string;
@@ -17,59 +19,44 @@ const SentenceEngQuiz: FC<SentenceEngQuizProps> = ({
     answers: [],
   });
 
+  const currentId = useMemo(() => ((reviewId) => reviewId)(reviewId), [reviewId]);
+
   useEffect(() => {
-    const vocabularyQuizIndex = vocabularies.findIndex(
-      (vocabulary) => vocabulary.id === reviewId
-    );
-    const { en_sentence, content } = vocabularies[vocabularyQuizIndex];
-
-    const searchReg = new RegExp(
-      `^(${content})\\W|\\W(${content})\\W|\\W(${content})$`
-    );
-
-    let questionText = en_sentence.replace(searchReg, (matches: string) =>
-      matches.replace(
-        content,
-        `<span className="word_primary">${content}</span>`
-      )
-    );
-
-    if (
-      !new RegExp(`<span className="word_primary">${content}<\/span>`).test(
-        questionText
-      )
-    ) {
-      questionText = questionText.replace(
-        content,
-        `<span className="word_primary">${content}</span>`
+    if (currentVocabulary) {
+      const vocabularyQuizIndex = vocabularies.findIndex(
+        (vocabulary) => vocabulary.id === reviewId
       );
+
+      const { en_sentence, content } = currentVocabulary;
+      let questionText = getQuestionStr(en_sentence, content);
+
+      const answers = [
+        {
+          id: currentVocabulary.id,
+          label: currentVocabulary.translate,
+          value: currentVocabulary.content,
+          isTrue: true,
+        },
+        ...Arr.randomItems(vocabularies, 3, [vocabularyQuizIndex]).map(
+          ({ id, translate, content }: any) => ({
+            id,
+            label: translate,
+            value: content,
+            isTrue: false,
+          })
+        ),
+      ];
+
+      setQuizState({
+        question: `<span>${questionText}</span>`,
+        answers: Arr.randomOrder(answers),
+      });
     }
-
-    const answers = [
-      {
-        id: vocabularies[vocabularyQuizIndex].id,
-        label: vocabularies[vocabularyQuizIndex].translate,
-        value: vocabularies[vocabularyQuizIndex].content,
-        isTrue: true,
-      },
-      ...Arr.randomItems(vocabularies, 3, [vocabularyQuizIndex]).map(
-        ({ id, translate, content }: any) => ({
-          id,
-          label: translate,
-          value: content,
-          isTrue: false,
-        })
-      ),
-    ];
-
-    setQuizState({
-      question: `<span>${questionText}</span>`,
-      answers: Arr.randomOrder(answers),
-    });
-  }, []);
+  }, [currentVocabulary]);
 
   return (
     <ObjectiveTest
+      reviewId={currentId}
       title="Chọn nghĩa của từ được gạch chân"
       question={parse(quizState.question)}
       answers={quizState.answers}
