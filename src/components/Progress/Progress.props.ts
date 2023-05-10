@@ -1,4 +1,4 @@
 export default interface ProgressProps {
-  current: number,
-  total: number
+  current: number;
+  total: number;
 }

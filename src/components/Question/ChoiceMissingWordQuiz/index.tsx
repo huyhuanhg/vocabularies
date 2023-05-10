@@ -18,6 +18,7 @@ const ChoiceMissingWordQuiz: FC<ChoiceMissingWordQuizProps> = ({
     question: "",
     answers: [],
   });
+
   const currentId = useMemo(
     () => ((reviewId) => reviewId)(reviewId),
     [reviewId]
@@ -30,7 +31,7 @@ const ChoiceMissingWordQuiz: FC<ChoiceMissingWordQuizProps> = ({
       );
 
       const { en_sentence, content } = currentVocabulary;
-      let questionText = getQuestionStr(en_sentence, content, 'fill');
+      let questionText = getQuestionStr(en_sentence, content, "fill");
 
       const answers = [
         {

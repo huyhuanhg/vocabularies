@@ -5,7 +5,9 @@ import ProgressProps from "./Progress.props";
 const Progress: FC<ProgressProps> = ({ total, current }) => {
   return (
     <Container>
-      <label>{current} / {total}</label>
+      <label>
+        {current} / {total}
+      </label>
       <Style.Progress className="progress_bar" value={current} max={total} />
     </Container>
   );

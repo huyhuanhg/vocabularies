@@ -19,39 +19,23 @@ export const QuizHeader = styled.div`
 `;
 
 export const QuizContent = styled.div`
-  width: 100%;
-  text-align: center;
+  display: flex;
   margin-top: 15px;
+  gap: 20px;
 
-  button {
-    margin: 0;
-    font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
-    cursor: pointer;
-    text-transform: none;
-    border-radius: 50%;
-    background: #c9c6c6;
-    border: none;
-    padding: 0;
-    position: relative;
-    &.btn-sound-icon {
-      width: 60px;
-      height: 60px;
-    }
-    &.btn-sound-slow-icon {
-      width: 50px;
-      height: 50px;
-    }
+  .ButtonEffect {
+    width: 60px;
+    height: 60px;
 
-    img {
-      overflow: clip;
-      vertical-align: middle;
-      cursor: pointer;
-      position: absolute;
-      bottom: 1px;
-      left: 0;
+    .ButtonEffect__btn {
+      padding: 0;
+      line-height: 0;
     }
+  }
+
+  .ButtonEffect:nth-child(2) {
+    width: 50px;
+    height: 50px;
   }
 `;
 
@@ -68,6 +52,11 @@ export const QuizAnswer = styled.div`
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
+
+    &:focus {
+      outline: none !important;
+      background: #fff !important;
+    }
   }
 `;
 

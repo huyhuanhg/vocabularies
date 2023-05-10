@@ -28,6 +28,10 @@ export const QuizContent = styled.div`
   font-size: 16px;
   line-height: 1.2;
   color: #06072e;
+
+  form {
+    text-align: center;
+  }
 `;
 
 export const QuizAnswer = styled.div`

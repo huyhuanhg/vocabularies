@@ -20,7 +20,8 @@ const Question: FC<QuestionProps> = ({
     Math.floor(Math.random() * 4 + 1)
   );
 
-  const [answerIsPass, setAnswerIsPass] = useState(null);
+  const [audioUs, setAudioUs] = useState<HTMLAudioElement | null>(null);
+  const [answerIsPass, setAnswerIsPass] = useState<null | boolean>(null);
   const [isShowResult, setIsShowResult] = useState(false);
   const [isShowTrans, setIsShowTrans] = useState(false);
   const [currentVocabulary, setCurrentVocabulary] = useState<any>(null);
@@ -32,17 +33,6 @@ const Question: FC<QuestionProps> = ({
   }, [index, total]);
 
   useEffect(() => {
-    if (answerIsPass === null) {
-      document.removeEventListener("keypress", () => {});
-    } else
-    document.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        setIsShowResult(true);
-      }
-    });
-  }, [answerIsPass]);
-
-  useEffect(() => {
     let vocabulary = null;
 
     if (reviewId && vocabularies.length > 0) {
@@ -50,8 +40,9 @@ const Question: FC<QuestionProps> = ({
         (vocabularyItem) => vocabularyItem.id === reviewId
       );
       vocabulary = vocabularyIndex > -1 ? vocabularies[vocabularyIndex] : null;
+      const { audio_us } = vocabulary;
+      setAudioUs(new Audio(audio_us));
     }
-
     setCurrentVocabulary(vocabulary);
   }, [reviewId, vocabularies]);
 
@@ -92,6 +83,15 @@ const Question: FC<QuestionProps> = ({
     return questionText;
   };
 
+  const playAudio = (speed: number = 1) => {
+    if (!audioUs) {
+      return;
+    }
+
+    audioUs.playbackRate = speed;
+    audioUs.play();
+  };
+
   const renderSwitchType = (type: number) => {
     switch (type) {
       case 1: {
@@ -125,7 +125,13 @@ const Question: FC<QuestionProps> = ({
         );
       }
     }
-    return <FillListenWordQuiz vocabulary={currentVocabulary} />;
+    return (
+      <FillListenWordQuiz
+        vocabulary={currentVocabulary}
+        playAudio={playAudio}
+        setAnswer={setAnswerIsPass}
+      />
+    );
   };
 
   const handleNextQuiz = () => {
@@ -144,22 +150,30 @@ const Question: FC<QuestionProps> = ({
     setCurrentVocabulary(vocabulary);
   };
 
+  const handleCheck = () => {
+    setIsShowResult(true);
+    playAudio();
+  };
+
+  const handleForgetClick = () => {
+    setAnswerIsPass(false);
+    handleCheck();
+  };
+
   return (
     <Container>
       <Style.QuizWrapper>
-        <div className="quiz-content">
-          {renderSwitchType(quizType - quizType + 3)}
-        </div>
+        <div className="quiz-content">{renderSwitchType(quizType)}</div>
         <div className="quiz-control">
           <ButtonEffect
             disabled={answerIsPass === null}
             state="active"
-            click={() => setIsShowResult(true)}
+            click={handleCheck}
           >
             KIỂM TRA
           </ButtonEffect>
           <div className="btn-abort">
-            <button>Mình không nhớ từ này</button>
+            <button onClick={handleForgetClick}>Mình không nhớ từ này</button>
           </div>
         </div>
         <Style.QuizResult
@@ -192,6 +206,7 @@ const Question: FC<QuestionProps> = ({
                   <ButtonEffect
                     space={4}
                     state={answerIsPass ? "active" : "error"}
+                    click={() => playAudio()}
                   >
                     <Image
                       className="icon-btn-answer"

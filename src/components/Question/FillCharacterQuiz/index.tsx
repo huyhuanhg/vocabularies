@@ -2,6 +2,7 @@ import {
   ChangeEvent,
   FC,
   KeyboardEvent,
+  RefObject,
   createRef,
   useEffect,
   useMemo,
@@ -16,7 +17,7 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
   setAnswer,
 }) => {
   const [fillResult, setFillResult] = useState<string[]>([]);
-  const [elRefs, setElRefs] = useState([]);
+  const [elRefs, setElRefs] = useState<RefObject<HTMLInputElement>[]>([]);
 
   useEffect(() => {
     if (vocabulary) {
@@ -30,11 +31,6 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
   }, [vocabulary]);
 
   useEffect(() => {
-    console.log("object :>> ", fillResult);
-    console.log(
-      "vocabulary && fillResult.join :>> ",
-      vocabulary && fillResult.join("").length
-    );
     if (vocabulary) {
       let result = null;
       result =
@@ -81,7 +77,7 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
       elRefs[index + 1] &&
       Object(elRefs[index + 1]).hasOwnProperty("current")
     ) {
-      elRefs[index + 1].current.focus();
+      elRefs[index + 1].current?.focus();
     }
 
     if (
@@ -90,7 +86,7 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
       elRefs[index - 1] &&
       Object(elRefs[index - 1]).hasOwnProperty("current")
     ) {
-      elRefs[index - 1].current.focus();
+      elRefs[index - 1].current?.focus();
     }
   };
 

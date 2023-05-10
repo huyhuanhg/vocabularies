@@ -84,7 +84,11 @@ export const QuizWrapper = styled.div`
   }
 `;
 
-export const QuizResult = styled.div<{ isSuccess: boolean | null, open: boolean, isShowTrans: boolean }>`
+export const QuizResult = styled.div<{
+  isSuccess: boolean | null;
+  open: boolean;
+  isShowTrans: boolean;
+}>`
   display: ${(props) => (props.open ? "block" : "none")};
   position: fixed;
   width: 100vw;
@@ -136,7 +140,7 @@ export const QuizResult = styled.div<{ isSuccess: boolean | null, open: boolean,
 
       .sentence-trans {
         transition: 0.2s;
-        opacity: ${props => props.isShowTrans ? 1 : 0};
+        opacity: ${(props) => (props.isShowTrans ? 1 : 0)};
       }
     }
     &-action {

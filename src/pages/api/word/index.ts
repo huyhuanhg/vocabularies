@@ -37,7 +37,7 @@ const addWordStorage = async (data: any) => {
     const wordStorageRef = collection(db, "word_storages");
 
     return await setDoc(
-      doc(collection(wordStorageRef, data.id.toString(), `words__${data.user}`), data.id.toString()),
+      doc(db, "word_storages", `${data.user}_${data.id}`),
       {
         id: `${data.user}_${data.id}`,
         vocabulary_id: data.id,
@@ -49,7 +49,7 @@ const addWordStorage = async (data: any) => {
     );
   } catch (error: any) {
     if (error?.code !== "unavailable") {
-      console.error("ERROR SET WORD STORAGE IN DB", error);
+      console.error("ERROR GET WORD STORAGE IN DB", error);
       return Promise.reject("ERROR SET WORD STORAGE IN DB");
     }
   }

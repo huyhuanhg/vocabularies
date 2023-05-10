@@ -1,3 +1,5 @@
 export default interface FillListenWordQuizProps {
-  vocabulary: any,
+  vocabulary: any;
+  playAudio: Function;
+  setAnswer: Function;
 }

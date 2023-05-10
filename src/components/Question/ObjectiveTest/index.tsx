@@ -13,10 +13,11 @@ const ObjectiveTest: FC<ObjectiveTestProps> = ({
   const [currentAnswer, setCurrentAnswer] = useState(null);
 
   useEffect(() => {
-    if(reviewId) {
-      setCurrentAnswer(null)
+    if (reviewId) {
+      setCurrentAnswer(null);
+      setAnswer(null);
     }
-  }, [reviewId])
+  }, [reviewId]);
 
   const renderQuizAnswerItem = () => {
     return (

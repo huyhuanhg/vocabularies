@@ -39,7 +39,7 @@ const initialState: any = {
     count: 0,
     ids: [],
     loading: false,
-    vocabularies: []
+    vocabularies: [],
   },
 };
 

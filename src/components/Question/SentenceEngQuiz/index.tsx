@@ -19,7 +19,10 @@ const SentenceEngQuiz: FC<SentenceEngQuizProps> = ({
     answers: [],
   });
 
-  const currentId = useMemo(() => ((reviewId) => reviewId)(reviewId), [reviewId]);
+  const currentId = useMemo(
+    () => ((reviewId) => reviewId)(reviewId),
+    [reviewId]
+  );
 
   useEffect(() => {
     if (currentVocabulary) {
