@@ -87,6 +87,25 @@ const review = createSlice({
         review: {
           ...state.review,
           count: review,
+          loading: false
+        },
+      };
+    });
+    builder.addCase(fetchReviewData.rejected, (state) => {
+      return {
+        ...state,
+        review: {
+          ...state.review,
+          loading: false,
+        },
+      };
+    });
+    builder.addCase(fetchReviewData.pending, (state) => {
+      return {
+        ...state,
+        review: {
+          ...state.review,
+          loading: true,
         },
       };
     });
@@ -108,6 +127,15 @@ const review = createSlice({
         review: {
           ...state.review,
           loading: true,
+        },
+      };
+    });
+    builder.addCase(fetchReviewCount.rejected, (state) => {
+      return {
+        ...state,
+        review: {
+          ...state.review,
+          loading: false,
         },
       };
     });

@@ -25,8 +25,8 @@ const SentenceEngQuiz: FC<SentenceEngQuizProps> = ({
         (vocabulary) => vocabulary.id === reviewId
       );
 
-      const { en_sentence, content } = vocabulary;
-      let questionText = getQuestionStr(en_sentence, content);
+      const { en_sentence, pattern } = vocabulary;
+      let questionText = getQuestionStr(en_sentence, pattern);
 
       const answers = [
         {

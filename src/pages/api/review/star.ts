@@ -81,7 +81,7 @@ export default async function handler(
     const userInfo = await getDoc(doc(db, "users", req.query.user as string));
     const reviewedAt = userInfo.data()?.reviewed_at
       ? moment(userInfo.data()?.reviewed_at.toDate())
-      : undefined;
+      : null;
 
     if (reviewedAt && reviewedAt.isAfter(moment().subtract({ minutes: 10 }))) {
       res.status(200).json({
@@ -91,6 +91,7 @@ export default async function handler(
             ...startCount,
             review: 0,
           },
+          reviewedAt: reviewedAt ? reviewedAt.unix(): null,
         },
       });
 
@@ -102,7 +103,7 @@ export default async function handler(
       collection(db, "word_storages"),
       where("user", "==", user),
       where("review_flg", "==", true),
-      where("last_seen", "<=", new Date(new Date().getTime() - 6 * 3600 * 1000)),
+      where("last_seen", "<=", new Date(now.getTime() - 6 * 3600 * 1000)),
       limit(31),
       orderBy("last_seen")
     ))
@@ -116,6 +117,7 @@ export default async function handler(
           ...startCount,
           review: reviewCount,
         },
+        reviewedAt: reviewedAt ? reviewedAt.unix(): null,
       },
     });
   } catch (error) {

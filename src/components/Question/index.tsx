@@ -40,40 +40,23 @@ const Question: FC<QuestionProps> = ({
   }, [index, total]);
 
   const getEnSentence = (
-    sentence?: string,
-    content?: string,
+    sentence: string,
+    pattern?: string,
     type: "fill" | "highlight" = "highlight"
-  ) => {
-    if (!sentence || !content) {
-      return "";
+  ): string => {
+    if (!pattern) {
+      return sentence;
     }
+    const searchReg = new RegExp(`(^|\\W)(${pattern})(\\W|$)`, 'i');
 
-    const searchReg = new RegExp(
-      `^(${content})\\W|\\W(${content})\\W|\\W(${content})$`
-    );
-
-    let questionText = sentence.replace(searchReg, (matches: string) =>
+    return sentence.replace(searchReg, (matches: string) =>
       matches.replace(
-        content,
+        pattern,
         type === "highlight"
-          ? `<span className="word_primary">${content}</span>`
-          : "___"
+          ? `<span className="word_primary">${pattern}</span>`
+          : `<span className="word_fill">${pattern}</span>`
       )
     );
-
-    if (
-      !new RegExp(`<span className="word_primary">${content}<\/span>`).test(
-        questionText
-      )
-    ) {
-      questionText = questionText.replace(
-        content,
-        type === "highlight"
-          ? `<span className="word_primary">${content}</span>`
-          : "___"
-      );
-    }
-    return questionText;
   };
 
   const playAudio = async (speed: number = 1) => {
@@ -193,7 +176,7 @@ const Question: FC<QuestionProps> = ({
                     {parse(
                       getEnSentence(
                         current.vocabulary.en_sentence,
-                        current.vocabulary.content
+                        current.vocabulary.pattern
                       )
                     )}
                   </p>

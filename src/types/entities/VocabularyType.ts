@@ -10,4 +10,5 @@ export default interface VocabularyType {
   translate: string
   type: string
   vi_sentence: string
+  pattern?: string
 }

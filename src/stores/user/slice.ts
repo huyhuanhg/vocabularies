@@ -1,10 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { updateReviewedAt } from "./action";
+import { fetchReviewData } from "../review/action";
 
 const initialState = {
   detail: {
     loading: false,
-    data: []
+    reviewedAt: null,
+    data: [],
   }
 };
 
@@ -37,6 +39,17 @@ const user = createSlice({
         detail: {
           ...state.detail,
           loading: false
+        }
+      };
+    });
+    builder.addCase(fetchReviewData.fulfilled, (state, { payload }) => {
+      const { reviewed_at } = payload;
+
+      return {
+        ...state,
+        detail: {
+          ...state.detail,
+          reviewedAt: reviewed_at
         }
       };
     });

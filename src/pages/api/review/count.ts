@@ -68,7 +68,7 @@ export default async function handler(
         data: {
           count: 0,
           reviewed_at: reviewedAt
-            ? reviewedAt.format("DD/MM/YYYY HH:mm:ss")
+            ? reviewedAt.unix()
             : null,
           wordStorages: [],
         },
@@ -98,6 +98,7 @@ export default async function handler(
         audio_us,
         type,
         ipa_us,
+        pattern
       } = vocabulary.data();
       return {
         id,
@@ -108,6 +109,7 @@ export default async function handler(
         audio_us,
         en_sentence,
         vi_sentence,
+        pattern
       };
     });
 
@@ -140,7 +142,7 @@ export default async function handler(
       data: {
         count: wordStorageResponseData.length,
         reviewed_at: reviewedAt
-          ? reviewedAt.format("DD/MM/YYYY HH:mm:ss")
+          ? reviewedAt.unix()
           : null,
         wordStorages: Arr.randomOrder(wordStorageResponseData),
       },

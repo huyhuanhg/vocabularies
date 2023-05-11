@@ -2,8 +2,9 @@ import { FC, useEffect } from "react";
 import { auth } from "@/configs/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/router";
-import { Loading } from "@/components/common";
+import { LoadingRing } from "@/components/common";
 import AuthLayoutProps from "./AuthLayout.props";
+import { useSelector } from "react-redux";
 
 const Layout: FC<AuthLayoutProps> = ({
   component: Component,
@@ -11,6 +12,9 @@ const Layout: FC<AuthLayoutProps> = ({
 }) => {
   const [loggedInUser, loading] = useAuthState(auth);
   const { push } = useRouter();
+  const {
+    review: { loading: fetchReviewDataLoading },
+  } = useSelector(({ reviewReducer }: Record<string, any>) => reviewReducer);
   useEffect(() => {
     if (!loading && !loggedInUser) {
       push("/auth/login");
@@ -19,7 +23,7 @@ const Layout: FC<AuthLayoutProps> = ({
 
   return (
     <main>
-      {loading && <Loading full />}
+      {loading || fetchReviewDataLoading && <LoadingRing full/>}
       {loggedInUser && loggedInUser?.email && (
         <Component {...pageProps} user={loggedInUser} />
       )}

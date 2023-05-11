@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { db } from "@/configs/firebase";
+import { getPattern } from "@/helpers/word";
 import {
   doc,
   getDoc,
@@ -23,11 +24,14 @@ const addVocabulary = async (data: any) => {
         vi_sentence: data.vi_sentence,
         translate: data.trans,
         last_seen: serverTimestamp(),
+        pattern: getPattern(data.content, data.en_sentence)
       },
       { merge: true }
     );
-  } catch (error) {
-    console.error("ERROR SET VOCABULARY IN DB", error);
+  } catch (error: any) {
+    // add report
+
+    const message = error.message
     return Promise.reject("ERROR SET VOCABULARY IN DB");
   }
 };
@@ -50,7 +54,8 @@ const addWordStorage = async (data: any) => {
     );
   } catch (error: any) {
     if (error?.code !== "unavailable") {
-      console.error("ERROR GET WORD STORAGE IN DB", error);
+      // add report
+
       return Promise.reject("ERROR SET WORD STORAGE IN DB");
     }
   }

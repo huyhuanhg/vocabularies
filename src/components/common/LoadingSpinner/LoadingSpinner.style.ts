@@ -10,6 +10,7 @@ const Container = styled.div<{ full?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 999999999999999999999999999999;
 `;
 
 export const SpinnerWrapper = styled.div<{ size: number }>`

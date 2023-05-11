@@ -1,4 +1,4 @@
-import { Button, ButtonEffect, Chart } from "@/components/common";
+import { ButtonEffect, Chart } from "@/components/common";
 import Layout from "@/layouts/VocabularyLayout";
 import { fetchReviewData } from "@/stores/review/action";
 import Container, * as Style from "@/styles/Home.style";

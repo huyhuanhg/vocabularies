@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import Navigation from "@/components/Navigation";
 import DashboardLayoutProps from "./VocabularyLayout.props";
 import Container, * as Style from "./VocabularyLayout.style";

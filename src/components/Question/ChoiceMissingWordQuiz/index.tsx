@@ -25,8 +25,8 @@ const ChoiceMissingWordQuiz: FC<ChoiceMissingWordQuizProps> = ({
         (vocabulary) => vocabulary.id === reviewId
       );
 
-      const { en_sentence, content } = vocabulary;
-      let questionText = getQuestionStr(en_sentence, content, "fill");
+      const { en_sentence, pattern } = vocabulary;
+      let questionText = getQuestionStr(en_sentence, pattern, "fill");
 
       const answers = [
         {

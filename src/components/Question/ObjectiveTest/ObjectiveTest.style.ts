@@ -38,6 +38,23 @@ export const QuizContent = styled.div`
     .word_primary {
       text-decoration: underline;
     }
+
+    .word_fill {
+      display: inline-block;
+      position: relative;
+
+      &::after {
+        content: "";
+        display: inline-block;
+        width: 100%;
+        background-color: #fff;
+        position: absolute;
+        height: 100%;
+        left: 0;
+        bottom: 1px;
+        border-bottom: 1px solid;
+      }
+    }
   }
 `;
 
