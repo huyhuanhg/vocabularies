@@ -1,9 +1,9 @@
-import VocabularyType from "@/types/entities/VocabularyType";
+import WordStorageType from "@/types/entities/WordStorageType";
 
 export default interface QuestionProps {
   index: number;
-  current: VocabularyType;
+  current: WordStorageType;
   total: number;
-  vocabularies: VocabularyType[];
+  wordStorages: WordStorageType[];
   next: Function;
 }

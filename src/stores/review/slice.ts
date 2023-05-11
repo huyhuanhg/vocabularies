@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchReviewCount, fetchReviewData } from "./action";
+import { fetchReviewCount, fetchReviewData, updateReviewWord } from "./action";
 
 const initialState: any = {
   count: [
@@ -37,9 +37,11 @@ const initialState: any = {
 
   review: {
     count: 0,
-    ids: [],
+    wordStorages: [],
     loading: false,
-    vocabularies: [],
+    updateInfo: {
+      loading: false
+    }
   },
 };
 
@@ -89,14 +91,13 @@ const review = createSlice({
       };
     });
     builder.addCase(fetchReviewCount.fulfilled, (state, { payload }) => {
-      const { ids, count, vocabularies } = payload;
+      const { wordStorages, count } = payload;
       return {
         ...state,
         review: {
           ...state.review,
           count,
-          ids,
-          vocabularies,
+          wordStorages,
           loading: false,
         },
       };
@@ -107,6 +108,42 @@ const review = createSlice({
         review: {
           ...state.review,
           loading: true,
+        },
+      };
+    });
+    builder.addCase(updateReviewWord.pending, (state) => {
+      return {
+        ...state,
+        review: {
+          ...state.review,
+          updateInfo: {
+            ...state.review.updateInfo,
+            loading: true
+          },
+        },
+      };
+    });
+    builder.addCase(updateReviewWord.fulfilled, (state) => {
+      return {
+        ...state,
+        review: {
+          ...state.review,
+          updateInfo: {
+            ...state.review.updateInfo,
+            loading: false
+          },
+        },
+      };
+    });
+    builder.addCase(updateReviewWord.rejected, (state) => {
+      return {
+        ...state,
+        review: {
+          ...state.review,
+          updateInfo: {
+            ...state.review.updateInfo,
+            loading: false
+          },
         },
       };
     });

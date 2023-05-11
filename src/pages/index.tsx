@@ -27,7 +27,7 @@ const Home = ({ user }: any) => {
         {reviewCount === 0 ? (
           <Style.Message>Không có từ nào để ôn tập</Style.Message>
         ) : (
-          <Style.Message>Có {reviewCount} từ cần ôn tập</Style.Message>
+          <Style.Message>Có {reviewCount > 30 ? `hơn 30` : reviewCount} từ cần ôn tập</Style.Message>
         )}
         {reviewCount > 0 && (
           <ButtonEffect

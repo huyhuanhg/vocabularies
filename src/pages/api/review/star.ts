@@ -5,6 +5,8 @@ import {
   getCountFromServer,
   getDoc,
   getDocs,
+  limit,
+  orderBy,
   query,
   where,
 } from "firebase/firestore";
@@ -81,7 +83,7 @@ export default async function handler(
       ? moment(userInfo.data()?.reviewed_at.toDate())
       : undefined;
 
-    if (reviewedAt && reviewedAt.isAfter(moment().subtract({ hours: 1 }))) {
+    if (reviewedAt && reviewedAt.isAfter(moment().subtract({ minutes: 10 }))) {
       res.status(200).json({
         status: "success",
         data: {
@@ -96,19 +98,16 @@ export default async function handler(
     }
 
     const now = new Date();
-    const reviewOneStarCount = await getDocs(
-      query(
-        collection(db, "word_storages"),
-        where("user", "==", user),
-        where("last_seen", "<=", new Date(now.getTime() - 6 * 3600 * 1000))
-      )
-    );
+    const hasReviewCount = await getCountWordStorage(() => query(
+      collection(db, "word_storages"),
+      where("user", "==", user),
+      where("review_flg", "==", true),
+      where("last_seen", "<=", new Date(new Date().getTime() - 6 * 3600 * 1000)),
+      limit(31),
+      orderBy("last_seen")
+    ))
 
-    const reviewData = reviewOneStarCount.docs.filter(
-      (doc) => doc.data().rate < 5
-    );
-
-    reviewCount += reviewData.length;
+    reviewCount += hasReviewCount;
 
     res.status(200).json({
       status: "success",

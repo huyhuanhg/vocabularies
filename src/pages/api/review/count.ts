@@ -3,6 +3,8 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
+  orderBy,
   query,
   where,
 } from "firebase/firestore";
@@ -21,14 +23,13 @@ export default async function handler(
       ? moment(userInfo.data()?.reviewed_at.toDate())
       : undefined;
 
-    if (reviewedAt && reviewedAt.isAfter(moment().subtract({ hours: 1 }))) {
+    if (reviewedAt && reviewedAt.isAfter(moment().subtract({ minutes: 10 }))) {
       res.status(200).json({
         status: "success",
         data: {
           count: 0,
-          ids: [],
           reviewed_at: reviewedAt.format("DD/MM/YYYY HH:mm:ss"),
-          vocabularies: [],
+          wordStorages: [],
         },
       });
 
@@ -36,39 +37,116 @@ export default async function handler(
     }
 
     const now = new Date();
-    const reviewOneStarCount = await getDocs(
+    const reviewOneStarSnapshots = await getDocs(
       query(
         collection(db, "word_storages"),
         where("user", "==", req.query.user),
-        where("last_seen", "<=", new Date(now.getTime() - 6 * 3600 * 1000))
+        where("review_flg", "==", true),
+        where("last_seen", "<=", new Date(now.getTime() - 6 * 3600 * 1000)),
+        limit(31),
+        orderBy("last_seen")
       )
     );
 
-    const reviewIds = reviewOneStarCount.docs
-      .filter((doc) => doc.data().rate < 5)
-      .map((item: any) => item.data().vocabulary_id);
+    const wordStorages = reviewOneStarSnapshots.docs.map((item: any) => {
+      const { id, last_seen, rate, review_flg, user, vocabulary_id } =
+        item.data();
+
+      return {
+        id,
+        last_seen: last_seen?.seconds || null,
+        rate,
+        review_flg,
+        user,
+        vocabulary_id,
+      };
+    });
+
+    if (wordStorages.length === 0) {
+      res.status(200).json({
+        status: "success",
+        data: {
+          count: 0,
+          reviewed_at: reviewedAt
+            ? reviewedAt.format("DD/MM/YYYY HH:mm:ss")
+            : null,
+          wordStorages: [],
+        },
+      });
+
+      return;
+    }
 
     const vocabularies = await getDocs(
-      query(collection(db, "vocabularies"), where("id", "in", reviewIds.map(id =>  `${id}`)))
+      query(
+        collection(db, "vocabularies"),
+        where(
+          "id",
+          "in",
+          wordStorages.map(({ vocabulary_id }) => `${vocabulary_id}`)
+        )
+      )
     );
 
-    const randomVocabularies = Arr.randomOrder(vocabularies.docs.map((vocabulary) => {
-      const {id, content, translate, en_sentence, vi_sentence, audio_us, type, ipa_us} = vocabulary.data()
-      return { id, content, type, translate, ipa_us, audio_us, en_sentence, vi_sentence }
-    }))
+    const vocabularyData = vocabularies.docs.map((vocabulary) => {
+      const {
+        id,
+        content,
+        translate,
+        en_sentence,
+        vi_sentence,
+        audio_us,
+        type,
+        ipa_us,
+      } = vocabulary.data();
+      return {
+        id,
+        content,
+        type,
+        translate,
+        ipa_us,
+        audio_us,
+        en_sentence,
+        vi_sentence,
+      };
+    });
+
+    const wordStorageResponseData = JSON.parse(
+      JSON.stringify(
+        wordStorages.map(
+          ({ id, last_seen, rate, review_flg, user, vocabulary_id }) => {
+            console.log("vocabularyData :>> ", vocabularyData);
+            const vocabulary = vocabularyData.find(
+              (vocabularyItem) => vocabulary_id === vocabularyItem.id
+            );
+
+            return !vocabulary || !review_flg
+              ? undefined
+              : {
+                  id,
+                  user,
+                  rate,
+                  last_seen,
+                  review_flg,
+                  vocabulary,
+                };
+          }
+        )
+      )
+    );
 
     res.status(200).json({
       status: "success",
       data: {
-        count: randomVocabularies.length,
-        ids: randomVocabularies.map((vocabulary: any) => vocabulary.id),
+        count: wordStorageResponseData.length,
         reviewed_at: reviewedAt
           ? reviewedAt.format("DD/MM/YYYY HH:mm:ss")
           : null,
-        vocabularies: randomVocabularies,
+        wordStorages: Arr.randomOrder(wordStorageResponseData),
       },
     });
   } catch (error) {
+    console.log(error);
     res.status(400).json({ status: "fail" });
   }
 }

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Container = styled.div<{ full?: boolean }>`
+const Container = styled.div<{ full?: boolean }>`
   width: ${(props) => (props.full ? "100vw" : "100%")};
   height: ${(props) => (props.full ? "100vh" : "100%")};
   position: ${(props) => (props.full ? "fixed" : "absolute")};
@@ -11,3 +11,5 @@ export const Container = styled.div<{ full?: boolean }>`
   align-items: center;
   justify-content: center;
 `;
+
+export default Container

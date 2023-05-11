@@ -52,6 +52,7 @@ export const Congratulatory = styled.div`
   .wrapper {
     padding-top: 50px;
     position: relative;
+    min-height: 400px;
 
     .message {
       color: #ffcb08;

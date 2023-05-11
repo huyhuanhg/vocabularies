@@ -99,6 +99,8 @@ export const QuizResult = styled.div<{
   background-color: rgba(0, 0, 0, 0.5);
 
   .quiz-result-answer {
+    min-height: 200px;
+    overflow: hidden;
     position: absolute;
     bottom: 180px;
     width: 100%;

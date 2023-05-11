@@ -8,14 +8,24 @@ import { useRouter } from "next/router";
 import Question from "@/components/Question";
 import Progress from "@/components/Progress";
 import CircleProgress from "@/components/CircleProgress";
+import { LoadingRing } from "@/components/common";
+import { updateReviewedAt } from "@/stores/user/action";
 
 const Review = ({ user }: any) => {
   const router = useRouter();
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const {
-    review: { loading, count: reviewCount, vocabularies },
-  } = useSelector(({ reviewReducer }: Record<string, any>) => reviewReducer);
+    reviewReducer: {
+      review: { loading, count: reviewCount, wordStorages },
+    },
+    userReducer: {
+      detail: { loading: userReviewedLoading },
+    },
+  } = useSelector(({ reviewReducer, userReducer }: Record<string, any>) => ({
+    reviewReducer,
+    userReducer,
+  }));
 
   const [progressInfo, setProgressInfo] = useState({
     current: 0,
@@ -29,6 +39,12 @@ const Review = ({ user }: any) => {
   useEffect(() => {
     dispatch(fetchReviewCount({ user: user.email }));
   }, []);
+
+  useEffect(() => {
+    if (progressInfo.isFinish) {
+      dispatch(updateReviewedAt({ user: user.email }));
+    }
+  }, [progressInfo.isFinish]);
 
   useEffect(() => {
     if (progressInfo.current === reviewCount && progressInfo.current !== 0) {
@@ -47,7 +63,10 @@ const Review = ({ user }: any) => {
     setProgressInfo({
       ...progressCloneData,
       ...(key && { [key]: progressCloneData[key] + 1 }),
-      current: progressCloneData.current === reviewCount - 1 ? progressCloneData.current : progressCloneData.current + 1,
+      current:
+        progressCloneData.current === reviewCount - 1
+          ? progressCloneData.current
+          : progressCloneData.current + 1,
       isFinish: !key || progressCloneData.current === reviewCount - 1,
     });
   };
@@ -72,64 +91,73 @@ const Review = ({ user }: any) => {
           <Button onClick={() => router.push("/")}>Quay lại</Button>
         </Style.Empty>
       )}
-      {!loading && reviewCount > 0 && !progressInfo.isFinish && (
-        <Style.Question>
-          <Style.Header>
-            <Progress total={reviewCount} current={progressInfo.current + 1} />
-            <Style.BtnClose onClick={() => setIsShowModalClose(true)} />
-          </Style.Header>
-          <Question
-            index={progressInfo.current}
-            current={vocabularies[progressInfo.current]}
-            total={reviewCount}
-            vocabularies={vocabularies}
-            next={nextQuiz}
-          />
-          <Modal
-            open={isShowModalClose}
-            footer={null}
-            closable={false}
-            centered
-            onCancel={() => setIsShowModalClose(false)}
-          >
-            <Style.ModalCloseMsg>
-              Bạn có chắc chắn muốn thoát?
-              <br /> Kết quả ôn tập của bạn đã được lưu lại.
-            </Style.ModalCloseMsg>
-            <Style.ModalCloseBtnGroup>
-              <ButtonEffect
-                state="active"
-                click={() => setIsShowModalClose(false)}
-              >
-                ÔN TẬP TIẾP
-              </ButtonEffect>
-              <ButtonEffect click={() => nextQuiz()}>THOÁT</ButtonEffect>
-            </Style.ModalCloseBtnGroup>
-          </Modal>
-        </Style.Question>
-      )}
+      {!loading &&
+        wordStorages[progressInfo.current] &&
+        !progressInfo.isFinish && (
+          <Style.Question>
+            <Style.Header>
+              <Progress
+                total={reviewCount}
+                current={progressInfo.current + 1}
+              />
+              <Style.BtnClose onClick={() => setIsShowModalClose(true)} />
+            </Style.Header>
+            <Question
+              index={progressInfo.current}
+              current={wordStorages[progressInfo.current]}
+              total={reviewCount}
+              wordStorages={wordStorages}
+              next={nextQuiz}
+            />
+            <Modal
+              open={isShowModalClose}
+              footer={null}
+              closable={false}
+              centered
+              onCancel={() => setIsShowModalClose(false)}
+            >
+              <Style.ModalCloseMsg>
+                Bạn có chắc chắn muốn thoát?
+                <br /> Kết quả ôn tập của bạn đã được lưu lại.
+              </Style.ModalCloseMsg>
+              <Style.ModalCloseBtnGroup>
+                <ButtonEffect
+                  state="active"
+                  click={() => setIsShowModalClose(false)}
+                >
+                  ÔN TẬP TIẾP
+                </ButtonEffect>
+                <ButtonEffect click={() => nextQuiz()}>THOÁT</ButtonEffect>
+              </Style.ModalCloseBtnGroup>
+            </Modal>
+          </Style.Question>
+        )}
       {progressInfo.isFinish && (
         <Style.Congratulatory>
-          <div className="wrapper">
-            <p className="message">
-              {renderCongratulatoryMessage(
-                (progressInfo.trueCount /
-                  (progressInfo.trueCount + progressInfo.falseCount)) *
-                  100
-              )}
-            </p>
-            <CircleProgress
-              total={progressInfo.trueCount + progressInfo.falseCount}
-              value={progressInfo.trueCount}
-            />
-            <p className="Congratulatory__info">
-              Bạn đã trả lời đúng {progressInfo.trueCount}/
-              {progressInfo.trueCount + progressInfo.falseCount} câu
-            </p>
-            <ButtonEffect state="active" click={() => router.push("/")}>
-              TRỞ LẠI
-            </ButtonEffect>
-          </div>
+          {userReviewedLoading ? (
+            <LoadingRing full />
+          ) : (
+            <div className="wrapper">
+              <p className="message">
+                {renderCongratulatoryMessage(
+                  (progressInfo.trueCount /
+                    (progressInfo.trueCount + progressInfo.falseCount)) *
+                    100
+                )}
+              </p>
+              <CircleProgress
+                total={progressInfo.trueCount + progressInfo.falseCount}
+                value={progressInfo.trueCount}
+              />
+              <p className="Congratulatory__info">
+                Bạn đã trả lời đúng {progressInfo.trueCount}/
+                {progressInfo.trueCount + progressInfo.falseCount} câu
+              </p>
+              <ButtonEffect state="active" click={() => router.push("/")}>
+                TRỞ LẠI
+              </ButtonEffect>
+            </div>
+          )}
         </Style.Congratulatory>
       )}
     </Container>
