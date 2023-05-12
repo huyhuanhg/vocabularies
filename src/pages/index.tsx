@@ -1,4 +1,4 @@
-import { Button, Chart } from "@/components/common";
+import { ButtonEffect, Chart } from "@/components/common";
 import Layout from "@/layouts/VocabularyLayout";
 import { fetchReviewData } from "@/stores/review/action";
 import Container, * as Style from "@/styles/Home.style";
@@ -12,7 +12,7 @@ const Home = ({ user }: any) => {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const {
-    count: defaultChartValue,
+    count: chartData,
     review: { count: reviewCount },
   } = useSelector(({ reviewReducer }: Record<string, any>) => reviewReducer);
 
@@ -23,16 +23,25 @@ const Home = ({ user }: any) => {
   return (
     <Layout>
       <Container>
-        <Chart data={defaultChartValue} unit="từ" />
+        <Chart data={chartData} unit="từ" />
         {reviewCount === 0 ? (
           <Style.Message>Không có từ nào để ôn tập</Style.Message>
         ) : (
-          <Style.Message>Có {reviewCount} từ cần ôn tập</Style.Message>
+          <Style.Message>Có {reviewCount > 30 ? `hơn 30` : reviewCount} từ cần ôn tập</Style.Message>
         )}
         {reviewCount > 0 && (
-          <Style.Review onClick={() => router.push("/review")}>
+          <ButtonEffect
+            style={{
+              marginTop: 20,
+              width: 250,
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+            state="active"
+            click={() => router.push("/review")}
+          >
             Ôn tập ngay
-          </Style.Review>
+          </ButtonEffect>
         )}
       </Container>
     </Layout>

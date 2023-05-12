@@ -5,7 +5,12 @@ const Container = styled.div`
   max-width: 500px;
   margin: 0 auto;
   position: relative;
-  background: linear-gradient( to bottom, transparent, rgb(var(--background-end-rgb)) ) rgb(var(--background-start-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
 `;
 
 export const Content = styled.div`

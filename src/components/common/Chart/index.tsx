@@ -4,19 +4,22 @@ import { FC, useEffect, useState } from "react";
 
 const Chart: FC<ChartProps> = ({ height, data, defaultData, unit }) => {
   const formatData = (data?: ItemProps[]) => {
-
     if (!Array.isArray(data) || data.length === 0) {
       return [];
     }
 
-    const maxValue = [...data].sort((current, next) => next.value - current.value)[0]
-      .value;
+    const maxValue = [...data].sort(
+      (current, next) => next.value - current.value
+    )[0].value;
 
     return data.map((convert) => {
-      return ({
+      return {
         ...convert,
-        mt: convert.value === 0 ? "300px" :`${(maxValue - convert.value) / maxValue * 300}px`,
-      })
+        mt:
+          convert.value === 0
+            ? "300px"
+            : `${((maxValue - convert.value) / maxValue) * 300}px`,
+      };
     });
   };
 
@@ -33,7 +36,11 @@ const Chart: FC<ChartProps> = ({ height, data, defaultData, unit }) => {
   return (
     <Container height={height ?? 305}>
       {resources.map((resource, index) => (
-        <Style.Item key={index} color={resource.color} mt={resource.mt}>
+        <Style.Item
+          key={`star_${index + 1}`}
+          color={resource.color}
+          mt={resource.mt}
+        >
           <span className="chart-item-label">{resource.label}</span>
           {resource.isShowValue && (
             <span className="chart-item-value">

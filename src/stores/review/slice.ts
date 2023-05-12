@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchReviewCount, fetchReviewData } from "./action";
+import { fetchReviewCount, fetchReviewData, updateReviewWord } from "./action";
 
 const initialState: any = {
   count: [
@@ -37,8 +37,11 @@ const initialState: any = {
 
   review: {
     count: 0,
-    ids: [],
-    loading: false
+    wordStorages: [],
+    loading: false,
+    updateInfo: {
+      loading: false
+    }
   },
 };
 
@@ -84,19 +87,37 @@ const review = createSlice({
         review: {
           ...state.review,
           count: review,
+          loading: false
         },
       };
     });
-    builder.addCase(fetchReviewCount.fulfilled, (state, { payload }) => {
-      const { count, ids } = payload.review;
-
+    builder.addCase(fetchReviewData.rejected, (state) => {
       return {
         ...state,
         review: {
           ...state.review,
-          count: count,
-          ids: ids,
-          loading: false
+          loading: false,
+        },
+      };
+    });
+    builder.addCase(fetchReviewData.pending, (state) => {
+      return {
+        ...state,
+        review: {
+          ...state.review,
+          loading: true,
+        },
+      };
+    });
+    builder.addCase(fetchReviewCount.fulfilled, (state, { payload }) => {
+      const { wordStorages, count } = payload;
+      return {
+        ...state,
+        review: {
+          ...state.review,
+          count,
+          wordStorages,
+          loading: false,
         },
       };
     });
@@ -105,7 +126,52 @@ const review = createSlice({
         ...state,
         review: {
           ...state.review,
-          loading: true
+          loading: true,
+        },
+      };
+    });
+    builder.addCase(fetchReviewCount.rejected, (state) => {
+      return {
+        ...state,
+        review: {
+          ...state.review,
+          loading: false,
+        },
+      };
+    });
+    builder.addCase(updateReviewWord.pending, (state) => {
+      return {
+        ...state,
+        review: {
+          ...state.review,
+          updateInfo: {
+            ...state.review.updateInfo,
+            loading: true
+          },
+        },
+      };
+    });
+    builder.addCase(updateReviewWord.fulfilled, (state) => {
+      return {
+        ...state,
+        review: {
+          ...state.review,
+          updateInfo: {
+            ...state.review.updateInfo,
+            loading: false
+          },
+        },
+      };
+    });
+    builder.addCase(updateReviewWord.rejected, (state) => {
+      return {
+        ...state,
+        review: {
+          ...state.review,
+          updateInfo: {
+            ...state.review.updateInfo,
+            loading: false
+          },
         },
       };
     });
