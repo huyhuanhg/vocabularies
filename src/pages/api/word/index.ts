@@ -28,14 +28,11 @@ const addVocabulary = async (data: any) => {
     if (data.en_sentence) {
       try {
         pattern = getPattern(data.content, data.en_sentence);
-        console.log('pattern1 :>> ', pattern);
       } catch (error: any) {
         // add report
         await logReports(data.user, error.message, data);
       }
     }
-
-    console.log('pattern 3:>> ', pattern);
 
     await setDoc(
       doc(db, "vocabularies", data.id.toString()),
@@ -67,8 +64,6 @@ const addVocabulary = async (data: any) => {
 
 const addWordStorage = async (data: any, reviewed_flg: boolean) => {
   try {
-    const wordStorageRef = collection(db, "word_storages");
-
     return await setDoc(
       doc(db, "word_storages", `${data.user}_${data.id}`),
       {
