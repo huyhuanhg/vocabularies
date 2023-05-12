@@ -172,7 +172,7 @@ export default async function handler(
 
   let result = "";
 
-  if (! requestData.origTxt) {
+  if (!requestData.origTxt) {
     return res.end();
   }
 
@@ -304,7 +304,7 @@ export default async function handler(
           <p>Có phải bạn đang tìm từ này?</p>
           ${responseData.suggests.reduce((suggestTxtResult, suggest) => {
             suggestTxtResult += `<p class="voca-suggest-word" id="mochi-suggest-word-2" value="${suggest}">${suggest}</p>`;
-            return suggestTxtResult
+            return suggestTxtResult;
           }, "")}
         </div>`;
       }
