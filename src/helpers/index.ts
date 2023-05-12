@@ -1,2 +1,2 @@
 export * as Arr from "./array";
-export * as Word from "./word";
+export * as Word from "./sentence";

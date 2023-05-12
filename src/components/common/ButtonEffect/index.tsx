@@ -7,6 +7,7 @@ const ButtonEffect: FC<ButtonEffectProps> = ({
   click,
   mouseDown,
   mouseUp,
+  mouseLeave,
   disabled,
   style,
   cssType,
@@ -25,6 +26,11 @@ const ButtonEffect: FC<ButtonEffectProps> = ({
     mouseUp && mouseUp(e);
   };
 
+  const handleMouseLeave = (e: MouseEvent) => {
+    setIsEffect(false);
+    mouseLeave && mouseLeave(e);
+  };
+
   const handleMouseDown = (e: MouseEvent) => {
     setIsEffect(true);
     mouseDown && mouseDown(e);
@@ -41,6 +47,7 @@ const ButtonEffect: FC<ButtonEffectProps> = ({
       onClick={handleClick}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
       isEffect={isEffect}
       ref={btnRef}
     >

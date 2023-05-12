@@ -8,5 +8,6 @@ export default interface ButtonEffectProps
   click?: Function;
   mouseDown?: Function;
   mouseUp?: Function;
+  mouseLeave?: Function;
   btnRef?: RefObject<HTMLButtonElement>
 }
