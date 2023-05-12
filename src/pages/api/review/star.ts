@@ -103,7 +103,7 @@ export default async function handler(
       collection(db, "word_storages"),
       where("user", "==", user),
       where("review_flg", "==", true),
-      where("last_seen", "<=", new Date(now.getTime() - 6 * 3600 * 1000)),
+      where("last_seen", "<=", new Date(now.getTime() - 3 * 3600 * 1000)),
       limit(31),
       orderBy("last_seen")
     ))
