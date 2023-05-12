@@ -27,15 +27,18 @@ export const updateReviewWord = createAsyncThunk(
   "review/update",
   async ({ wordStorage, isTrue }: { wordStorage: WordStorageType; isTrue: boolean }) => {
     try {
-      const rate = !isTrue
-        ? !wordStorage.rate
-          ? 0
-          : wordStorage.rate - 0.2
-        : !wordStorage.rate
-        ? 0.2
-        : wordStorage.rate + 0.2;
+      const currentRate = wordStorage.rate ? Number(Number(wordStorage.rate).toFixed(1)) : 0
+      const rateRound = Math.round(currentRate)
+
+      let rate = 0
+      if (isTrue) {
+        rate = currentRate + .5 - (rateRound / 30)
+      } else {
+        rate = currentRate <= 0 ? 0 : (currentRate - Number(Number(rateRound * .05).toFixed(1)))
+      }
+
       return await updateDoc(doc(db, "word_storages", wordStorage.id), {
-        rate,
+        rate: Number(Number(rate).toFixed(1)),
         review_flg: rate < 5,
         last_seen: serverTimestamp(),
       });
