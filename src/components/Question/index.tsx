@@ -35,7 +35,7 @@ const Question: FC<QuestionProps> = ({
 
   useEffect(() => {
     if (index < total) {
-      setQuizType(Math.floor(Math.random() * 4 + 1));
+      setQuizType(Math.floor(total > 3 ? (Math.random() * 4 + 1) : (Math.random() * 2 + 3)));
     }
   }, [index, total]);
 
