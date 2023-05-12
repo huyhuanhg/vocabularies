@@ -28,7 +28,7 @@ export const updateReviewWord = createAsyncThunk(
   async ({ wordStorage, isTrue }: { wordStorage: WordStorageType; isTrue: boolean }) => {
     try {
       const currentRate = wordStorage.rate ? Number(Number(wordStorage.rate).toFixed(1)) : 0
-      let rateRound = Math.round(currentRate)
+      const rateRound = Math.round(currentRate)
 
       let rate = 0
       if (isTrue) {
