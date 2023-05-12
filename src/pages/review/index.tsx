@@ -3,7 +3,7 @@ import Container, * as Style from "./Review.style";
 import { useDispatch, useSelector } from "react-redux";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 import { fetchReviewCount } from "@/stores/review/action";
-import { Button, ButtonEffect, Loading, Modal } from "@/components/common";
+import { Button, ButtonEffect, Modal } from "@/components/common";
 import { useRouter } from "next/router";
 import Question from "@/components/Question";
 import Progress from "@/components/Progress";
@@ -84,7 +84,6 @@ const Review = ({ user }: any) => {
 
   return (
     <Container>
-      {loading && <Loading full />}
       {!loading && reviewCount === 0 && (
         <Style.Empty>
           <span>Không có gì để ôn tập!</span>

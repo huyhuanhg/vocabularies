@@ -117,7 +117,6 @@ export default async function handler(
       JSON.stringify(
         wordStorages.map(
           ({ id, last_seen, rate, review_flg, user, vocabulary_id }) => {
-            console.log("vocabularyData :>> ", vocabularyData);
             const vocabulary = vocabularyData.find(
               (vocabularyItem) => vocabulary_id === vocabularyItem.id
             );
