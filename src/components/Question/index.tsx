@@ -21,10 +21,14 @@ const Question: FC<QuestionProps> = ({
   next,
 }) => {
   const [quizType, setQuizType] = useState<number | null>(null);
+  const [audio, setAudio] = useState<{
+    id: string | null;
+    control: HTMLAudioElement | null;
+  }>({ id: null, control: null });
   const [answerIsPass, setAnswerIsPass] = useState<null | boolean>(null);
   const [isShowResult, setIsShowResult] = useState(false);
   const [isShowTrans, setIsShowTrans] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  // const audioRef = useRef<HTMLAudioElement>(null);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const {
@@ -34,8 +38,17 @@ const Question: FC<QuestionProps> = ({
   } = useSelector(({ reviewReducer }: Record<string, any>) => reviewReducer);
 
   useEffect(() => {
+    setAudio({
+      id: current.vocabulary.id,
+      control: new Audio(current.vocabulary.audio_us),
+    });
+  }, [current]);
+
+  useEffect(() => {
     if (index < total) {
-      setQuizType(Math.floor(total > 3 ? (Math.random() * 4 + 1) : (Math.random() * 2 + 3)));
+      setQuizType(
+        Math.floor(total > 3 ? Math.random() * 4 + 1 : Math.random() * 2 + 3)
+      );
     }
   }, [index, total]);
 
@@ -47,7 +60,7 @@ const Question: FC<QuestionProps> = ({
     if (!pattern) {
       return sentence;
     }
-    const searchReg = new RegExp(`(^|\\W)(${pattern})(\\W|$)`, 'i');
+    const searchReg = new RegExp(`(^|\\W)(${pattern})(\\W|$)`, "i");
 
     return sentence.replace(searchReg, (matches: string) =>
       matches.replace(
@@ -60,9 +73,28 @@ const Question: FC<QuestionProps> = ({
   };
 
   const playAudio = async (speed: number = 1) => {
-    audioRef.current!.playbackRate = speed;
-    audioRef.current?.play();
+    // setAudioError(undefined);
+    if (current.vocabulary.id === audio.id && audio.control) {
+      audio.control.playbackRate = speed;
+      audio.control.play().catch((e) => {
+        // setAudioError(e);
+      });
+      return;
+    }
+    const newAudio = new Audio(current.vocabulary.audio_us);
+    newAudio.playbackRate = speed;
+    newAudio.play().catch((e) => {
+      // setAudioError(e);
+    });
   };
+  // const playAudio = async (speed: number = 1) => {
+  //   audioRef.current!.playbackRate = speed;
+  //   audioRef.current?.play().catch((e) => {
+  //     setTimeout(() => {
+  //       audioRef.current?.click()
+  //     }, 1000)
+  //   });
+  // };
 
   const getVocabularies = (wordStorages: WordStorageType[]) =>
     wordStorages.map((wordStorage) => wordStorage.vocabulary);
@@ -125,6 +157,10 @@ const Question: FC<QuestionProps> = ({
   };
 
   const handleCheck = () => {
+    if (answerIsPass === null) {
+      return
+    }
+
     setIsShowResult(true);
 
     dispatch(
@@ -162,67 +198,64 @@ const Question: FC<QuestionProps> = ({
           isShowTrans={isShowTrans}
         >
           <div className="quiz-result-answer">
-            {updateLoading ? (
-              <LoadingSpinner />
-            ) : (
-              <div className="quiz-result-answer-wrapper">
-                <div className="quiz-result-answer-content">
-                  <p className="word-content">{current.vocabulary.content}</p>
-                  <p className="word-phonetic">{current.vocabulary.ipa_us}</p>
-                  <p className="en-hint">
-                    {current.vocabulary.translate} ({current.vocabulary.type})
-                  </p>
-                  <p className="sentence-en">
-                    {parse(
-                      getEnSentence(
-                        current.vocabulary.en_sentence,
-                        current.vocabulary.pattern
-                      )
-                    )}
-                  </p>
-                  <p className="sentence-trans">
-                    {current.vocabulary.vi_sentence}
-                  </p>
-                </div>
-                <div className="quiz-result-answer-action">
-                  <div className="btn-wrapper btn-sound-answer">
-                    <audio
-                      ref={audioRef}
-                      preload="auto"
-                      src={current.vocabulary.audio_us}
+            {updateLoading && <LoadingSpinner />}
+            <div className="quiz-result-answer-wrapper">
+              <div className="quiz-result-answer-content">
+                <p className="word-content">{current.vocabulary.content}</p>
+                <p className="word-phonetic">{current.vocabulary.ipa_us}</p>
+                <p className="en-hint">
+                  {current.vocabulary.translate} ({current.vocabulary.type})
+                </p>
+                <p className="sentence-en">
+                  {parse(
+                    getEnSentence(
+                      current.vocabulary.en_sentence,
+                      current.vocabulary.pattern
+                    )
+                  )}
+                </p>
+                <p className="sentence-trans">
+                  {current.vocabulary.vi_sentence}
+                </p>
+              </div>
+              <div className="quiz-result-answer-action">
+                <div className="btn-wrapper btn-sound-answer">
+                  {/* <audio
+                    ref={audioRef}
+                    preload="auto"
+                    src={current.vocabulary.audio_us}
+                  /> */}
+                  <ButtonEffect
+                    space={4}
+                    state={answerIsPass ? "active" : "error"}
+                    click={() => playAudio()}
+                  >
+                    <Image
+                      className="icon-btn-answer"
+                      src="/sound-answer.svg"
+                      width={60}
+                      height={60}
+                      alt="icon-btn-answer"
                     />
-                    <ButtonEffect
-                      space={4}
-                      state={answerIsPass ? "active" : "error"}
-                      click={() => playAudio()}
-                    >
-                      <Image
-                        className="icon-btn-answer"
-                        src="/sound-answer.svg"
-                        width={60}
-                        height={60}
-                        alt="icon-btn-answer"
-                      />
-                    </ButtonEffect>
-                  </div>
-                  <div className="btn-wrapper btn-trans-answer">
-                    <ButtonEffect
-                      space={4}
-                      state={answerIsPass ? "active" : "error"}
-                      click={() => setIsShowTrans(!isShowTrans)}
-                    >
-                      <Image
-                        className="icon-btn-answer"
-                        src="/translate.svg"
-                        width={60}
-                        height={60}
-                        alt="icon-btn-translate"
-                      />
-                    </ButtonEffect>
-                  </div>
+                  </ButtonEffect>
+                </div>
+                <div className="btn-wrapper btn-trans-answer">
+                  <ButtonEffect
+                    space={4}
+                    state={answerIsPass ? "active" : "error"}
+                    click={() => setIsShowTrans(!isShowTrans)}
+                  >
+                    <Image
+                      className="icon-btn-answer"
+                      src="/translate.svg"
+                      width={60}
+                      height={60}
+                      alt="icon-btn-translate"
+                    />
+                  </ButtonEffect>
                 </div>
               </div>
-            )}
+            </div>
           </div>
           <div className="quiz-result-answer-control">
             <ButtonEffect

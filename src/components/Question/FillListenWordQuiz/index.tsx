@@ -26,8 +26,8 @@ const FillListenWordQuiz: FC<FillListenWordQuizProps> = ({
   }, [vocabulary]);
 
   useEffect(() => {
-    soundRef.current?.click()
-  }, [soundRef]);
+    playAudio()
+  }, [playAudio]);
 
   const handleChangeAnswer = (e: ChangeEvent<HTMLInputElement>) => {
     setAnswerState(e.target.value);
