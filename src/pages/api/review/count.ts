@@ -67,9 +67,7 @@ export default async function handler(
         status: "success",
         data: {
           count: 0,
-          reviewed_at: reviewedAt
-            ? reviewedAt.unix()
-            : null,
+          reviewed_at: reviewedAt ? reviewedAt.unix() : null,
           wordStorages: [],
         },
       });
@@ -88,49 +86,53 @@ export default async function handler(
       )
     );
 
-    const vocabularyData = vocabularies.docs.map((vocabulary) => {
-      const {
-        id,
-        content,
-        translate,
-        en_sentence,
-        vi_sentence,
-        audio_us,
-        type,
-        ipa_us,
-        pattern
-      } = vocabulary.data();
-      return {
-        id,
-        content,
-        type,
-        translate,
-        ipa_us,
-        audio_us,
-        en_sentence,
-        vi_sentence,
-        pattern
-      };
-    });
+    const vocabularyData: Record<string, any> = vocabularies.docs.reduce(
+      (result, vocabularyDoc) => {
+        const {
+          id,
+          content,
+          translate,
+          en_sentence,
+          vi_sentence,
+          audio_us,
+          type,
+          ipa_us,
+          pattern,
+        } = vocabularyDoc.data();
+        return {
+          ...result,
+          [id]: {
+            id,
+            content,
+            translate,
+            en_sentence,
+            vi_sentence,
+            audio_us,
+            type,
+            ipa_us,
+            pattern,
+          },
+        };
+      },
+      {}
+    );
 
     const wordStorageResponseData = JSON.parse(
       JSON.stringify(
         wordStorages.map(
           ({ id, last_seen, rate, review_flg, user, vocabulary_id }) => {
-            const vocabulary = vocabularyData.find(
-              (vocabularyItem) => vocabulary_id === vocabularyItem.id
-            );
+            if (!vocabularyData[vocabulary_id] || !review_flg) {
+              return undefined;
+            }
 
-            return !vocabulary || !review_flg
-              ? undefined
-              : {
-                  id,
-                  user,
-                  rate,
-                  last_seen,
-                  review_flg,
-                  vocabulary,
-                };
+            return {
+              id,
+              user,
+              rate,
+              last_seen,
+              review_flg,
+              vocabulary: vocabularyData[vocabulary_id],
+            };
           }
         )
       )
@@ -140,9 +142,7 @@ export default async function handler(
       status: "success",
       data: {
         count: wordStorageResponseData.length,
-        reviewed_at: reviewedAt
-          ? reviewedAt.unix()
-          : null,
+        reviewed_at: reviewedAt ? reviewedAt.unix() : null,
         wordStorages: Arr.randomOrder(wordStorageResponseData),
       },
     });

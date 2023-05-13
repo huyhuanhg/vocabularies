@@ -25,24 +25,23 @@ const Home = ({ user }: any) => {
       <Container>
         <Chart data={chartData} unit="từ" />
         {reviewCount === 0 ? (
-          <Style.Message>Không có từ nào để ôn tập</Style.Message>
+          <Style.Message>Chưa có gì để ôn tập</Style.Message>
         ) : (
           <Style.Message>Có {reviewCount > 30 ? `hơn 30` : reviewCount} từ cần ôn tập</Style.Message>
         )}
-        {reviewCount > 0 && (
-          <ButtonEffect
-            style={{
-              marginTop: 20,
-              width: 250,
-              left: "50%",
-              transform: "translateX(-50%)",
-            }}
-            state="active"
-            click={() => router.push("/review")}
-          >
-            Ôn tập ngay
-          </ButtonEffect>
-        )}
+        <ButtonEffect
+          style={{
+            marginTop: 20,
+            width: 250,
+            left: "50%",
+            transform: "translateX(-50%)",
+          }}
+          state="active"
+          click={() => router.push("/review")}
+          disabled={reviewCount === 0}
+        >
+          Ôn tập ngay
+        </ButtonEffect>
       </Container>
     </Layout>
   );

@@ -41,6 +41,78 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
     );
   };
 
+  const handleFocus = (progress: -1 | 1, index: number) => {
+    const lastIndex = vocabulary.content.length - 1;
+
+    elRefs[index].current?.blur()
+    let nextIndex: number | null = null
+
+    if (elRefs[index]?.current) {
+      if (progress === 1) {
+        if (lastIndex === index) {
+          nextIndex = lastIndex
+        } else {
+          if (elRefs[index + 1]?.current && !elRefs[index + 1].current?.disabled) {
+            nextIndex = index + 1
+          } else {
+            if (elRefs[index + 2]?.current) {
+              nextIndex = index + 2
+            }
+          }
+        }
+      } else {
+        nextIndex = index === 0 ? 0 : index - 1
+      }
+    }
+
+    if (nextIndex !== null && elRefs[nextIndex] && elRefs[nextIndex].current) {
+      elRefs[nextIndex].current?.focus()
+    }
+  }
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, index: number) => {
+    e.preventDefault();
+    const currentRef = elRefs[index].current;
+
+    if (e.key === "Tab" || e.key === "ArrowRight") {
+      handleFocus(1, index)
+      return
+    }
+
+    if (e.key === "ArrowLeft" || e.key === "Backspace") {
+      if (e.key === "Backspace") {
+        if (currentRef?.value) {
+          currentRef!.value = ''
+          handleChange()
+          return
+        }
+      }
+      handleFocus(-1, index)
+      return
+    }
+
+    if (e.altKey || e.ctrlKey) {
+      return
+    }
+
+    if (/^Key([a-z])$/i.test(e.code)) {
+      const key = e.code.replace(/^Key([a-z])$/i, '$1').toLocaleLowerCase()
+
+      if (!currentRef?.value) {
+        currentRef!.value = key
+        handleFocus(1, index)
+      } else {
+        if (elRefs[index + 1]?.current) {
+          elRefs[index + 1].current!.value = key
+          handleFocus(1, index + 1)
+        }
+      }
+
+      handleChange()
+      return
+    }
+  };
+
   const getPlaceholderRandom = (strArr: string[]) => {
     return Arr.randomItems(
       Array.from({ length: strArr.length }, (_, index) => index),
@@ -53,43 +125,11 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
     [vocabulary]
   );
 
-  const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>, index: number) => {
-    const lastIndex = vocabulary.content.length - 1;
-    if (
-      ((/[a-zA-Z0-9']/.test(e.key) && e.key.length === 1) ||
-        e.key === "ArrowRight") &&
-      lastIndex > index &&
-      elRefs[index + 1]
-    ) {
-      if (!elRefs[index + 1]?.current?.disabled) {
-        elRefs[index + 1].current?.focus();
-      } else {
-        if (lastIndex >= index + 2) {
-          elRefs[index + 2].current?.focus();
-        }
-      }
-    }
-
-    if (
-      (e.key === "Backspace" || e.key === "ArrowLeft") &&
-      index > 0 &&
-      elRefs[index - 1]
-    ) {
-      if (!elRefs[index - 1]?.current?.disabled) {
-        elRefs[index - 1].current?.focus();
-      } else {
-        if (index > 1) {
-          elRefs[index - 2].current?.focus();
-        }
-      }
-    }
-  };
-
   const renderAnswer = (word: string) => {
     const wordInfo = word.split("");
 
     return (
-      <form>
+      <form style={{ textAlign: "center" }}>
         {wordInfo.map((char, index) => {
           return (
             <Style.QuizAnswerItem
@@ -101,11 +141,10 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
               maxLength={1}
               autoFocus={index === 0}
               tabIndex={index}
-              onKeyUp={(e) => handleKeyUp(e, index)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
               placeholder={
                 placeholderRandom.includes(index) ? wordInfo[index] : ""
               }
-              onChange={handleChange}
               disabled={char === " "}
             />
           );
