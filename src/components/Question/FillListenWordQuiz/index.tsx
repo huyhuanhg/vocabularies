@@ -23,11 +23,10 @@ const FillListenWordQuiz: FC<FillListenWordQuizProps> = ({
 
   useEffect(() => {
     setAnswerState("");
+    if(soundRef?.current) {
+      soundRef.current.click()
+    }
   }, [vocabulary]);
-
-  useEffect(() => {
-    playAudio()
-  }, [playAudio]);
 
   const handleChangeAnswer = (e: ChangeEvent<HTMLInputElement>) => {
     setAnswerState(e.target.value);
