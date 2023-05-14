@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { FC, KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
 import Container, * as Style from "./Question.style";
 import QuestionProps from "./Question.props";
 import SentenceEngQuiz from "./SentenceEngQuiz";
@@ -29,6 +29,9 @@ const Question: FC<QuestionProps> = ({
   const [isShowResult, setIsShowResult] = useState(false);
   const [isShowTrans, setIsShowTrans] = useState(false);
   // const audioRef = useRef<HTMLAudioElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const btnCheckRef = useRef<HTMLButtonElement>(null);
+  const btnContinueRef = useRef<HTMLButtonElement>(null);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const {
@@ -146,6 +149,7 @@ const Question: FC<QuestionProps> = ({
         vocabulary={current.vocabulary}
         playAudio={playAudio}
         setAnswer={setAnswerIsPass}
+        rate={current.rate}
       />
     );
   };
@@ -156,8 +160,16 @@ const Question: FC<QuestionProps> = ({
     next(answerIsPass ? "trueCount" : "falseCount");
   };
 
-  const handleCheck = () => {
-    if (answerIsPass === null) {
+  const handleEnterCheck = (e: KeyboardEvent<HTMLInputElement> | globalThis.KeyboardEvent) => {
+    if (e.key !== "Enter") {
+      return
+    }
+    containerRef.current?.removeEventListener('keyup', handleEnterCheck)
+    handleCheck()
+ }
+
+  const handleCheck = (isForget?: true) => {
+    if (!isForget && answerIsPass === null) {
       return
     }
 
@@ -171,13 +183,43 @@ const Question: FC<QuestionProps> = ({
     ).finally(() => playAudio());
   };
 
-  const handleForgetClick = () => {
-    setAnswerIsPass(false);
-    handleCheck();
+  const handleEnterContinue = (e: globalThis.KeyboardEvent) => {
+    if (e.key !== "Enter") {
+      return
+    }
+
+    containerRef.current?.removeEventListener('keyup', handleEnterContinue)
+    handleNextQuiz()
   };
 
+  const handleForgetClick = () => {
+    handleCheck(true);
+  };
+
+  useEffect(() => {
+    if(answerIsPass !== null) {
+      containerRef.current?.addEventListener('keyup', handleEnterCheck)
+    } else {
+      containerRef.current?.removeEventListener('keyup', handleEnterCheck)
+    }
+    return () => {
+      containerRef.current?.removeEventListener('keyup', handleEnterCheck)
+    }
+  }, [answerIsPass])
+
+  useEffect(() => {
+    if(!updateLoading && isShowResult) {
+      containerRef.current?.addEventListener('keyup', handleEnterContinue)
+    } else {
+      containerRef.current?.removeEventListener('keyup', handleEnterContinue)
+    }
+    return () => {
+      containerRef.current?.removeEventListener('keyup', handleEnterContinue)
+    }
+  }, [updateLoading, isShowResult])
+
   return (
-    <Container>
+    <Container ref={containerRef}>
       <Style.QuizWrapper>
         <div className="quiz-content">{renderSwitchType(quizType)}</div>
         <div className="quiz-control">
@@ -185,6 +227,7 @@ const Question: FC<QuestionProps> = ({
             disabled={answerIsPass === null}
             state="active"
             click={handleCheck}
+            btnRef={btnCheckRef}
           >
             KIỂM TRA
           </ButtonEffect>
@@ -259,9 +302,10 @@ const Question: FC<QuestionProps> = ({
           </div>
           <div className="quiz-result-answer-control">
             <ButtonEffect
+              btnRef={btnContinueRef}
               state="active"
               click={handleNextQuiz}
-              disabled={updateLoading}
+              disabled={updateLoading || !isShowResult}
             >
               TIẾP TỤC
             </ButtonEffect>
