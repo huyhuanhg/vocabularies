@@ -50,13 +50,22 @@ const search = createSlice({
       };
     });
 
-    builder.addCase("renderCache", (state, { payload }: any) => {
+    builder.addCase("search/renderCache", (state, { payload }: any) => {
       const { data, ids, suggests } = payload
       return {
         ...state,
         data,
         ids,
         suggests,
+      };
+    });
+
+    builder.addCase("search/reset", (state) => {
+      return {
+        ...state,
+        data: [],
+        ids: [],
+        suggests: []
       };
     });
 

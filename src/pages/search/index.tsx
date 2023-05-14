@@ -27,13 +27,17 @@ const Search = ({ user }: any) => {
     if (typeof q === "string" && q) {
       setFormState(q);
     }
+
+    return () => {
+      dispatch({ type: "search/reset" })
+    }
   }, []);
 
   useEffect(() => {
     if (router.query.q) {
       const keyword = router.query.q as string;
       if (caching.hasOwnProperty(keyword.trim().toLowerCase())) {
-        dispatch({ type: "renderCache", payload: { ...caching[keyword] } });
+        dispatch({ type: "search/renderCache", payload: { ...caching[keyword] } });
       } else {
         dispatch(
           fetchSearch({
