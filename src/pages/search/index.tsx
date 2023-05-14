@@ -35,8 +35,8 @@ const Search = ({ user }: any) => {
 
   useEffect(() => {
     if (router.query.q) {
-      const keyword = router.query.q as string;
-      if (caching.hasOwnProperty(keyword.trim().toLowerCase())) {
+      const keyword = (router.query.q as string).trim().toLowerCase();
+      if (caching.hasOwnProperty(keyword)) {
         dispatch({ type: "search/renderCache", payload: { ...caching[keyword] } });
       } else {
         dispatch(
@@ -65,7 +65,7 @@ const Search = ({ user }: any) => {
       setFormState(state);
     }
 
-    router.push(`/search?q=${state}`);
+    router.push(`/search?q=${state.toLocaleLowerCase()}`);
   };
 
   const handleEnter = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -275,13 +275,13 @@ const Search = ({ user }: any) => {
           </Style.InputSearch>
         </Style.Header>
         <Style.Body>
-          {suggests.length === 0 && searchData.length === 0 && (
+          {suggests?.length === 0 && searchData?.length === 0 && (
             <Style.Empty>
               <Image src="/note.png" alt="search" width={300} height={300} />
             </Style.Empty>
           )}
-          {searchData.length > 0 && renderSearchResult(searchData)}
-          {suggests.length > 0 && renderSuggests(suggests)}
+          {searchData?.length > 0 && renderSearchResult(searchData)}
+          {suggests?.length > 0 && renderSuggests(suggests)}
         </Style.Body>
       </Container>
     </Layout>
