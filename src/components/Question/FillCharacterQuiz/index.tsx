@@ -127,7 +127,6 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
 
   const renderAnswer = (word: string) => {
     const wordInfo = word.split("");
-
     return (
       <form style={{ textAlign: "center" }}>
         {wordInfo.map((char, index) => {

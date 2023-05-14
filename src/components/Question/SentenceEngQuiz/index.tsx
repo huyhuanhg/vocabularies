@@ -28,6 +28,14 @@ const SentenceEngQuiz: FC<SentenceEngQuizProps> = ({
       const { en_sentence, pattern } = vocabulary;
       let questionText = getQuestionStr(en_sentence, pattern);
 
+      const uniqueContentVocabularies = vocabularies.reduce((result: any, vocabularyItem) => {
+        if(!result.hasOwnProperty(vocabularyItem.content) && vocabularyItem.content !== vocabulary.content) {
+          result[vocabularyItem.content] = vocabularyItem
+        }
+
+        return result
+      }, {});
+
       const answers = [
         {
           id: vocabulary.id,
@@ -35,14 +43,15 @@ const SentenceEngQuiz: FC<SentenceEngQuizProps> = ({
           value: vocabulary.content,
           isTrue: true,
         },
-        ...Arr.randomItems(vocabularies, 3, [vocabularyQuizIndex]).map(
-          ({ id, translate, content }: any) => ({
-            id,
-            label: translate,
-            value: content,
-            isTrue: false,
-          })
-        ),
+        ...Arr.randomItems(
+          Object.values(uniqueContentVocabularies),
+          3
+        ).map(({ id, translate, content }: any) => ({
+          id,
+          label: translate,
+          value: content,
+          isTrue: false,
+        })),
       ];
 
       setQuizState({

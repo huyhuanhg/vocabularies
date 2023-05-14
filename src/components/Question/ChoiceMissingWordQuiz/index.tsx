@@ -28,6 +28,14 @@ const ChoiceMissingWordQuiz: FC<ChoiceMissingWordQuizProps> = ({
       const { en_sentence, pattern } = vocabulary;
       let questionText = getQuestionStr(en_sentence, pattern, "fill");
 
+      const uniqueContentVocabularies = vocabularies.reduce((result: any, vocabularyItem) => {
+        if(!result.hasOwnProperty(vocabularyItem.content) && vocabularyItem.content !== vocabulary.content) {
+          result[vocabularyItem.content] = vocabularyItem
+        }
+
+        return result
+      }, {});
+
       const answers = [
         {
           id: vocabulary.id,
@@ -35,14 +43,15 @@ const ChoiceMissingWordQuiz: FC<ChoiceMissingWordQuizProps> = ({
           value: vocabulary.content,
           isTrue: true,
         },
-        ...Arr.randomItems(vocabularies, 3, [vocabularyQuizIndex]).map(
-          ({ id, content }: any) => ({
-            id,
-            label: content,
-            value: content,
-            isTrue: false,
-          })
-        ),
+        ...Arr.randomItems(
+          Object.values(uniqueContentVocabularies),
+          3,
+        ).map(({ id, content }: any) => ({
+          id,
+          label: content,
+          value: content,
+          isTrue: false,
+        })),
       ];
 
       setQuizState({

@@ -60,4 +60,53 @@ export const QuizAnswer = styled.div`
   }
 `;
 
+export const Suggest = styled.div`
+  margin-top: 15px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  .suggest {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    min-height: 25px;
+    margin-bottom: 10px;
+
+    span {
+      display: inline-block;
+      width: 20px;
+      &.hide {
+        position: relative;
+        &::after {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          content: "";
+          display: block;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: #7e7e7e;
+        }
+      }
+    }
+  }
+  .suggest-msg {
+    text-align: center;
+    color: red;
+    padding: 0 20px;
+    margin-bottom: 30px;
+    min-height: 20px;
+  }
+
+  .ButtonEffect {
+    width: 200px;
+
+    &__btn {
+      padding: 8pt;
+    }
+  }
+`;
+
 export default Container;
