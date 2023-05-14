@@ -2,7 +2,7 @@ const randomElmSupport: any = (
   array: any[],
   count: number = 1,
   total: number,
-  result: any[] = []
+  result: any[],
 ) => {
   if (array.length === 0 || total === count) {
     return result;
@@ -18,14 +18,24 @@ const randomElmSupport: any = (
 export const randomItems = (
   array: any[],
   count: number = 1,
-  excepts: number[] = []
+  exceptIndex: number[] = [],
 ) => {
-  const cloneArr = [...array];
-  excepts.forEach((exceptIndex) => {
-    cloneArr.splice(exceptIndex, 1);
-  });
+  const cloneArr = unique(array.filter((_, index) => !exceptIndex.includes(index)));
 
   return randomElmSupport(cloneArr, count, 0, []);
+};
+
+export const unique = (array: (string | number)[]) => {
+  return array.reduce((previousValue: (string | number)[], item: string | number) => {
+    if(!previousValue.includes(item)) {
+      previousValue.push(item)
+    }
+    return previousValue
+  }, [])
+};
+
+export const except = (array: (string | number)[], excepts: (string | number)[]) => {
+  return array.filter((item: string | number) => !excepts.includes(item))
 };
 
 export const randomOrder = (array: any[]) => {
