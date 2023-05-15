@@ -119,6 +119,7 @@ export default async function handler(
           data: [],
         },
       });
+      return
     }
 
     let cloneData: any[] = [...(responseData!.data || [])];
@@ -134,10 +135,15 @@ export default async function handler(
       const { email, primary_email } = userInfo;
       requestData.user = primary_email || email;
 
-      const wordStorages = await getWordIdByIds(
-        requestData.user as string,
-        responseData!.ids
-      );
+      let wordStorages: string[] = []
+
+      if (responseData.ids && Array.isArray(responseData.ids) &&  responseData.ids.length > 0) {
+        wordStorages = await getWordIdByIds(
+          requestData.user as string,
+          responseData.ids
+        );
+      }
+
       cloneData = cloneData.map((data) => ({
         ...data,
         detail: data.detail.map((detailData: any) => ({
