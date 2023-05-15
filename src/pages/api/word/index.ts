@@ -68,6 +68,7 @@ const addWordStorage = async (data: any, reviewed_flg: boolean) => {
       doc(db, "word_storages", `${data.user}_${data.id}`),
       {
         id: `${data.user}_${data.id}`,
+        content: data.content.toLowerCase(),
         vocabulary_id: `${data.id}`,
         user: data.user,
         rate: increment(0),
