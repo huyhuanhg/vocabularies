@@ -4,7 +4,6 @@ import {
   doc,
   getCountFromServer,
   getDoc,
-  getDocs,
   limit,
   orderBy,
   query,
