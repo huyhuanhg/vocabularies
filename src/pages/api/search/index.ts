@@ -1,6 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { db } from "@/configs/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type WordItem = {
@@ -43,11 +50,15 @@ const fetchWord = async (text: string) => {
       return Promise.resolve(null);
     })
     .then(({ data }) => {
-      const { suggests, vi, ids }: {suggests: string[], vi: any[], ids: number[] } = data;
+      const {
+        suggests,
+        vi,
+        ids,
+      }: { suggests: string[]; vi: any[]; ids: number[] } = data;
       return {
         search: text.toLowerCase(),
         suggests,
-        ids: ids.map(id => `${id}`),
+        ids: ids.map((id) => `${id}`),
         data: vi.map(
           ({
             audio_uk,
@@ -88,8 +99,9 @@ const getWordIdByIds = async (user: string, ids: string[]) => {
 
   const querySnapshot = await getDocs(q);
 
-  return querySnapshot.docs.map((docSnapshot) => docSnapshot.data().vocabulary_id);
-
+  return querySnapshot.docs.map(
+    (docSnapshot) => docSnapshot.data().vocabulary_id
+  );
 };
 
 export default async function handler(
@@ -100,26 +112,40 @@ export default async function handler(
     const requestData = req.query;
     const responseData = await fetchWord(requestData.q as string);
 
-    if(!responseData) {
+    if (!responseData) {
       res.status(200).json({
         status: "success",
         data: {
           suggests: [],
-          data: []
+          data: [],
         },
       });
     }
 
-    let cloneData: any[] = [...(responseData!.data  || [])]
-    if(requestData.user && cloneData.length > 0) {
-       const wordStorages = await getWordIdByIds(requestData.user as string, responseData!.ids);
-       cloneData = cloneData.map((data) => ({
+    let cloneData: any[] = [...(responseData!.data || [])];
+    if (requestData.user && cloneData.length > 0) {
+      const userInfo: any = await getDoc(
+        doc(db, "users", requestData.user as string)
+      ).then((user) => (user.exists() ? user.data() : null));
+
+      if (!userInfo) {
+        res.status(400).json({ status: "fail" });
+      }
+
+      const { email, primary_email } = userInfo;
+      requestData.user = primary_email || email;
+
+      const wordStorages = await getWordIdByIds(
+        requestData.user as string,
+        responseData!.ids
+      );
+      cloneData = cloneData.map((data) => ({
         ...data,
         detail: data.detail.map((detailData: any) => ({
           ...detailData,
-          savedFlg: wordStorages.includes(`${detailData.id}`)
-        }))
-      }))
+          savedFlg: wordStorages.includes(`${detailData.id}`),
+        })),
+      }));
     }
 
     res.status(200).json({

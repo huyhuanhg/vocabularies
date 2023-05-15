@@ -26,49 +26,60 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const user = req.query.user;
+    let userQuery = req.query.user;
+    const userInfo: any = await getDoc(doc(db, "users", userQuery as string))
+    .then((user) => user.exists() ? user.data() : null)
+
+    if(!userInfo) {
+      res.status(400).json({ status: "fail" });
+    }
+
+    const {email, primary_email, reviewed_at} = userInfo
+    userQuery = primary_email || email
+
     // get vocabulary 1*
     const oneStarVocabularyCount = await getCountWordStorage(
       (coll: Query<unknown>) =>
-        query(coll, where("user", "==", user), where("rate", "<=", 1))
+        query(coll, where("user", "==", userQuery), where("rate", "<=", 1))
     );
-    // get vocabulary 2*
+
+    // // get vocabulary 2*
     const twoStarVocabularyCount = await getCountWordStorage(
       (coll: Query<unknown>) =>
         query(
           coll,
-          where("user", "==", user),
+          where("user", "==", userQuery),
           where("rate", ">", 1),
           where("rate", "<=", 2.2)
         )
     );
-    // get vocabulary 3*
+    // // get vocabulary 3*
     const threeStarVocabularyCount = await getCountWordStorage(
       (coll: Query<unknown>) =>
         query(
           coll,
-          where("user", "==", user),
+          where("user", "==", userQuery),
           where("rate", ">", 2.2),
           where("rate", "<=", 3.6)
         )
     );
-    // get vocabulary 4*
+    // // get vocabulary 4*
     const fourStarVocabularyCount = await getCountWordStorage(
       (coll: Query<unknown>) =>
         query(
           coll,
-          where("user", "==", user),
+          where("user", "==", userQuery),
           where("rate", ">", 3.6),
           where("rate", "<", 5)
         )
     );
-    // get vocabulary 5*
+    // // get vocabulary 5*
     const fiveStarVocabularyCount = await getCountWordStorage(
       (coll: Query<unknown>) =>
-        query(coll, where("user", "==", user), where("rate", ">=", 5))
+        query(coll, where("user", "==", userQuery), where("rate", ">=", 5))
     );
 
-    const startCount = {
+    const starCount = {
       one: oneStarVocabularyCount,
       two: twoStarVocabularyCount,
       three: threeStarVocabularyCount,
@@ -78,9 +89,8 @@ export default async function handler(
 
     let reviewCount = 0;
 
-    const userInfo = await getDoc(doc(db, "users", req.query.user as string));
-    const reviewedAt = userInfo.data()?.reviewed_at
-      ? moment(userInfo.data()?.reviewed_at.toDate())
+    const reviewedAt = reviewed_at
+      ? moment(reviewed_at.toDate())
       : null;
 
     if (reviewedAt && reviewedAt.isAfter(moment().subtract({ minutes: 10 }))) {
@@ -88,7 +98,7 @@ export default async function handler(
         status: "success",
         data: {
           count: {
-            ...startCount,
+            ...starCount,
             review: 0,
           },
           reviewedAt: reviewedAt ? reviewedAt.unix(): null,
@@ -101,7 +111,7 @@ export default async function handler(
     const now = new Date();
     const hasReviewCount = await getCountWordStorage(() => query(
       collection(db, "word_storages"),
-      where("user", "==", user),
+      where("user", "==", userQuery),
       where("review_flg", "==", true),
       where("last_seen", "<=", new Date(now.getTime() - 3 * 3600 * 1000)),
       limit(31),
@@ -114,7 +124,7 @@ export default async function handler(
       status: "success",
       data: {
         count: {
-          ...startCount,
+          ...starCount,
           review: reviewCount,
         },
         reviewedAt: reviewedAt ? reviewedAt.unix(): null,
