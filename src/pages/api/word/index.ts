@@ -97,9 +97,16 @@ export default async function handler(
 
   const data = JSON.parse(q as string);
 
-  // if (! data.user) {
-  //   return res.status(401).end();
-  // }
+  const userInfo: any = await getDoc(
+    doc(db, "users", data.user as string)
+  ).then((user) => (user.exists() ? user.data() : null));
+
+  if (!userInfo) {
+    res.status(400).json({ status: "fail" });
+  }
+
+  const { email, primary_email } = userInfo;
+  data.user = primary_email || email;
 
   if (await isWordStorageAdded(data)) {
     res.status(200).json({ status: "success" });
