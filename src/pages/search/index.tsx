@@ -94,7 +94,7 @@ const Search = ({ user }: any) => {
           return (
             <Style.SearchDictionary key={index}>
               <p className="word-title">
-                {resultItem.content} ({resultItem.type})
+                {resultItem.content} {resultItem.type && `(${resultItem.type})`}
               </p>
               <Style.SearchPhonetics>
                 {resultItem.audio_uk && (
