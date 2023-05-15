@@ -37,7 +37,11 @@ const Home = ({ user }: any) => {
             transform: "translateX(-50%)",
           }}
           state="active"
-          click={() => router.push("/review")}
+          click={() => {
+            const audio = new Audio('/clicksoundeffect.mp3')
+            audio.play().catch(() => {{}})
+            router.push("/review")
+          }}
           disabled={reviewCount === 0}
         >
           Ôn tập ngay
