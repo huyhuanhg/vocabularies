@@ -4,12 +4,14 @@ import authReducer from "./auth/slice";
 import reviewReducer from "./review/slice";
 import userReducer from "./user/slice";
 import searchReducer from "./search/slice";
+import noteReducer from "./note/slice";
 
 const reducer = combineReducers({
   authReducer,
   reviewReducer,
   userReducer,
-  searchReducer
+  searchReducer,
+  noteReducer
 });
 
 const store = configureStore({
