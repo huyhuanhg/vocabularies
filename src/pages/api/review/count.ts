@@ -18,10 +18,20 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const userInfo = await getDoc(doc(db, "users", req.query.user as string));
-    const reviewedAt = userInfo.data()?.reviewed_at
-      ? moment(userInfo.data()?.reviewed_at.toDate())
-      : undefined;
+    // const userInfo = await getDoc(doc(db, "users", req.query.user as string));
+    let userQuery = req.query.user;
+    const userInfo: any = await getDoc(
+      doc(db, "users", userQuery as string)
+    ).then((user) => (user.exists() ? user.data() : null));
+
+    if (!userInfo) {
+      res.status(400).json({ status: "fail" });
+    }
+
+    const { email, primary_email, reviewed_at } = userInfo;
+    const reviewedAt = reviewed_at ? moment(reviewed_at.toDate()) : undefined;
+
+    userQuery = primary_email || email;
 
     if (reviewedAt && reviewedAt.isAfter(moment().subtract({ minutes: 10 }))) {
       res.status(200).json({
@@ -40,7 +50,7 @@ export default async function handler(
     const reviewOneStarSnapshots = await getDocs(
       query(
         collection(db, "word_storages"),
-        where("user", "==", req.query.user),
+        where("user", "==", userQuery),
         where("review_flg", "==", true),
         where("last_seen", "<=", new Date(now.getTime() - 3 * 3600 * 1000)),
         limit(31),

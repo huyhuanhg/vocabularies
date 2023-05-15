@@ -1,5 +1,7 @@
 import {
   collection,
+  doc,
+  getDoc,
   getDocs,
   query,
   where,
@@ -13,12 +15,25 @@ export default async function handler(
 ) {
   try {
     const { ids, user } = req.query;
+    let userQuery = user;
+
+    const userInfo: any = await getDoc(
+      doc(db, "users", userQuery as string)
+    ).then((user) => (user.exists() ? user.data() : null));
+
+    if (!userInfo) {
+      res.status(400).json({ status: "fail" });
+    }
+
+    const { email, primary_email } = userInfo;
+    userQuery = primary_email || email;
+
     const vocabularyIds = JSON.parse(ids as string);
 
     const wordStorages = await getDocs(
       query(
         collection(db, "word_storages"),
-        where("user", "==", user),
+        where("user", "==", userQuery),
         where("vocabulary_id", "in", vocabularyIds.map((id: number) => `${id}`))
       )
     );
