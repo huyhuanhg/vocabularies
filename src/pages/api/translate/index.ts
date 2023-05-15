@@ -39,7 +39,7 @@ const getWordIdByIds = async (user: string, ids: number[]) => {
 };
 
 const fetchGGTrans = async (text: string) => {
-  const ggTransUrl = "https://translate.googleapis.com/translate_a/single";
+  const ggTransUrl = process.env.NEXT_APP_GOOGLE_TRANSLATE_URL;
 
   const queryString = new URLSearchParams({
     client: "dict-chrome-ex",
@@ -85,8 +85,7 @@ const fetchGGTrans = async (text: string) => {
 };
 
 const fetchWord = async (text: string) => {
-  const apiUrl =
-    "https://mochien3.1-api.mochidemy.com/v3.1/words/dictionary-english";
+  const apiUrl = process.env.NEXT_APP_MOCHI_DICTIONARY_URL;
   const queryString = new URLSearchParams({
     key: text,
     search_positions: "first_search",

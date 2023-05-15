@@ -29,8 +29,7 @@ type WordDetail = {
 };
 
 const fetchWord = async (text: string) => {
-  const apiUrl =
-    "https://mochien3.1-api.mochidemy.com/v3.1/words/dictionary-english";
+  const apiUrl = process.env.NEXT_APP_MOCHI_DICTIONARY_URL;
   const queryString = new URLSearchParams({
     key: text,
     search_positions: "first_search",

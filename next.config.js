@@ -10,6 +10,8 @@ const nextConfig = {
     NEXT_APP_FIREBASE_MESSAGING_SENDER_ID:
       process.env.NEXT_APP_FIREBASE_MESSAGING_SENDER_ID,
     NEXT_APP_FIREBASE_APP_ID: process.env.NEXT_APP_FIREBASE_APP_ID,
+    NEXT_APP_MOCHI_DICTIONARY_URL: process.env.NEXT_APP_MOCHI_DICTIONARY_URL,
+    NEXT_APP_GOOGLE_TRANSLATE_URL: process.env.NEXT_APP_GOOGLE_TRANSLATE_URL,
   },
   compiler: {
     // Enables the styled-components SWC transform
