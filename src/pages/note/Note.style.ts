@@ -48,10 +48,35 @@ export const Body = styled.div`
   .wrapper {
     height: 100%;
     overflow: auto;
+    position: relative;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 5px #fafafa;
+      border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #bfbfbf;
+      border-radius: 10px;
+    }
 
     .content {
       min-height: calc(100% - 70px);
       padding: 20px 10px;
+    }
+
+    .LoadingSpinner {
+      width: 100%;
+      position: relative;
+      top: auto;
+      left: auto;
+      height: auto;
+      margin: 20px 0 40px;
+      background: none;
     }
   }
 `;

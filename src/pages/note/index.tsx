@@ -4,30 +4,115 @@ import Layout from "@/layouts/VocabularyLayout";
 import NoteNavigation from "@/components/NoteNavigation";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
+import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 import { fetchNote } from "@/stores/note/action";
-import { LoadingRing } from "@/components/common";
+import { LoadingRing, LoadingSpinner } from "@/components/common";
 
 const Note = ({ user }: any) => {
   const router = useRouter();
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const [formState, setFormState] = useState("");
-  const { data: noteData, loading } = useSelector(
-    ({ noteReducer }: Record<string, any>) => noteReducer
-  );
+  const {
+    data: noteData,
+    caching: cache,
+    loading,
+    paginator,
+    loadMoreLoading,
+  } = useSelector(({ noteReducer }: Record<string, any>) => noteReducer);
+  const [loadMore, setLoadMore] = useState(false);
+  const scrollBarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const { level } = router.query;
+    const currentLevel = Number(level as string) || 1;
+    console.log("currentLevel :>> loadMore", currentLevel);
+    if (
+      !loadMoreLoading &&
+      loadMore &&
+      paginator.hasOwnProperty(currentLevel) &&
+      !paginator[currentLevel].isFetchedAll
+    ) {
+      getLoadMore();
+    }
+    setLoadMore(false);
+  }, [loadMore]);
 
   useEffect(() => {
     const { level, keyword } = router.query;
-    const currentLevel = level || 1
+    const currentLevel = level || 1;
     if (currentLevel && /[1-5]/.test(currentLevel as string)) {
-      dispatch(
-        fetchNote({ user: user.email, data: { level: currentLevel, keyword: (keyword as string || "").toLowerCase() } })
-      );
+      if (cache.hasOwnProperty(currentLevel) && !(keyword as string)) {
+        dispatch({
+          type: "note/renderCache",
+          payload: { data: cache[currentLevel as string] },
+        });
+      } else {
+        dispatch(
+          fetchNote({
+            user: user.email,
+            data: {
+              level: currentLevel,
+              keyword: ((keyword as string) || "").toLowerCase(),
+            },
+          })
+        );
+      }
     }
-    setFormState(keyword as string || '')
+    setFormState((keyword as string) || "");
   }, [router.query]);
+
+  useEffect(() => {
+    scrollBarRef.current?.scrollTo(0, 0);
+    const { level } = router.query;
+    const currentLevel = Number(level as string) || 1;
+    console.log("currentLevel :>> router.query.level", currentLevel);
+    if (
+      paginator.hasOwnProperty(currentLevel) &&
+      !paginator[currentLevel].isFetchedAll
+    ) {
+      console.log('add :>> ');
+      scrollBarRef.current?.addEventListener("scroll", handleLoadMore);
+    }
+    return () => {
+      dispatch({ type: "note/resetLoadMore" });
+    };
+  }, [router.query.level]);
+
+  useEffect(() => {
+    const { level } = router.query;
+    const currentLevel = Number(level as string) || 1;
+    if (
+      paginator.hasOwnProperty(currentLevel) &&
+      paginator[currentLevel].isFetchedAll
+    ) {
+      console.log('remove :>> ');
+      scrollBarRef.current?.removeEventListener("scroll", handleLoadMore);
+    }
+  }, [paginator]);
+
+  const handleLoadMore = (e: Event) => {
+    const el = e.target as HTMLDivElement;
+    if (el.scrollTop + el.clientHeight === el.scrollHeight) {
+      setLoadMore(true);
+    }
+  };
+
+  const getLoadMore = () => {
+    const { level, keyword } = router.query;
+    const currentLevel = level || 1;
+    dispatch(
+      fetchNote({
+        user: user.email,
+        data: {
+          level: currentLevel,
+          keyword: ((keyword as string) || "").toLowerCase(),
+          id: noteData[noteData.length - 1].id,
+        },
+      })
+    );
+  };
 
   const renderData = () =>
     noteData.map((noteItem: any) => {
@@ -54,16 +139,16 @@ const Note = ({ user }: any) => {
     });
 
   const handleSearch = () => {
-    if ((router.query.keyword as string || "") === formState) {
-      return
+    if (((router.query.keyword as string) || "") === formState) {
+      return;
     }
 
     const searchQuery = {
       ...router.query,
-      keyword: formState
-    }
+      keyword: formState,
+    };
 
-    router.push(`/note?${new URLSearchParams(searchQuery)}`)
+    router.push(`/note?${new URLSearchParams(searchQuery)}`);
   };
 
   const handleEnter = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -83,7 +168,7 @@ const Note = ({ user }: any) => {
         <NoteNavigation />
 
         <Style.Body>
-          <div className="wrapper">
+          <div ref={scrollBarRef} className="wrapper">
             <Style.InputSearch>
               <input
                 type="text"
@@ -109,6 +194,7 @@ const Note = ({ user }: any) => {
                 </Style.Empty>
               )}
               {renderData()}
+              {loadMoreLoading && <LoadingSpinner />}
             </div>
           </div>
         </Style.Body>

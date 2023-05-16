@@ -51,8 +51,7 @@ export default async function handler(
 
     let querySnapshot = (coll: Query<unknown>, ...props: any) => query(
       coll,
-      where("rate", ">", 3.6),
-      where("rate", "<", 5),
+      where("rate", ">=", 5),
       ...props
     )
 

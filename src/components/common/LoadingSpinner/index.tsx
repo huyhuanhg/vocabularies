@@ -17,7 +17,7 @@ const LoadingSpinner: FC<LoadingSpinnerProps> = ({ full, size }) => {
     );
   };
   return (
-    <Container full={full}>
+    <Container full={full} className="LoadingSpinner">
       <Style.SpinnerWrapper size={size ?? 80}>{renderDot()}</Style.SpinnerWrapper>
     </Container>
   );
