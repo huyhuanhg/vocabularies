@@ -48,10 +48,35 @@ export const Body = styled.div`
   .wrapper {
     height: 100%;
     overflow: auto;
+    position: relative;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 5px #fafafa;
+      border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #bfbfbf;
+      border-radius: 10px;
+    }
 
     .content {
       min-height: calc(100% - 70px);
       padding: 20px 10px;
+    }
+
+    .LoadingSpinner {
+      width: 100%;
+      position: relative;
+      top: auto;
+      left: auto;
+      height: auto;
+      margin: 20px 0 40px;
+      background: none;
     }
   }
 `;
@@ -63,25 +88,83 @@ export const Empty = styled.div`
   justify-content: center;
 `;
 
-export const NoteItem = styled.div`
-  display: flex;
-  flex-wrap: wrap;
+export const NoteItem = styled.div<{ active: boolean }>`
   margin-bottom: 1rem;
-  padding: 10px;
   background: #d9d9d9;
   border-radius: 10px;
   transition: 0.2s;
-  cursor: pointer;
 
   &:hover {
-    background: #b1b1b1;
-  }
-  &:nth-of-type(2n) {
-    background: #f0f0f0;
-    &:hover {
-      background: #bfbfbf;
+    background: #d0d0d0;
+    .NoteItem__Panel {
+      background: #b0afaf;
+      /* &:hover {
+        background: #bfbfbf;
+      } */
     }
   }
+
+  &:nth-of-type(2n) {
+    background: #f0f0f0;
+    .NoteItem__Panel {
+      background: #d9d9d9;
+    }
+    &:hover {
+      background: #d0d0d0;
+      .NoteItem__Panel {
+        background: #c1c1c1;
+      }
+    }
+  }
+
+  .NoteItem__Panel--sub {
+    display: ${(props) => (props.active ? "block" : "none")};
+    padding: 10px;
+    transition: 0.2s;
+    .NoteItem__word-more-info {
+      width: 100%;
+      position: relative;
+
+      .NoteItem__word-sentence {
+        margin-right: 35px;
+        font-size: 0.9rem;
+      }
+
+      .NoteItem__word-en-sentence {
+        margin-bottom: 10px;
+
+        .word_primary {
+          color: #006d75;
+          font-weight: bold;
+        }
+      }
+
+      .NoteItem__word-vi-sentence {
+      }
+
+      .NoteItem__word-audio {
+        position: absolute;
+        top: 0;
+        right: 0;
+        .ButtonEffect {
+          width: auto;
+          .ButtonEffect__btn {
+            padding: 0;
+            line-height: 0;
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const NoteItemPanel = styled.div`
+  background: #bfbfbf;
+  display: flex;
+  flex-wrap: wrap;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 10px;
 
   .NoteItem__word-content {
     flex: 0 0 auto;
@@ -111,5 +194,4 @@ export const NoteItem = styled.div`
     }
   }
 `;
-
 export default Container;
