@@ -20,45 +20,44 @@ const ChoiceMissingWordQuiz: FC<ChoiceMissingWordQuizProps> = ({
   });
 
   useEffect(() => {
-    if (vocabulary) {
-      const vocabularyQuizIndex = vocabularies.findIndex(
-        (vocabulary) => vocabulary.id === reviewId
-      );
+    const { en_sentence, pattern } = vocabulary;
+    let questionText = getQuestionStr(en_sentence, pattern, "fill");
 
-      const { en_sentence, pattern } = vocabulary;
-      let questionText = getQuestionStr(en_sentence, pattern, "fill");
-
-      const uniqueContentVocabularies = vocabularies.reduce((result: any, vocabularyItem) => {
-        if(!result.hasOwnProperty(vocabularyItem.content) && vocabularyItem.content !== vocabulary.content) {
-          result[vocabularyItem.content] = vocabularyItem
+    const uniqueContentVocabularies = vocabularies.reduce(
+      (result: any, vocabularyItem) => {
+        if (
+          !result.hasOwnProperty(vocabularyItem.content) &&
+          vocabularyItem.content !== vocabulary.content
+        ) {
+          result[vocabularyItem.content] = vocabularyItem;
         }
 
-        return result
-      }, {});
+        return result;
+      },
+      {}
+    );
 
-      const answers = [
-        {
-          id: vocabulary.id,
-          label: vocabulary.content,
-          value: vocabulary.content,
-          isTrue: true,
-        },
-        ...Arr.randomItems(
-          Object.values(uniqueContentVocabularies),
-          3,
-        ).map(({ id, content }: any) => ({
+    const answers = [
+      {
+        id: vocabulary.id,
+        label: vocabulary.pattern || vocabulary.content,
+        value: vocabulary.content,
+        isTrue: true,
+      },
+      ...Arr.randomItems(Object.values(uniqueContentVocabularies), 3).map(
+        ({ id, content, pattern }: any) => ({
           id,
-          label: content,
+          label: pattern || content,
           value: content,
           isTrue: false,
-        })),
-      ];
+        })
+      ),
+    ];
 
-      setQuizState({
-        question: `<span>${questionText}</span>`,
-        answers: Arr.randomOrder(answers),
-      });
-    }
+    setQuizState({
+      question: `<span>${questionText}</span>`,
+      answers: Arr.randomOrder(answers),
+    });
   }, [vocabulary]);
   return (
     <ObjectiveTest

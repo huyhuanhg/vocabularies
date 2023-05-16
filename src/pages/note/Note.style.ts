@@ -88,45 +88,34 @@ export const Empty = styled.div`
   justify-content: center;
 `;
 
-export const NoteItem = styled.div<{ active: boolean }>`
-  margin-bottom: 1rem;
-  background: #d9d9d9;
+export const NoteItem = styled.div`
+  margin-bottom: .5rem;
   border-radius: 10px;
   transition: 0.2s;
+  background: #f0f0f0;
+
+  .NoteItem__Panel {
+    background: #d9d9d9;
+  }
 
   &:hover {
     background: #d0d0d0;
     .NoteItem__Panel {
-      background: #b0afaf;
-      /* &:hover {
-        background: #bfbfbf;
-      } */
-    }
-  }
-
-  &:nth-of-type(2n) {
-    background: #f0f0f0;
-    .NoteItem__Panel {
-      background: #d9d9d9;
-    }
-    &:hover {
-      background: #d0d0d0;
-      .NoteItem__Panel {
-        background: #c1c1c1;
-      }
+      background: #c1c1c1;
     }
   }
 
   .NoteItem__Panel--sub {
-    display: ${(props) => (props.active ? "block" : "none")};
-    padding: 10px;
+    height: 4px;
+    overflow: hidden;
     transition: 0.2s;
     .NoteItem__word-more-info {
+      padding: 10px;
       width: 100%;
       position: relative;
 
       .NoteItem__word-sentence {
-        margin-right: 35px;
+        margin-right: 30px;
         font-size: 0.9rem;
       }
 
@@ -144,8 +133,8 @@ export const NoteItem = styled.div<{ active: boolean }>`
 
       .NoteItem__word-audio {
         position: absolute;
-        top: 0;
-        right: 0;
+        top: 10px;
+        right: 10px;
         .ButtonEffect {
           width: auto;
           .ButtonEffect__btn {

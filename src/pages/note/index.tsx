@@ -29,7 +29,6 @@ const Note = ({ user }: any) => {
     loadMoreLoading,
   } = useSelector(({ noteReducer }: Record<string, any>) => noteReducer);
   const [loadMore, setLoadMore] = useState(false);
-  const [currentActive, setCurrentActive] = useState("");
 
   const scrollBarRef = useRef<HTMLDivElement>(null);
 
@@ -104,6 +103,9 @@ const Note = ({ user }: any) => {
   const renderData = () =>
     noteData.map((noteItem: any) => {
       const audioRef = createRef<HTMLAudioElement>();
+      const collapseInnerRef = createRef<HTMLDivElement>();
+      const collapseRef = createRef<HTMLDivElement>();
+
       const playAudio = (e: Event) => {
         e.stopPropagation();
         audioRef.current?.play().catch(() => {});
@@ -122,18 +124,23 @@ const Note = ({ user }: any) => {
         );
       };
 
-      const collapse = (key: string) => {
-        setCurrentActive(currentActive === key ? "" : key);
+      const collapse = () => {
+        if (collapseRef.current && collapseInnerRef.current) {
+          console.log("1 :>> ", 1);
+          collapseRef.current.style.height =
+            collapseRef.current.clientHeight === 4
+              ? `${collapseInnerRef.current.clientHeight}px`
+              : "4px";
+          collapseRef.current.style.opacity =
+            collapseRef.current.clientHeight === 4 ? "1" : "0";
+        }
       };
 
       return (
-        <Style.NoteItem
-          key={noteItem.id}
-          active={currentActive === noteItem.id}
-        >
+        <Style.NoteItem key={noteItem.id}>
           <Style.NoteItemPanel
             className="NoteItem__Panel"
-            onClick={() => collapse(noteItem.id)}
+            onClick={() => collapse()}
           >
             <div className="NoteItem__word-content">
               <p className="NoteItem__word-content--value">
@@ -156,8 +163,8 @@ const Note = ({ user }: any) => {
               </p>
             </div>
           </Style.NoteItemPanel>
-          <div className="NoteItem__Panel--sub">
-            <div className="NoteItem__word-more-info">
+          <div className="NoteItem__Panel--sub" ref={collapseRef}>
+            <div className="NoteItem__word-more-info" ref={collapseInnerRef}>
               <div className="NoteItem__word-sentence">
                 <p className="NoteItem__word-en-sentence">
                   {parse(getEnSentence(noteItem.en_sentence, noteItem.pattern))}
