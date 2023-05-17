@@ -5,7 +5,7 @@ import SentenceEngQuiz from "./SentenceEngQuiz";
 import ChoiceMissingWordQuiz from "./ChoiceMissingWordQuiz";
 import FillCharacterQuiz from "./FillCharacterQuiz";
 import FillListenWordQuiz from "./FillListenWordQuiz";
-import Image from "next/image";
+import { Image } from "@/components/common";
 import { ButtonEffect, LoadingSpinner } from "../common";
 import parse from "html-react-parser";
 import { useDispatch, useSelector } from "react-redux";
