@@ -40,8 +40,7 @@ export const updateReviewWord = createAsyncThunk(
       rate = Number(Number(rate).toFixed(1))
 
       return await updateDoc(doc(db, "word_storages", wordStorage.id), {
-        rate: rate > 5 ? 5 : rate,
-        review_flg: rate < 5,
+        rate,
         last_seen: isTrue ? serverTimestamp() : new Date((new Date()).getTime() - 2 * 3600 * 1000),
       });
     } catch (e) {
