@@ -7,6 +7,7 @@ import parse from "html-react-parser";
 import {
   ChangeEvent,
   KeyboardEvent,
+  MouseEvent,
   createRef,
   useEffect,
   useRef,
@@ -110,6 +111,14 @@ const Note = ({ user }: any) => {
         e.stopPropagation();
         audioRef.current?.play().catch(() => {});
       };
+
+      const playSentenceAudio = (
+        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+        sentence: string
+      ) => {
+        e.stopPropagation();
+        speechSynthesis.speak(new SpeechSynthesisUtterance(sentence));
+      };
       const getEnSentence = (sentence: string, pattern?: string): string => {
         if (!pattern) {
           return sentence;
@@ -161,6 +170,18 @@ const Note = ({ user }: any) => {
                   : noteItem.translate}
               </p>
             </div>
+            <div className="NoteItem__word-audio">
+              <audio ref={audioRef} preload="auto" src={noteItem.audio_us} />
+              <ButtonEffect space={2} click={playAudio}>
+                <Image
+                  className="icon-btn-answer"
+                  src="/sound-answer.svg"
+                  width={25}
+                  height={25}
+                  alt="icon-btn-answer"
+                />
+              </ButtonEffect>
+            </div>
           </Style.NoteItemPanel>
           <div className="NoteItem__Panel--sub" ref={collapseRef}>
             <div className="NoteItem__word-more-info" ref={collapseInnerRef}>
@@ -173,13 +194,17 @@ const Note = ({ user }: any) => {
                 </p>
               </div>
               <div className="NoteItem__word-audio">
-                <audio ref={audioRef} preload="auto" src={noteItem.audio_us} />
-                <ButtonEffect space={2} click={playAudio}>
+                <ButtonEffect
+                  space={2}
+                  click={(
+                    e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+                  ) => playSentenceAudio(e, noteItem.en_sentence)}
+                >
                   <Image
                     className="icon-btn-answer"
-                    src="/sound-answer.svg"
-                    width={25}
-                    height={25}
+                    src="/sound-sentence.svg"
+                    width={20}
+                    height={20}
                     alt="icon-btn-answer"
                   />
                 </ButtonEffect>

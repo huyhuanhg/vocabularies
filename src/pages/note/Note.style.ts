@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 const Container = styled.div`
   height: 100%;
@@ -88,12 +88,28 @@ export const Empty = styled.div`
   justify-content: center;
 `;
 
+const audio = css`
+  .NoteItem__word-audio {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    line-height: 0;
+    .ButtonEffect {
+      width: auto;
+      .ButtonEffect__btn {
+        padding: 0;
+        line-height: 0;
+      }
+    }
+  }
+`;
+
 export const NoteItem = styled.div`
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
   border-radius: 10px;
   transition: 0.2s;
   background: #f0f0f0;
-
+  position: relative;
   .NoteItem__Panel {
     background: #d9d9d9;
   }
@@ -127,24 +143,19 @@ export const NoteItem = styled.div`
           font-weight: bold;
         }
       }
-
-      .NoteItem__word-vi-sentence {
-      }
-
-      .NoteItem__word-audio {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        .ButtonEffect {
-          width: auto;
-          .ButtonEffect__btn {
-            padding: 0;
-            line-height: 0;
-          }
-        }
+    }
+    .NoteItem__word-audio {
+      top: calc(50% - 10px);
+      .ButtonEffect__btn {
+        width: 25px;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     }
   }
+  ${audio}
 `;
 
 export const NoteItemPanel = styled.div`
@@ -157,7 +168,7 @@ export const NoteItemPanel = styled.div`
 
   .NoteItem__word-content {
     flex: 0 0 auto;
-    width: 41.6666666667%;
+    width: calc(40% - 30px);
 
     &--value {
       font-size: 15px;
@@ -171,12 +182,12 @@ export const NoteItemPanel = styled.div`
 
   .NoteItem__word-type {
     flex: 0 0 auto;
-    width: 16.6666666667%;
+    width: 15%;
   }
 
   .NoteItem__word-translate {
     flex: 0 0 auto;
-    width: 41.6666666667%;
+    width: 45%;
     p {
       font-size: 15px;
       color: #333333;
