@@ -1969,7 +1969,7 @@ const getPresentOrPluralNounPattern = (
 
   // 2 & 3: Tận cùng s, ss, sh, ch, z, x & phụ âm + o
   if (
-    new RegExp(`((${consonants.join("|")})o)|s|sh|ch|z|x$`, "i").test(keyword)
+    new RegExp(`(((${consonants.join("|")})o)|s|sh|ch|z|x)$`, "i").test(keyword)
   ) {
     return baseGetPattern(`${keyword}es`, sentence);
   }
