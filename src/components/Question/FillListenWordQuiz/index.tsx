@@ -1,7 +1,7 @@
 import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import FillListenWordQuizProps from "./FillListenWordQuiz.props";
 import Container, * as Style from "./FillCharacterQuiz.style";
-import Image from "next/image";
+import { Image } from "@/components/common";
 import { ButtonEffect } from "@/components/common";
 import { Arr } from "@/helpers";
 import parse from "html-react-parser";
