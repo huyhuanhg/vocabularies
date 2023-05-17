@@ -3,7 +3,7 @@ import store from "@/stores";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useMemo } from "react";
 import { Provider } from "react-redux";
 import "@/styles/globals.css";
 import { ConfigProvider } from "antd";
@@ -27,7 +27,10 @@ const HTML: FC<Props> = ({ children }) => {
         <Head>
           <title>Vocabularies</title>
           <meta name="description" content="Quản lý túi tiền" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+          />
           <link rel="icon" href="/logo.png" />
           <link rel="apple-touch-icon" href="/logo.png" />
           <link rel="manifest" href="/manifest.json" />
@@ -44,20 +47,20 @@ export default function App({
 }: AppProps) {
   const router = useRouter();
 
-  if (
-    router.pathname.match("/auth/login") ||
-    router.pathname.match("/auth/login/extension")
-  ) {
-    return (
-      <HTML>
-        <Component {...pageProps} />
-      </HTML>
-    );
-  }
+  const isNotLayout = useMemo(
+    () =>
+      router.pathname.match("/auth/login") ||
+      router.pathname.match("/auth/login/extension"),
+    [router.pathname]
+  );
 
   return (
     <HTML>
-      <AuthLayout {...pageProps} component={Component}></AuthLayout>
+      {isNotLayout ? (
+        <Component {...pageProps} />
+      ) : (
+        <AuthLayout {...pageProps} component={Component}></AuthLayout>
+      )}
     </HTML>
   );
 }

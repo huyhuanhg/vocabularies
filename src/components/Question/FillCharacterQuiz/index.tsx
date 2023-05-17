@@ -18,11 +18,11 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
   const [elRefs, setElRefs] = useState<RefObject<HTMLInputElement>[]>([]);
 
   useEffect(() => {
-    if (vocabulary) {
-      setElRefs((elRefs) =>
-        Array.from(vocabulary.content).map((_, i) => elRefs[i] || createRef())
-      );
-    }
+    setElRefs((elRefs) =>
+      Array.from(vocabulary.content).map((_, i) => elRefs[i] || createRef())
+    );
+
+    setAnswer(null);
   }, [vocabulary]);
 
   const handleChange = () => {
@@ -44,72 +44,75 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
   const handleFocus = (progress: -1 | 1, index: number) => {
     const lastIndex = vocabulary.content.length - 1;
 
-    elRefs[index].current?.blur()
-    let nextIndex: number | null = null
+    elRefs[index].current?.blur();
+    let nextIndex: number | null = null;
 
     if (elRefs[index]?.current) {
       if (progress === 1) {
         if (lastIndex === index) {
-          nextIndex = lastIndex
+          nextIndex = lastIndex;
         } else {
-          if (elRefs[index + 1]?.current && !elRefs[index + 1].current?.disabled) {
-            nextIndex = index + 1
+          if (
+            elRefs[index + 1]?.current &&
+            !elRefs[index + 1].current?.disabled
+          ) {
+            nextIndex = index + 1;
           } else {
             if (elRefs[index + 2]?.current) {
-              nextIndex = index + 2
+              nextIndex = index + 2;
             }
           }
         }
       } else {
-        nextIndex = index === 0 ? 0 : index - 1
+        nextIndex = index === 0 ? 0 : index - 1;
       }
     }
 
     if (nextIndex !== null && elRefs[nextIndex] && elRefs[nextIndex].current) {
-      elRefs[nextIndex].current?.focus()
+      elRefs[nextIndex].current?.focus();
     }
-  }
+  };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, index: number) => {
     e.preventDefault();
     const currentRef = elRefs[index].current;
 
     if (e.key === "Tab" || e.key === "ArrowRight") {
-      handleFocus(1, index)
-      return
+      handleFocus(1, index);
+      return;
     }
 
     if (e.key === "ArrowLeft" || e.key === "Backspace") {
       if (e.key === "Backspace") {
         if (currentRef?.value) {
-          currentRef!.value = ''
-          handleChange()
-          return
+          currentRef!.value = "";
+          handleChange();
+          return;
         }
       }
-      handleFocus(-1, index)
-      return
+      handleFocus(-1, index);
+      return;
     }
 
     if (e.altKey || e.ctrlKey) {
-      return
+      return;
     }
 
     if (/^Key([a-z])$/i.test(e.code)) {
-      const key = e.code.replace(/^Key([a-z])$/i, '$1').toLocaleLowerCase()
+      const key = e.code.replace(/^Key([a-z])$/i, "$1").toLocaleLowerCase();
 
       if (!currentRef?.value) {
-        currentRef!.value = key
-        handleFocus(1, index)
+        currentRef!.value = key;
+        handleFocus(1, index);
       } else {
         if (elRefs[index + 1]?.current) {
-          elRefs[index + 1].current!.value = key
-          handleFocus(1, index + 1)
+          elRefs[index + 1].current!.value = key;
+          handleFocus(1, index + 1);
         }
       }
 
-      handleChange()
-      return
+      handleChange();
+      return;
     }
   };
 

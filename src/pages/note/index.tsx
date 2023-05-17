@@ -126,7 +126,6 @@ const Note = ({ user }: any) => {
 
       const collapse = () => {
         if (collapseRef.current && collapseInnerRef.current) {
-          console.log("1 :>> ", 1);
           collapseRef.current.style.height =
             collapseRef.current.clientHeight === 4
               ? `${collapseInnerRef.current.clientHeight}px`
