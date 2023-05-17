@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import NoteNavigationItemProps from "./NoteNavigationItem.props";
 import Container from "./NoteNavigationItem.style";
-import Image from "next/image";
+import { Image } from "@/components/common";
 import { useRouter } from "next/router";
 
 const NoteNavigationItem: FC<NoteNavigationItemProps> = ({ level, color }) => {

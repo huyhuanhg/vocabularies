@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { Image } from "@/components/common";
 import Container, * as Style from "./Search.style";
 import Layout from "@/layouts/VocabularyLayout";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";

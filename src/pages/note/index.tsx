@@ -1,7 +1,7 @@
 import Container, * as Style from "./Note.style";
 import Layout from "@/layouts/VocabularyLayout";
 import NoteNavigation from "@/components/NoteNavigation";
-import Image from "next/image";
+import { Image } from "@/components/common";
 import { useRouter } from "next/router";
 import parse from "html-react-parser";
 import {
