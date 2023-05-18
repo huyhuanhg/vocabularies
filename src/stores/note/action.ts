@@ -4,7 +4,7 @@ export const fetchNote = createAsyncThunk(
   "note/index",
   async ({ user, data }: { user: string; data: Record<string, any> }) => {
     return fetch(
-      `/api/note?user=${user}&limit=100&level=${data.level}&afterAt=${
+      `/api/note?user=${user}&limit=30&level=${data.level}&afterAt=${
         data.id || ""
       }&keyword=${data.keyword || ""}`
     )

@@ -53,7 +53,7 @@ export default async function handler(
         where("user", "==", userQuery),
         where("review_flg", "==", true),
         where("last_seen", "<=", new Date(now.getTime() - 3 * 3600 * 1000)),
-        limit(31),
+        limit(30),
         orderBy("last_seen")
       )
     );

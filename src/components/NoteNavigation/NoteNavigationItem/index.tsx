@@ -31,6 +31,7 @@ const NoteNavigationItem: FC<NoteNavigationItemProps> = ({ level, color }) => {
     const currentLevel = router.query.level as string
 
     if (`${level}` === currentLevel || (!currentLevel && level === 1)) {
+      router.push(`/note?level=${level}&refresh`)
       return
     }
 

@@ -48,7 +48,8 @@ const Note = ({ user }: any) => {
       !loadMoreLoading &&
       loadMore &&
       paginator.hasOwnProperty(currentLevel) &&
-      !paginator[currentLevel].isFetchedAll
+      !paginator[currentLevel].isFetchedAll &&
+      noteData.length % 30 === 0
     ) {
       getLoadMore();
     }
@@ -60,7 +61,11 @@ const Note = ({ user }: any) => {
     const { level, keyword } = router.query;
     const currentLevel = level || 1;
     if (currentLevel && /[1-5]/.test(currentLevel as string)) {
-      if (cache.hasOwnProperty(currentLevel) && !(keyword as string)) {
+      if (
+        cache.hasOwnProperty(currentLevel) &&
+        !(keyword as string) &&
+        !router.query.hasOwnProperty("refresh")
+      ) {
         dispatch({
           type: "note/renderCache",
           payload: { data: cache[currentLevel as string] },
@@ -107,7 +112,7 @@ const Note = ({ user }: any) => {
     sentence: string
   ) => {
     e.stopPropagation();
-    playSentenceAudioHelper(sentence)
+    playSentenceAudioHelper(sentence);
   };
 
   const renderData = () =>
@@ -195,22 +200,24 @@ const Note = ({ user }: any) => {
                   {noteItem.vi_sentence}
                 </p>
               </div>
-              <div className="NoteItem__word-audio">
-                <ButtonEffect
-                  space={2}
-                  click={(
-                    e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
-                  ) => playSentenceAudio(e, noteItem.en_sentence)}
-                >
-                  <Image
-                    className="icon-btn-answer"
-                    src="/sound-sentence.svg"
-                    width={20}
-                    height={20}
-                    alt="icon-btn-answer"
-                  />
-                </ButtonEffect>
-              </div>
+              {noteItem.en_sentence && (
+                <div className="NoteItem__word-audio">
+                  <ButtonEffect
+                    space={2}
+                    click={(
+                      e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+                    ) => playSentenceAudio(e, noteItem.en_sentence)}
+                  >
+                    <Image
+                      className="icon-btn-answer"
+                      src="/sound-sentence.svg"
+                      width={20}
+                      height={20}
+                      alt="icon-btn-answer"
+                    />
+                  </ButtonEffect>
+                </div>
+              )}
             </div>
           </div>
         </Style.NoteItem>
