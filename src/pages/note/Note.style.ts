@@ -106,7 +106,7 @@ const audio = css`
 
 export const NoteItem = styled.div`
   margin-bottom: 0.5rem;
-  border-radius: 10px;
+  border-radius: 10px 10px 5px 5px;
   transition: 0.2s;
   background: #f0f0f0;
   position: relative;
@@ -164,7 +164,7 @@ export const NoteItemPanel = styled.div`
   flex-wrap: wrap;
   cursor: pointer;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 10px 10px 0 0;
 
   .NoteItem__word-content {
     flex: 0 0 auto;
