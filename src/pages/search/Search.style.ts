@@ -225,11 +225,35 @@ export const WordDetailItem = styled.div`
       }
     }
   }
-  .word-sentence {
-    line-height: 20px;
-    color: black;
-    font-size: 13px;
-    margin-bottom: 5px;
+
+  .result-sentence {
+    position: relative;
+    margin-right: 30px;
+    .word-sentence {
+      line-height: 20px;
+      color: black;
+      font-size: 13px;
+      margin-bottom: 5px;
+
+      &.en-sentence .word_primary {
+        color: #006d75;
+        font-weight: bold;
+      }
+    }
+
+    .WordDetailItem__word-audio {
+      position: absolute;
+      line-height: 0;
+      left: calc(100% + 10px);
+      top: calc(50% - 12.5px);
+
+      .ButtonEffect {
+        &__btn {
+          padding: 0;
+          line-height: 0;
+        }
+      }
+    }
   }
 `;
 

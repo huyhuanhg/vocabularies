@@ -1,4 +1,12 @@
-import { FC, KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
+import {
+  FC,
+  KeyboardEvent,
+  MouseEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Container, * as Style from "./Question.style";
 import QuestionProps from "./Question.props";
 import SentenceEngQuiz from "./SentenceEngQuiz";
@@ -12,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 import { updateReviewWord } from "@/stores/review/action";
 import WordStorageType from "@/types/entities/WordStorageType";
+import { playSentenceAudio } from "@/helpers/sentence";
 
 const Question: FC<QuestionProps> = ({
   index,
@@ -160,17 +169,19 @@ const Question: FC<QuestionProps> = ({
     next(answerIsPass ? "trueCount" : "falseCount");
   };
 
-  const handleEnterCheck = (e: KeyboardEvent<HTMLInputElement> | globalThis.KeyboardEvent) => {
+  const handleEnterCheck = (
+    e: KeyboardEvent<HTMLInputElement> | globalThis.KeyboardEvent
+  ) => {
     if (e.key !== "Enter") {
-      return
+      return;
     }
-    containerRef.current?.removeEventListener('keyup', handleEnterCheck)
-    handleCheck()
- }
+    containerRef.current?.removeEventListener("keyup", handleEnterCheck);
+    handleCheck();
+  };
 
   const handleCheck = (isForget?: true) => {
     if (!isForget && answerIsPass === null) {
-      return
+      return;
     }
 
     setIsShowResult(true);
@@ -185,38 +196,42 @@ const Question: FC<QuestionProps> = ({
 
   const handleEnterContinue = (e: globalThis.KeyboardEvent) => {
     if (e.key !== "Enter") {
-      return
+      return;
     }
 
-    containerRef.current?.removeEventListener('keyup', handleEnterContinue)
-    handleNextQuiz()
+    containerRef.current?.removeEventListener("keyup", handleEnterContinue);
+    handleNextQuiz();
   };
 
   const handleForgetClick = () => {
     handleCheck(true);
   };
 
-  useEffect(() => {
-    if(answerIsPass !== null) {
-      containerRef.current?.addEventListener('keyup', handleEnterCheck)
-    } else {
-      containerRef.current?.removeEventListener('keyup', handleEnterCheck)
-    }
-    return () => {
-      containerRef.current?.removeEventListener('keyup', handleEnterCheck)
-    }
-  }, [answerIsPass])
+  const showTranslateAndPlayAudio = (sentence: string) => {
+    playSentenceAudio(sentence);
+  };
 
   useEffect(() => {
-    if(!updateLoading && isShowResult) {
-      containerRef.current?.addEventListener('keyup', handleEnterContinue)
+    if (answerIsPass !== null) {
+      containerRef.current?.addEventListener("keyup", handleEnterCheck);
     } else {
-      containerRef.current?.removeEventListener('keyup', handleEnterContinue)
+      containerRef.current?.removeEventListener("keyup", handleEnterCheck);
     }
     return () => {
-      containerRef.current?.removeEventListener('keyup', handleEnterContinue)
+      containerRef.current?.removeEventListener("keyup", handleEnterCheck);
+    };
+  }, [answerIsPass]);
+
+  useEffect(() => {
+    if (!updateLoading && isShowResult) {
+      containerRef.current?.addEventListener("keyup", handleEnterContinue);
+    } else {
+      containerRef.current?.removeEventListener("keyup", handleEnterContinue);
     }
-  }, [updateLoading, isShowResult])
+    return () => {
+      containerRef.current?.removeEventListener("keyup", handleEnterContinue);
+    };
+  }, [updateLoading, isShowResult]);
 
   return (
     <Container ref={containerRef}>
@@ -279,6 +294,24 @@ const Question: FC<QuestionProps> = ({
                       width={60}
                       height={60}
                       alt="icon-btn-answer"
+                      title="Play word audio"
+                    />
+                  </ButtonEffect>
+                </div>
+                <div className="btn-wrapper btn-sentence-audio">
+                  <ButtonEffect
+                    space={2}
+                    click={() =>
+                      showTranslateAndPlayAudio(current.vocabulary.en_sentence)
+                    }
+                  >
+                    <Image
+                      className="icon-btn-answer"
+                      src="/sound-sentence.svg"
+                      width={30}
+                      height={30}
+                      alt="icon-btn-answer"
+                      title="Play sentence audio"
                     />
                   </ButtonEffect>
                 </div>
@@ -291,9 +324,10 @@ const Question: FC<QuestionProps> = ({
                     <Image
                       className="icon-btn-answer"
                       src="/translate.svg"
-                      width={60}
-                      height={60}
+                      width={40}
+                      height={40}
                       alt="icon-btn-translate"
+                      title="Translate sentence"
                     />
                   </ButtonEffect>
                 </div>
