@@ -152,9 +152,24 @@ export const QuizResult = styled.div<{
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      /* gap: 1rem; */
 
       .btn-wrapper {
+        line-height: 0;
+        margin-bottom: 0.75rem;
+        &.btn-sentence-audio {
+          width: 40px;
+          height: 40px;
+          .ButtonEffect {
+            height: 100%;
+            .ButtonEffect__btn {
+              height: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+          }
+        }
         .ButtonEffect__btn {
           padding: 0;
           line-height: 0;

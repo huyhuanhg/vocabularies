@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 import { fetchNote } from "@/stores/note/action";
 import { ButtonEffect, LoadingRing, LoadingSpinner } from "@/components/common";
+import { playSentenceAudio as playSentenceAudioHelper } from "@/helpers/sentence";
 
 const Note = ({ user }: any) => {
   const router = useRouter();
@@ -101,6 +102,14 @@ const Note = ({ user }: any) => {
     );
   };
 
+  const playSentenceAudio = (
+    e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+    sentence: string
+  ) => {
+    e.stopPropagation();
+    playSentenceAudioHelper(sentence)
+  };
+
   const renderData = () =>
     noteData.map((noteItem: any) => {
       const audioRef = createRef<HTMLAudioElement>();
@@ -112,13 +121,6 @@ const Note = ({ user }: any) => {
         audioRef.current?.play().catch(() => {});
       };
 
-      const playSentenceAudio = (
-        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
-        sentence: string
-      ) => {
-        e.stopPropagation();
-        speechSynthesis.speak(new SpeechSynthesisUtterance(sentence));
-      };
       const getEnSentence = (sentence: string, pattern?: string): string => {
         if (!pattern) {
           return sentence;

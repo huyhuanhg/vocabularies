@@ -1,7 +1,7 @@
 import { Image } from "@/components/common";
 import Container, * as Style from "./Search.style";
 import Layout from "@/layouts/VocabularyLayout";
-import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
+import { ChangeEvent, KeyboardEvent, MouseEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 import { fetchSearch, saveWord } from "@/stores/search/action";
@@ -9,6 +9,7 @@ import { ButtonEffect, LoadingRing } from "@/components/common";
 import { useRouter } from "next/router";
 import { getPattern } from "@/helpers/sentence";
 import parse from "html-react-parser";
+import { playSentenceAudio as playSentenceAudioHelper } from "@/helpers/sentence";
 
 const Search = ({ user }: any) => {
   const [formState, setFormState] = useState("");
@@ -85,6 +86,14 @@ const Search = ({ user }: any) => {
 
   const handleSaveWord = (data: any) => {
     dispatch(saveWord({user: user.email, data}))
+  };
+
+  const playSentenceAudio = (
+    e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+    sentence: string
+  ) => {
+    e.stopPropagation();
+    playSentenceAudioHelper(sentence)
   };
 
   const renderSearchResult = (data: Record<string, any>[]) => {
@@ -217,11 +226,29 @@ const Search = ({ user }: any) => {
                           </div>
                         </ButtonEffect>
                       </div>
-                      <div className="word-sentence en-sentence">
-                        {parse(enSentence)}
-                      </div>
-                      <div className="word-sentence vi-sentence">
-                        {wordDetail.vi_sentence}
+                      <div className="result-sentence">
+                        <div className="word-sentence en-sentence">
+                          {parse(enSentence)}
+                        </div>
+                        <div className="word-sentence vi-sentence">
+                          {wordDetail.vi_sentence}
+                        </div>
+                        <div className="WordDetailItem__word-audio">
+                          <ButtonEffect
+                            space={2}
+                            click={(
+                              e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+                            ) => playSentenceAudio(e, wordDetail.en_sentence)}
+                          >
+                            <Image
+                              className="icon-btn-answer"
+                              src="/sound-answer.svg"
+                              width={20}
+                              height={20}
+                              alt="icon-btn-answer"
+                            />
+                          </ButtonEffect>
+                        </div>
                       </div>
                     </Style.WordDetailItem>
                   );
