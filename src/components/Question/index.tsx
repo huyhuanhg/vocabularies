@@ -1,12 +1,4 @@
-import {
-  FC,
-  KeyboardEvent,
-  MouseEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { FC, KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
 import Container, * as Style from "./Question.style";
 import QuestionProps from "./Question.props";
 import SentenceEngQuiz from "./SentenceEngQuiz";
@@ -20,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 import { updateReviewWord } from "@/stores/review/action";
 import WordStorageType from "@/types/entities/WordStorageType";
-import { playSentenceAudio } from "@/helpers/sentence";
+import { playSentenceAudio as playSentenceAudioHelper } from "@/helpers/sentence";
 
 const Question: FC<QuestionProps> = ({
   index,
@@ -207,8 +199,8 @@ const Question: FC<QuestionProps> = ({
     handleCheck(true);
   };
 
-  const showTranslateAndPlayAudio = (sentence: string) => {
-    playSentenceAudio(sentence);
+  const playSentenceAudio = (sentence: string) => {
+    playSentenceAudioHelper(sentence);
   };
 
   useEffect(() => {
@@ -298,23 +290,25 @@ const Question: FC<QuestionProps> = ({
                     />
                   </ButtonEffect>
                 </div>
-                <div className="btn-wrapper btn-sentence-audio">
-                  <ButtonEffect
-                    space={2}
-                    click={() =>
-                      showTranslateAndPlayAudio(current.vocabulary.en_sentence)
-                    }
-                  >
-                    <Image
-                      className="icon-btn-answer"
-                      src="/sound-sentence.svg"
-                      width={30}
-                      height={30}
-                      alt="icon-btn-answer"
-                      title="Play sentence audio"
-                    />
-                  </ButtonEffect>
-                </div>
+                {current.vocabulary.en_sentence && (
+                  <div className="btn-wrapper btn-sentence-audio">
+                    <ButtonEffect
+                      space={2}
+                      click={() =>
+                        playSentenceAudio(current.vocabulary.en_sentence)
+                      }
+                    >
+                      <Image
+                        className="icon-btn-answer"
+                        src="/sound-sentence.svg"
+                        width={30}
+                        height={30}
+                        alt="icon-btn-answer"
+                        title="Play sentence audio"
+                      />
+                    </ButtonEffect>
+                  </div>
+                )}
                 <div className="btn-wrapper btn-trans-answer">
                   <ButtonEffect
                     space={4}

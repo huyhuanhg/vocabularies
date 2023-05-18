@@ -1,7 +1,13 @@
 import { Image } from "@/components/common";
 import Container, * as Style from "./Search.style";
 import Layout from "@/layouts/VocabularyLayout";
-import { ChangeEvent, KeyboardEvent, MouseEvent, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  MouseEvent,
+  useEffect,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 import { fetchSearch, saveWord } from "@/stores/search/action";
@@ -20,7 +26,7 @@ const Search = ({ user }: any) => {
     data: searchData,
     suggests,
     loading,
-    saveWordLoadingId
+    saveWordLoadingId,
   } = useSelector(({ searchReducer }: Record<string, any>) => searchReducer);
 
   useEffect(() => {
@@ -30,15 +36,18 @@ const Search = ({ user }: any) => {
     }
 
     return () => {
-      dispatch({ type: "search/reset" })
-    }
+      dispatch({ type: "search/reset" });
+    };
   }, []);
 
   useEffect(() => {
     if (router.query.q) {
       const keyword = (router.query.q as string).trim().toLowerCase();
       if (caching.hasOwnProperty(keyword)) {
-        dispatch({ type: "search/renderCache", payload: { ...caching[keyword] } });
+        dispatch({
+          type: "search/renderCache",
+          payload: { ...caching[keyword] },
+        });
       } else {
         dispatch(
           fetchSearch({
@@ -85,7 +94,7 @@ const Search = ({ user }: any) => {
   };
 
   const handleSaveWord = (data: any) => {
-    dispatch(saveWord({user: user.email, data}))
+    dispatch(saveWord({ user: user.email, data }));
   };
 
   const playSentenceAudio = (
@@ -93,7 +102,7 @@ const Search = ({ user }: any) => {
     sentence: string
   ) => {
     e.stopPropagation();
-    playSentenceAudioHelper(sentence)
+    playSentenceAudioHelper(sentence);
   };
 
   const renderSearchResult = (data: Record<string, any>[]) => {
@@ -189,7 +198,9 @@ const Search = ({ user }: any) => {
                         <ButtonEffect
                           cssType="text"
                           space={2}
-                          disabled={wordDetail.savedFlg || (saveWordLoadingId !== null)}
+                          disabled={
+                            wordDetail.savedFlg || saveWordLoadingId !== null
+                          }
                           state="active"
                           click={() => {
                             const { audio_us, content, type, ipa_us } =
@@ -206,7 +217,13 @@ const Search = ({ user }: any) => {
                             );
                           }}
                         >
-                          <div className={saveWordLoadingId !== wordDetail.id ? undefined : "loading"}>
+                          <div
+                            className={
+                              saveWordLoadingId !== wordDetail.id
+                                ? undefined
+                                : "loading"
+                            }
+                          >
                             <svg
                               width="15"
                               height="16"
@@ -233,22 +250,27 @@ const Search = ({ user }: any) => {
                         <div className="word-sentence vi-sentence">
                           {wordDetail.vi_sentence}
                         </div>
-                        <div className="WordDetailItem__word-audio">
-                          <ButtonEffect
-                            space={2}
-                            click={(
-                              e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
-                            ) => playSentenceAudio(e, wordDetail.en_sentence)}
-                          >
-                            <Image
-                              className="icon-btn-answer"
-                              src="/sound-answer.svg"
-                              width={20}
-                              height={20}
-                              alt="icon-btn-answer"
-                            />
-                          </ButtonEffect>
-                        </div>
+                        {wordDetail.en_sentence && (
+                          <div className="WordDetailItem__word-audio">
+                            <ButtonEffect
+                              space={2}
+                              click={(
+                                e: MouseEvent<
+                                  HTMLButtonElement,
+                                  globalThis.MouseEvent
+                                >
+                              ) => playSentenceAudio(e, wordDetail.en_sentence)}
+                            >
+                              <Image
+                                className="icon-btn-answer"
+                                src="/sound-answer.svg"
+                                width={20}
+                                height={20}
+                                alt="icon-btn-answer"
+                              />
+                            </ButtonEffect>
+                          </div>
+                        )}
                       </div>
                     </Style.WordDetailItem>
                   );

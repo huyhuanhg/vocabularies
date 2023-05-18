@@ -52,7 +52,7 @@ const note = createSlice({
         paginator: {
           ...state.paginator,
           [level as number]: {
-            isFetchedAll: data.length < 100,
+            isFetchedAll: data.length < 30,
           },
         },
       };
