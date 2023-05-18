@@ -4,6 +4,7 @@ import {
   doc,
   getCountFromServer,
   getDoc,
+  getDocs,
   limit,
   orderBy,
   query,
@@ -92,7 +93,8 @@ export default async function handler(
       ? moment(reviewed_at.toDate())
       : null;
 
-    if (reviewedAt && reviewedAt.isAfter(moment().subtract({ minutes: 10 }))) {
+    const now = moment()
+    if (reviewedAt && reviewedAt.isAfter(now.clone().subtract({ minutes: 10 }))) {
       res.status(200).json({
         status: "success",
         data: {
@@ -100,24 +102,45 @@ export default async function handler(
             ...starCount,
             review: 0,
           },
-          reviewedAt: reviewedAt ? reviewedAt.unix(): null,
+          countDown: (600 - (now.unix() - reviewedAt.unix())) * 1000,
+          reviewedAt: reviewedAt.unix(),
         },
       });
 
       return;
     }
 
-    const now = new Date();
     const hasReviewCount = await getCountWordStorage(() => query(
       collection(db, "word_storages"),
       where("user", "==", userQuery),
       where("review_flg", "==", true),
-      where("last_seen", "<=", new Date(now.getTime() - 3 * 3600 * 1000)),
+      where("last_seen", "<=", new Date((now.unix() - 3 * 3600) * 1000)),
       limit(31),
       orderBy("last_seen")
     ))
 
     reviewCount += hasReviewCount;
+
+    let countDown = 0;
+    if (reviewCount === 0) {
+      const latestReview = await getDocs(query(
+        collection(db, "word_storages"),
+        where("user", "==", userQuery),
+        where("review_flg", "==", true),
+        where("last_seen", ">", new Date((now.unix() - 3 * 3600) * 1000)),
+        limit(1),
+        orderBy("last_seen")
+      ))
+
+      const lastSec = latestReview.docs.map((lastWord => {
+        const { last_seen } = lastWord.data()
+        return  last_seen.seconds
+      }))
+
+      if (lastSec.length > 0) {
+        countDown = (3 * 3600 - (now.unix() - lastSec[0])) * 1000
+      }
+    }
 
     res.status(200).json({
       status: "success",
@@ -126,6 +149,7 @@ export default async function handler(
           ...starCount,
           review: reviewCount,
         },
+        countDown,
         reviewedAt: reviewedAt ? reviewedAt.unix(): null,
       },
     });

@@ -39,9 +39,10 @@ const initialState: any = {
     count: 0,
     wordStorages: [],
     loading: false,
+    countDown: 0,
     updateInfo: {
       loading: false
-    }
+    },
   },
 };
 
@@ -51,7 +52,7 @@ const review = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder.addCase(fetchReviewData.fulfilled, (state, { payload }) => {
-      const { one, two, three, four, five, review } = payload.count;
+      const { one, two, three, four, five, review, } = payload.count;
 
       return {
         ...state,
@@ -87,6 +88,7 @@ const review = createSlice({
         review: {
           ...state.review,
           count: review,
+          countDown: payload.countDown,
           loading: false
         },
       };

@@ -27,7 +27,9 @@ export const updateReviewWord = createAsyncThunk(
   "review/update",
   async ({ wordStorage, isTrue }: { wordStorage: WordStorageType; isTrue: boolean }) => {
     try {
-      const currentRate = wordStorage.rate ? Number(Number(wordStorage.rate).toFixed(1)) : 0
+      let currentRate = wordStorage.rate ? Number(Number(wordStorage.rate).toFixed(1)) : 0
+      currentRate = currentRate > 5 ? 5 : currentRate;
+
       const rateRound = Math.round(currentRate)
 
       let rate = 0
@@ -41,6 +43,7 @@ export const updateReviewWord = createAsyncThunk(
 
       return await updateDoc(doc(db, "word_storages", wordStorage.id), {
         rate,
+        review_flg: rate > 5,
         last_seen: isTrue ? serverTimestamp() : new Date((new Date()).getTime() - 2 * 3600 * 1000),
       });
     } catch (e) {

@@ -1,19 +1,47 @@
+const voiceEnables = [
+  'com.apple.speech.synthesis.voice.Fred',
+  'com.apple.eloquence.en-US.Rocko',
+  'com.apple.eloquence.en-US.Shelley',
+  'com.apple.speech.synthesis.voice.Princess',
+  'com.apple.eloquence.en-US.Eddy',
+  'com.apple.eloquence.en-US.Grandpa',
+  'com.apple.speech.synthesis.voice.Kathy',
+  'com.apple.eloquence.en-US.Reed',
+  'com.apple.voice.compact.en-US.Samantha',
+  'com.apple.eloquence.en-US.Sandy',
+  'com.apple.speech.synthesis.voice.Junior',
+  'com.apple.speech.synthesis.voice.Ralph',
+  'Google US English'
+]
+
 const playAudio = (
   sentence: string,
   lang: string = "en-US",
-  isRandom: boolean = true
+  voiceURI?: string
 ) => {
   speechSynthesis.cancel();
   const ssu = new SpeechSynthesisUtterance(sentence);
   const voices = speechSynthesis.getVoices();
-  const langVoice = voices.filter((v) => v.lang === lang);
 
-  if (langVoice.length > 0) {
-    ssu.voice =
-      langVoice[!isRandom ? 0 : Math.floor(Math.random() * langVoice.length)];
+  if (voiceURI) {
+    if (voiceEnables.includes(voiceURI)) {
+      ssu.voice = voices.find(v => v.voiceURI === voiceURI) as SpeechSynthesisVoice | null
+      speechSynthesis.speak(ssu);
+    }
+    return
   }
 
-  speechSynthesis.speak(ssu);
+  const langVoice = voices.filter((v) => {
+    return v.lang === lang && voiceEnables.includes(v.voiceURI)
+  });
+
+  if (langVoice.length === 0) {
+    return
+  }
+
+  ssu.voice =
+    langVoice[Math.floor(Math.random() * langVoice.length)];
+    speechSynthesis.speak(ssu);
 };
 
 export default playAudio;

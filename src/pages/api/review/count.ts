@@ -13,6 +13,19 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import moment from "moment";
 import { Arr } from "@/helpers";
 
+const format = (item: any) => {
+  const { id, last_seen, rate, review_flg, user, vocabulary_id } =
+  item.data();
+
+return {
+  id,
+  last_seen: last_seen?.seconds || null,
+  rate,
+  review_flg,
+  user,
+  vocabulary_id,
+};
+}
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -47,30 +60,34 @@ export default async function handler(
     }
 
     const now = new Date();
-    const reviewOneStarSnapshots = await getDocs(
+    const reviewFiveStarSnapshots = await getDocs(
+      query(
+        collection(db, "word_storages"),
+        where("user", "==", userQuery),
+        where("review_flg", "==", false),
+        where("rate", ">=", 5),
+        limit(Math.floor(Math.random() * 2 + 2)),
+        orderBy("rate")
+      )
+    );
+
+    const fiveStarWordStorages = reviewFiveStarSnapshots.docs.map(format);
+
+    const reviewEnableSnapshots = await getDocs(
       query(
         collection(db, "word_storages"),
         where("user", "==", userQuery),
         where("review_flg", "==", true),
         where("last_seen", "<=", new Date(now.getTime() - 3 * 3600 * 1000)),
-        limit(30),
+        limit(30 - fiveStarWordStorages.length),
         orderBy("last_seen")
       )
     );
 
-    const wordStorages = reviewOneStarSnapshots.docs.map((item: any) => {
-      const { id, last_seen, rate, review_flg, user, vocabulary_id } =
-        item.data();
-
-      return {
-        id,
-        last_seen: last_seen?.seconds || null,
-        rate,
-        review_flg,
-        user,
-        vocabulary_id,
-      };
-    });
+    const wordStorages = [
+      ...reviewEnableSnapshots.docs.map(format),
+      ...fiveStarWordStorages
+    ];
 
     if (wordStorages.length === 0) {
       res.status(200).json({
@@ -127,26 +144,22 @@ export default async function handler(
       {}
     );
 
-    const wordStorageResponseData = JSON.parse(
-      JSON.stringify(
-        wordStorages.map(
-          ({ id, last_seen, rate, review_flg, user, vocabulary_id }) => {
-            if (!vocabularyData[vocabulary_id] || !review_flg) {
-              return undefined;
-            }
+    const wordStorageResponseData = wordStorages.map(
+      ({ id, last_seen, rate, review_flg, user, vocabulary_id }) => {
+        if (!vocabularyData[vocabulary_id]) {
+          return undefined;
+        }
 
-            return {
-              id,
-              user,
-              rate,
-              last_seen,
-              review_flg,
-              vocabulary: vocabularyData[vocabulary_id],
-            };
-          }
-        )
-      )
-    );
+        return {
+          id,
+          user,
+          rate,
+          last_seen,
+          review_flg,
+          vocabulary: vocabularyData[vocabulary_id],
+        };
+      }
+    ).filter(item => item);
 
     res.status(200).json({
       status: "success",
