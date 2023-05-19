@@ -18,6 +18,7 @@ import { ThunkDispatch } from "@reduxjs/toolkit";
 import { fetchNote } from "@/stores/note/action";
 import { ButtonEffect, LoadingRing, LoadingSpinner } from "@/components/common";
 import { playSentenceAudio as playSentenceAudioHelper } from "@/helpers/sentence";
+import { convertType } from "@/helpers/word";
 
 const Note = ({ user }: any) => {
   const router = useRouter();
@@ -166,15 +167,13 @@ const Note = ({ user }: any) => {
               </p>
             </div>
             <div className="NoteItem__word-type">
-              <p>
-                {noteItem.type ? `(${noteItem.type.substring(0, 5)})` : "---"}
+              <p title={noteItem.type || undefined}>
+                {noteItem.type ? `(${convertType(noteItem.type)})` : "---"}
               </p>
             </div>
             <div className="NoteItem__word-translate">
               <p title={noteItem.translate}>
-                {noteItem.translate.length > 40
-                  ? `${noteItem.translate.substring(0, 40)}...`
-                  : noteItem.translate}
+                {noteItem.translate}
               </p>
             </div>
             <div className="NoteItem__word-audio">
@@ -192,6 +191,20 @@ const Note = ({ user }: any) => {
           </Style.NoteItemPanel>
           <div className="NoteItem__Panel--sub" ref={collapseRef}>
             <div className="NoteItem__word-more-info" ref={collapseInnerRef}>
+              <div className="NoteItem__word-full-detail">
+                <div className="NoteItem__word-content">
+                  <p className="NoteItem__word-content--value">
+                    {noteItem.content}{" "}
+                    <span className="NoteItem__word-type">{noteItem.type ? `(${convertType(noteItem.type)})` : ""}</span>
+                  </p>
+                  <p className="NoteItem__word-content__ipa-us">
+                    {noteItem.ipa_us}
+                  </p>
+                </div>
+                <div className="NoteItem__word-translate">
+                  <p>{noteItem.translate}</p>
+                </div>
+              </div>
               <div className="NoteItem__word-sentence">
                 <p className="NoteItem__word-en-sentence">
                   {parse(getEnSentence(noteItem.en_sentence, noteItem.pattern))}
@@ -199,25 +212,25 @@ const Note = ({ user }: any) => {
                 <p className="NoteItem__word-vi-sentence">
                   {noteItem.vi_sentence}
                 </p>
+                {noteItem.en_sentence && (
+                  <div className="NoteItem__word-audio">
+                    <ButtonEffect
+                      space={2}
+                      click={(
+                        e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+                      ) => playSentenceAudio(e, noteItem.en_sentence)}
+                    >
+                      <Image
+                        className="icon-btn-answer"
+                        src="/sound-sentence.svg"
+                        width={20}
+                        height={20}
+                        alt="icon-btn-answer"
+                      />
+                    </ButtonEffect>
+                  </div>
+                )}
               </div>
-              {noteItem.en_sentence && (
-                <div className="NoteItem__word-audio">
-                  <ButtonEffect
-                    space={2}
-                    click={(
-                      e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
-                    ) => playSentenceAudio(e, noteItem.en_sentence)}
-                  >
-                    <Image
-                      className="icon-btn-answer"
-                      src="/sound-sentence.svg"
-                      width={20}
-                      height={20}
-                      alt="icon-btn-answer"
-                    />
-                  </ButtonEffect>
-                </div>
-              )}
             </div>
           </div>
         </Style.NoteItem>

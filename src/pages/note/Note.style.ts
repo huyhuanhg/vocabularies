@@ -92,7 +92,7 @@ const audio = css`
   .NoteItem__word-audio {
     position: absolute;
     top: 10px;
-    right: 10px;
+    right: 5px;
     line-height: 0;
     .ButtonEffect {
       width: auto;
@@ -118,6 +118,10 @@ export const NoteItem = styled.div`
     background: #d0d0d0;
     .NoteItem__Panel {
       background: #c1c1c1;
+
+      .NoteItem__word-translate::after {
+        background: #c1c1c1;
+      }
     }
   }
 
@@ -128,30 +132,75 @@ export const NoteItem = styled.div`
     .NoteItem__word-more-info {
       padding: 10px;
       width: 100%;
-      position: relative;
+
+      .NoteItem__word-full-detail {
+        position: relative;
+        .NoteItem__word-content {
+          font-size: 15px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 5px;
+          &--value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #08979c;
+
+            .NoteItem__word-type {
+              color: #135200;
+              font-size: 1rem;
+              font-weight: normal;
+              line-height: 23px;
+            }
+          }
+
+          color: #030852;
+        }
+
+        .NoteItem__word-translate {
+          color: #ad6800;
+          margin-bottom: 15px;
+        }
+
+        &::after {
+          content: "";
+          display: block;
+          border-bottom: 1px solid #bfbfbf;
+          position: absolute;
+          bottom: -8px;
+          left: 0;
+          width: 100%;
+        }
+      }
 
       .NoteItem__word-sentence {
         margin-right: 30px;
         font-size: 0.9rem;
-      }
+        position: relative;
 
+        .NoteItem__word-audio {
+          top: 0;
+          right: auto;
+          left: calc(100% + 5px);
+          .ButtonEffect__btn {
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+      }
+      .NoteItem__word-vi-sentence {
+        color: #614700;
+      }
       .NoteItem__word-en-sentence {
         margin-bottom: 10px;
 
         .word_primary {
-          color: #006d75;
+          color: #00474f;
           font-weight: bold;
         }
-      }
-    }
-    .NoteItem__word-audio {
-      top: calc(50% - 10px);
-      .ButtonEffect__btn {
-        width: 25px;
-        height: 25px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
     }
   }
@@ -165,32 +214,61 @@ export const NoteItemPanel = styled.div`
   cursor: pointer;
   padding: 10px;
   border-radius: 10px 10px 0 0;
+  align-items: center;
 
   .NoteItem__word-content {
+    font-size: 15px;
     flex: 0 0 auto;
-    width: calc(40% - 30px);
+    width: calc(50% - 40px);
 
     &--value {
-      font-size: 15px;
       font-weight: bold;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
 
     &__ipa-us {
-      font-size: 15px;
+      font-size: 13px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
   }
 
   .NoteItem__word-type {
     flex: 0 0 auto;
-    width: 15%;
+    width: 43px;
   }
 
   .NoteItem__word-translate {
     flex: 0 0 auto;
-    width: 45%;
+    width: calc(50% - 23px);
+    height: 34px;
+    overflow: hidden;
+    padding-right: calc(1em - 3px);
+    position: relative;
+
+    &::before {
+      content: "...";
+      position: absolute;
+      right: 2px;
+      bottom: 0;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      width: 1em;
+      height: 1.3em;
+      margin-top: -0.3em;
+      background: #d9d9d9;
+    }
     p {
-      font-size: 15px;
-      color: #333333;
+      text-align: justify;
+      font-size: 13px;
+      color: #000;
     }
   }
 `;
