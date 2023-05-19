@@ -261,8 +261,8 @@ export const NoteItemPanel = styled.div`
       position: absolute;
       right: 0;
       width: 1em;
-      height: 1.5em;
-      margin-top: -0.4em;
+      height: 2em;
+      margin-top: -1em;
       background: #d9d9d9;
     }
     p {
