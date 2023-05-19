@@ -72,7 +72,7 @@ const addWordStorage = async (data: any, reviewed_flg: boolean) => {
         vocabulary_id: `${data.id}`,
         user: data.user,
         rate: increment(0),
-        last_seen: new Date((new Date()).getTime() - 3 * 3600 * 1000),
+        last_seen: new Date(new Date().getTime() - 3 * 3600 * 1000),
         review_flg: reviewed_flg,
       },
       { merge: true }
