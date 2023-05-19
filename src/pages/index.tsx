@@ -18,7 +18,7 @@ const Home = ({ user }: any) => {
     review: { count: reviewCount, countDown },
   } = useSelector(({ reviewReducer }: Record<string, any>) => reviewReducer);
 
-  const [countdown, setCountdown] = useState(0)
+  const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
     dispatch(fetchReviewData({ user: user.email }));
@@ -30,15 +30,19 @@ const Home = ({ user }: any) => {
 
   const onCountDowned: CountdownProps["onChange"] = (val) => {
     if (typeof val === "number" && val < 0) {
-      setCountdown(0)
+      setCountdown(0);
       dispatch(fetchReviewData({ user: user.email }));
     }
+  };
+
+  const redirectToNote = (level: number) => {
+    router.push(`/note?level=${level}`);
   };
 
   return (
     <Layout>
       <Container>
-        <Chart data={chartData} unit="từ" />
+        <Chart data={chartData} unit="từ" itemClick={redirectToNote} />
         {reviewCount === 0 ? (
           <Style.Message>
             {Math.floor(Math.random() * 2) === 1

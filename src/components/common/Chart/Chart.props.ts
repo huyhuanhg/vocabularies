@@ -14,4 +14,5 @@ export default interface ChartProps {
   defaultData?: ItemProps[];
   height?: string | number;
   unit?: string;
+  itemClick?: Function
 }

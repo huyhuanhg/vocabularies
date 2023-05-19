@@ -21,7 +21,11 @@ const Container = styled.div<{ height?: string | number }>`
   }
 `;
 
-export const Item = styled.div<{ color: string; mt: string }>`
+export const Item = styled.div<{
+  color: string;
+  mt: string;
+  height: string | number;
+}>`
   position: relative;
   flex: 1 0 auto;
   margin-left: 3px;
@@ -29,7 +33,8 @@ export const Item = styled.div<{ color: string; mt: string }>`
   border-radius: 20px 20px 0 0;
   background: ${(props) => props.color};
   margin-top: ${(props) => props.mt};
-  transition: all 0.5s;
+  transition: all 0.3s;
+  cursor: pointer;
 
   .chart-item-label,
   .chart-item-value {
@@ -43,10 +48,32 @@ export const Item = styled.div<{ color: string; mt: string }>`
   .chart-item-label {
     bottom: -40px;
     font-size: 20px;
+  transition: all 0.3s;
   }
 
   .chart-item-value {
     top: -30px;
+  transition: all 0.3s;
+  }
+
+  &::after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: ${(props) =>
+      typeof props.height === "string"
+        ? `calc(${props.height} + 40px)`
+        : `${props.height + 40}px`};
+    bottom: -40px;
+  }
+
+  &:hover {
+    transform: scaleX(1.05);
+    .chart-item-value,
+    .chart-item-label {
+      transform: scale(1.4);
+    }
   }
 `;
 

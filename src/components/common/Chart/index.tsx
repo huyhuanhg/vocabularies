@@ -2,7 +2,13 @@ import Container, * as Style from "./Chart.style";
 import ChartProps, { ItemFormatProps, ItemProps } from "./Chart.props";
 import { FC, useEffect, useState } from "react";
 
-const Chart: FC<ChartProps> = ({ height, data, defaultData, unit }) => {
+const Chart: FC<ChartProps> = ({
+  height,
+  data,
+  defaultData,
+  unit,
+  itemClick,
+}) => {
   const formatData = (data?: ItemProps[]) => {
     if (!Array.isArray(data) || data.length === 0) {
       return [];
@@ -40,6 +46,10 @@ const Chart: FC<ChartProps> = ({ height, data, defaultData, unit }) => {
           key={`star_${index + 1}`}
           color={resource.color}
           mt={resource.mt}
+          onClick={() =>
+            itemClick && resource.value > 0 && itemClick(index + 1)
+          }
+          height={height ?? 305}
         >
           <span className="chart-item-label">{resource.label}</span>
           {resource.isShowValue && (
@@ -49,29 +59,6 @@ const Chart: FC<ChartProps> = ({ height, data, defaultData, unit }) => {
           )}
         </Style.Item>
       ))}
-      {/* <div
-        className="col text-center"
-        style={{
-          height: "300px",
-          paddingLeft: "5px!important",
-          paddingRight: "5px!important",
-        }}
-      >
-        <div
-          data-count="100"
-          style={{ marginTop: "285px", height: "15px" }}
-          className="dashboard-1 dashboard dashboard-item-1"
-        >
-          <div className="text-center text-count-word">
-            <span className="count-word" style={{ display: "inline" }}>
-              0 từ
-            </span>
-          </div>
-          <div className="text-center dashboard-stt">
-            <span>1</span>
-          </div>
-        </div>
-      </div> */}
     </Container>
   );
 };
