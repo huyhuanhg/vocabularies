@@ -246,7 +246,7 @@ export const NoteItemPanel = styled.div`
     width: calc(50% - 23px);
     height: 34px;
     overflow: hidden;
-    padding-right: calc(1em - 3px);
+    padding-right: calc(1em - 2px);
     position: relative;
 
     &::before {
@@ -261,8 +261,8 @@ export const NoteItemPanel = styled.div`
       position: absolute;
       right: 0;
       width: 1em;
-      height: 1.3em;
-      margin-top: -0.3em;
+      height: 1.5em;
+      margin-top: -0.4em;
       background: #d9d9d9;
     }
     p {
