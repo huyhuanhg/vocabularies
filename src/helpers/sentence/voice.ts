@@ -11,7 +11,12 @@ const voiceEnables = [
   'com.apple.eloquence.en-US.Sandy',
   'com.apple.speech.synthesis.voice.Junior',
   'com.apple.speech.synthesis.voice.Ralph',
-  'Google US English'
+  'Google US English',
+  "Microsoft David - English (United States)",
+  "Microsoft Mark - English (United States)",
+  "Microsoft Zira - English (United States)",
+  "Microsoft Aria Online (Natural) - English (United States)",
+  "Microsoft Guy Online (Natural) - English (United States)",
 ]
 
 const playAudio = (
