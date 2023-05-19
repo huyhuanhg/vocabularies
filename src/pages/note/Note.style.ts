@@ -239,6 +239,8 @@ export const NoteItemPanel = styled.div`
   .NoteItem__word-type {
     flex: 0 0 auto;
     width: 43px;
+    align-self: flex-start;
+    font-size: 15px;
   }
 
   .NoteItem__word-translate {
