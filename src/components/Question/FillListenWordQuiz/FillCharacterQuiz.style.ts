@@ -45,6 +45,8 @@ export const QuizAnswer = styled.div`
   margin-top: 64px;
   background-color: #fff !important;
   padding: 1rem !important;
+  padding: 1rem 2.2rem 1rem 1rem !important;
+  position: relative;
   input {
     border: none;
     width: 100%;
@@ -57,6 +59,12 @@ export const QuizAnswer = styled.div`
       outline: none !important;
       background: #fff !important;
     }
+  }
+
+  .char-count {
+    position: absolute;
+    font-size: 14px;
+    color: #828282;
   }
 `;
 
@@ -74,20 +82,23 @@ export const Suggest = styled.div`
 
     span {
       display: inline-block;
-      width: 20px;
+      width: 25px;
       &.hide {
         position: relative;
+        color: rgba(0, 0, 0, 0.2);
+        font-size: 18px;
+        font-weight: normal;
         &::after {
           position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
           content: "";
           display: block;
           width: 10px;
-          height: 10px;
-          border-radius: 50%;
+          height: 3px;
           background: #7e7e7e;
+          bottom: 2px;
+          left: 50%;
+          width: calc(100% - 5px);
+          transform: translateX(-50%);
         }
       }
     }

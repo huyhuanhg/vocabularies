@@ -14,6 +14,7 @@ import { Arr } from "@/helpers";
 const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
   vocabulary,
   setAnswer,
+  rate,
 }) => {
   const [elRefs, setElRefs] = useState<RefObject<HTMLInputElement>[]>([]);
 
@@ -117,9 +118,25 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
   };
 
   const getPlaceholderRandom = (strArr: string[]) => {
+    let percent = 50;
+    switch (true) {
+      case rate >= 5:
+        percent = 0;
+        break;
+      case rate > 3.6:
+        percent = 25;
+        break;
+      case rate > 2.2:
+        percent = 30;
+        break;
+      case rate > 1:
+        percent = 40;
+        break;
+    }
+
     return Arr.randomItems(
       Array.from({ length: strArr.length }, (_, index) => index),
-      Math.floor((Math.random() * strArr.length * 3.5) / 10 + 1)
+      Math.ceil((strArr.length * percent) / 100)
     );
   };
 

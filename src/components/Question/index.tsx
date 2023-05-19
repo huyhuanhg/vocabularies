@@ -141,6 +141,7 @@ const Question: FC<QuestionProps> = ({
           <FillCharacterQuiz
             vocabulary={current.vocabulary}
             setAnswer={setAnswerIsPass}
+            rate={current.rate}
           />
         );
       }

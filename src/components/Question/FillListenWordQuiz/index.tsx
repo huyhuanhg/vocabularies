@@ -39,7 +39,7 @@ const FillListenWordQuiz: FC<FillListenWordQuizProps> = ({
         return `${txt}${
           suggestIndex.includes(index)
             ? `<span>${vocabulary.content.charAt(index)}</span>`
-            : '<span className="hide">&nbsp;</span>'
+            : `<span className="hide">${index + 1}</span>`
         }`;
       }, "");
 
@@ -58,13 +58,24 @@ const FillListenWordQuiz: FC<FillListenWordQuizProps> = ({
   };
 
   useEffect(() => {
+    let nextAnswer = null;
+
     if (answerState) {
-      setAnswer(
-        vocabulary.content.toLowerCase() ===
-          answerState.trim().replace(/\s\s+/, " ").toLowerCase()
-      );
+      if (suggest.suggestIndex.length === 0) {
+        nextAnswer =
+          vocabulary.content.toLowerCase() ===
+          answerState.trim().replace(/\s\s+/, " ").toLowerCase();
+      } else {
+        if (answerState.length === vocabulary.content.length) {
+          nextAnswer =
+            vocabulary.content.toLowerCase() ===
+            answerState.trim().replace(/\s\s+/, " ").toLowerCase();
+        }
+      }
     }
-  }, [answerState, setAnswer, vocabulary]);
+
+    setAnswer(nextAnswer);
+  }, [answerState, setAnswer, suggest.suggestIndex.length, vocabulary]);
 
   useEffect(() => {
     if (isPlayAudio && soundRef?.current) {
@@ -84,6 +95,9 @@ const FillListenWordQuiz: FC<FillListenWordQuizProps> = ({
     const wordLength = vocabulary.content.length;
     let percent = 50;
     switch (true) {
+      case rate >= 5:
+        percent = 0;
+        break;
       case rate > 3.6:
         percent = 25;
         break;
@@ -128,16 +142,27 @@ const FillListenWordQuiz: FC<FillListenWordQuizProps> = ({
           placeholder="Gõ lại từ bạn đã nghe được"
           value={answerState}
           onChange={(e) => handleChangeAnswer(e)}
+          maxLength={
+            suggest.data.length > 0 ? vocabulary.content.length : undefined
+          }
         />
+        {answerState.length > 0 && (
+          <span className="char-count">
+            {answerState.length}
+            {suggest.data.length > 0 && `/${vocabulary.content.length}`}
+          </span>
+        )}
       </Style.QuizAnswer>
 
-      <Style.Suggest>
-        <div className="suggest">{parse(suggest.data)}</div>
-        <div className="suggest-msg">{suggest.message}</div>
-        <ButtonEffect cssType="text" state="active" click={handleAddSuggest}>
-          Thêm gợi ý
-        </ButtonEffect>
-      </Style.Suggest>
+      {rate < 5 && (
+        <Style.Suggest>
+          <div className="suggest">{parse(suggest.data)}</div>
+          <div className="suggest-msg">{suggest.message}</div>
+          <ButtonEffect cssType="text" state="active" click={handleAddSuggest}>
+            Thêm gợi ý
+          </ButtonEffect>
+        </Style.Suggest>
+      )}
     </Container>
   );
 };
