@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 
 const cssScrollBar = css`
   &::-webkit-scrollbar {
@@ -13,6 +13,15 @@ const cssScrollBar = css`
   &::-webkit-scrollbar-thumb {
     background: #bfbfbf;
     border-radius: 10px;
+  }
+`;
+
+const ldsSpin = keyframes`
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
   }
 `;
 
@@ -261,8 +270,7 @@ export const WordDetailItem = styled.div`
             border-image: initial;
             border-radius: 50%;
             border-top: 2px solid rgb(0, 56, 240);
-            animation: 0.5s linear 0s infinite normal none running
-              btn-word-save-voca-spin;
+            animation: 1s linear 0s infinite normal none running ${ldsSpin};
           }
         }
       }

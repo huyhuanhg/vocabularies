@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 const Container = styled.div<{ full?: boolean }>`
   width: ${(props) => (props.full ? "100vw" : "100%")};
@@ -13,29 +13,30 @@ const Container = styled.div<{ full?: boolean }>`
   z-index: 999999999999999999999999999999;
 `;
 
+const lsdSpinner = keyframes`
+0% {
+  transform: rotate(0deg);
+}
+100% {
+  transform: rotate(360deg);
+}
+`;
+
 export const SpinnerWrapper = styled.div<{ size: number }>`
   color: official;
   display: inline-block;
   position: relative;
   width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;
-
-  @keyframes lds-spinner {
-    0% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
 `;
 
 export const SpinnerItem = styled.div<{
   index: number;
   size: number;
 }>`
-  transform-origin: ${(props) => props.size / 2}px ${(props) => props.size / 2}px;
-  animation: lds-spinner 1.2s linear infinite;
+  transform-origin: ${(props) => props.size / 2}px
+    ${(props) => props.size / 2}px;
+  animation: ${lsdSpinner} 1.2s linear infinite;
 
   &::after {
     content: " ";

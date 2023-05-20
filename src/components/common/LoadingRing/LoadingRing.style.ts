@@ -1,5 +1,13 @@
-import styled from "styled-components";
-import css from "styled-jsx/css";
+import styled, { keyframes } from "styled-components";
+
+const lsdRing = keyframes`
+0% {
+  transform: rotate(0deg);
+}
+100% {
+  transform: rotate(360deg);
+}
+`
 
 const Container = styled.div<{ full?: boolean }>`
   width: ${(props) => (props.full ? "100vw" : "100%")};
@@ -19,15 +27,6 @@ export const RingWrapper = styled.div<{ size: number }>`
   position: relative;
   width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;
-
-  @keyframes lds-ring {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
 `;
 
 export const RingItem = styled.div<{
@@ -43,7 +42,7 @@ export const RingItem = styled.div<{
   margin: ${props => props.size / 10}px;
   border: ${props => props.size / 10}px solid #fff;
   border-radius: 50%;
-  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  animation: ${lsdRing} 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
   border-color: #faad14 transparent transparent transparent;
 
   &:nth-of-type(${(props) => props.index + 1}) {
