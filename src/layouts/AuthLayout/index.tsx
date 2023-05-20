@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 
 const Layout: FC<AuthLayoutProps> = ({
   component: Component,
+  layout: Layout,
   ...pageProps
 }) => {
   const [loggedInUser, loading] = useAuthState(auth);
@@ -23,10 +24,16 @@ const Layout: FC<AuthLayoutProps> = ({
 
   return (
     <main>
-      {loading || fetchReviewDataLoading && <LoadingRing full/>}
-      {loggedInUser && loggedInUser?.email && (
-        <Component {...pageProps} user={loggedInUser} />
-      )}
+      {loading || (fetchReviewDataLoading && <LoadingRing full />)}
+      {loggedInUser &&
+        loggedInUser?.email &&
+        (Layout ? (
+          <Layout>
+            <Component {...pageProps} user={loggedInUser} />
+          </Layout>
+        ) : (
+          <Component {...pageProps} user={loggedInUser} />
+        ))}
     </main>
   );
 };

@@ -3,10 +3,11 @@ import store from "@/stores";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FC, ReactNode, useMemo } from "react";
+import { FC, ReactNode, useEffect, useMemo } from "react";
 import { Provider } from "react-redux";
 import "@/styles/globals.css";
 import { ConfigProvider } from "antd";
+import VocabularyLayout from "@/layouts/VocabularyLayout";
 
 interface Props {
   children: ReactNode;
@@ -19,6 +20,8 @@ const theme = {
     borderRadius: 3,
   },
 };
+
+const needVocabularyLayout = ["/", "/note", "/course", "/other"];
 
 const HTML: FC<Props> = ({ children }) => {
   return (
@@ -54,12 +57,21 @@ export default function App({
     [router.pathname]
   );
 
+  const hasWrapper = useMemo(
+    () => needVocabularyLayout.includes(router.pathname),
+    [router.pathname]
+  );
+
   return (
     <HTML>
       {isNotLayout ? (
         <Component {...pageProps} />
       ) : (
-        <AuthLayout {...pageProps} component={Component}></AuthLayout>
+        <AuthLayout
+          {...pageProps}
+          layout={hasWrapper ? VocabularyLayout : null}
+          component={Component}
+        ></AuthLayout>
       )}
     </HTML>
   );

@@ -23,8 +23,12 @@ const Chart: FC<ChartProps> = ({
         ...convert,
         mt:
           convert.value === 0
-            ? "300px"
-            : `${((maxValue - convert.value) / maxValue) * 300}px`,
+            ? height
+              ? `${height}px`
+              : "45vh"
+            : height
+            ? `${((maxValue - convert.value) / maxValue) * height}px`
+            : `calc(45vh * ${maxValue - convert.value}/${maxValue})`,
       };
     });
   };
@@ -40,7 +44,7 @@ const Chart: FC<ChartProps> = ({
   }, [data]);
 
   return (
-    <Container height={height ?? 305}>
+    <Container height={height ? height + 5 : 305}>
       {resources.map((resource, index) => (
         <Style.Item
           key={`star_${index + 1}`}
@@ -49,7 +53,7 @@ const Chart: FC<ChartProps> = ({
           onClick={() =>
             itemClick && resource.value > 0 && itemClick(index + 1)
           }
-          height={height ?? 305}
+          height={height ? height + 5 : 305}
         >
           <span className="chart-item-label">{resource.label}</span>
           {resource.isShowValue && (
