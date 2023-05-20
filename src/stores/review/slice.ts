@@ -44,6 +44,7 @@ const initialState: any = {
       loading: false
     },
   },
+  isFirstFetched: false
 };
 
 const review = createSlice({
@@ -53,44 +54,47 @@ const review = createSlice({
   extraReducers(builder) {
     builder.addCase(fetchReviewData.fulfilled, (state, { payload }) => {
       const { one, two, three, four, five, review, } = payload.count;
+      const now = Date.now()
+      const count = [...state.count].map((countItem) => {
+        switch (countItem.label) {
+          case "1":
+            return {
+              ...countItem,
+              value: one,
+            };
+          case "2":
+            return {
+              ...countItem,
+              value: two,
+            };
+          case "3":
+            return {
+              ...countItem,
+              value: three,
+            };
+          case "4":
+            return {
+              ...countItem,
+              value: four,
+            };
+          default:
+            return {
+              ...countItem,
+              value: five,
+            };
+        }
+      })
 
       return {
         ...state,
-        count: [...state.count].map((countItem) => {
-          switch (countItem.label) {
-            case "1":
-              return {
-                ...countItem,
-                value: one,
-              };
-            case "2":
-              return {
-                ...countItem,
-                value: two,
-              };
-            case "3":
-              return {
-                ...countItem,
-                value: three,
-              };
-            case "4":
-              return {
-                ...countItem,
-                value: four,
-              };
-            default:
-              return {
-                ...countItem,
-                value: five,
-              };
-          }
-        }),
+        count,
         review: {
           ...state.review,
           count: review,
-          countDown: payload.countDown,
+          countDown: payload.countDown === 0 ? 0 : now + payload.countDown,
           loading: false
         },
+        isFirstFetched: true
       };
     });
     builder.addCase(fetchReviewData.rejected, (state) => {

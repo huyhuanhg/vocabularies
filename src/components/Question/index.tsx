@@ -77,28 +77,15 @@ const Question: FC<QuestionProps> = ({
   };
 
   const playAudio = async (speed: number = 1) => {
-    // setAudioError(undefined);
     if (current.vocabulary.id === audio.id && audio.control) {
       audio.control.playbackRate = speed;
-      audio.control.play().catch((e) => {
-        // setAudioError(e);
-      });
+      audio.control.play().catch((e) => {});
       return;
     }
     const newAudio = new Audio(current.vocabulary.audio_us);
     newAudio.playbackRate = speed;
-    newAudio.play().catch((e) => {
-      // setAudioError(e);
-    });
+    newAudio.play().catch((e) => {});
   };
-  // const playAudio = async (speed: number = 1) => {
-  //   audioRef.current!.playbackRate = speed;
-  //   audioRef.current?.play().catch((e) => {
-  //     setTimeout(() => {
-  //       audioRef.current?.click()
-  //     }, 1000)
-  //   });
-  // };
 
   const getVocabularies = (wordStorages: WordStorageType[]) =>
     wordStorages.map((wordStorage) => wordStorage.vocabulary);
@@ -271,11 +258,6 @@ const Question: FC<QuestionProps> = ({
               </div>
               <div className="quiz-result-answer-action">
                 <div className="btn-wrapper btn-sound-answer">
-                  {/* <audio
-                    ref={audioRef}
-                    preload="auto"
-                    src={current.vocabulary.audio_us}
-                  /> */}
                   <ButtonEffect
                     space={4}
                     state={answerIsPass ? "active" : "error"}

@@ -2,23 +2,27 @@ import Container, * as Style from "./Navigation.style";
 import { useRouter } from "next/router";
 import { Image } from "@/components/common";
 import { useMemo } from "react";
+import { URLSearchParams } from "next/dist/compiled/@edge-runtime/primitives/url";
 
 const Navigation = () => {
   const router = useRouter();
 
-  const active = useMemo(() => router.pathname, [router.pathname])
+  const active = useMemo(() => router.pathname, [router.pathname]);
 
   const onChange = (key: string) => {
+    if (router.pathname === key) {
+      const { query } = router;
+      router.push(`${key}?${new URLSearchParams({ ...query, refresh: "" })}`);
+      return;
+    }
+
     router.push(key);
   };
 
   return (
     <Container>
       <ul>
-        <Style.Item
-          isActive={active === "/"}
-          onClick={() => onChange("/")}
-        >
+        <Style.Item isActive={active === "/"} onClick={() => onChange("/")}>
           <Image src="/review.png" alt="review" width={30} height={30} />
           <span className="label">Ôn tập</span>
         </Style.Item>
