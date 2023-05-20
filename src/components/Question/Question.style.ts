@@ -105,7 +105,7 @@ export const QuizResult = styled.div<{
     bottom: 180px;
     width: 100%;
     border-radius: 20px;
-    max-width: 720px;
+    max-width: 960px;
     left: 50%;
     transform: translateX(-50%);
     background: ${(props) => (props.isSuccess ? "#23ac38" : "#d34e4e")};
@@ -182,7 +182,7 @@ export const QuizResult = styled.div<{
       bottom: 20px;
       width: 70%;
       height: 80px;
-      max-width: 350px;
+      max-width: calc(960px * 70 / 100);
       left: 50%;
       transform: translateX(-50%);
     }
