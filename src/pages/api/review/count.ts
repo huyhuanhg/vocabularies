@@ -14,18 +14,17 @@ import moment from "moment";
 import { Arr } from "@/helpers";
 
 const format = (item: any) => {
-  const { id, last_seen, rate, review_flg, user, vocabulary_id } =
-  item.data();
+  const { id, last_seen, rate, review_flg, user, vocabulary_id } = item.data();
 
-return {
-  id,
-  last_seen: last_seen?.seconds || null,
-  rate,
-  review_flg,
-  user,
-  vocabulary_id,
+  return {
+    id,
+    last_seen: last_seen?.seconds || null,
+    rate,
+    review_flg,
+    user,
+    vocabulary_id,
+  };
 };
-}
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -86,7 +85,7 @@ export default async function handler(
 
     const wordStorages = [
       ...reviewEnableSnapshots.docs.map(format),
-      ...fiveStarWordStorages
+      ...fiveStarWordStorages,
     ];
 
     if (wordStorages.length === 0) {
@@ -144,8 +143,8 @@ export default async function handler(
       {}
     );
 
-    const wordStorageResponseData = wordStorages.map(
-      ({ id, last_seen, rate, review_flg, user, vocabulary_id }) => {
+    const wordStorageResponseData = wordStorages
+      .map(({ id, last_seen, rate, review_flg, user, vocabulary_id }) => {
         if (!vocabularyData[vocabulary_id]) {
           return undefined;
         }
@@ -158,8 +157,8 @@ export default async function handler(
           review_flg,
           vocabulary: vocabularyData[vocabulary_id],
         };
-      }
-    ).filter(item => item);
+      })
+      .filter((item) => item);
 
     res.status(200).json({
       status: "success",

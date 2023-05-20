@@ -1,5 +1,4 @@
 import Container, * as Style from "./Note.style";
-import Layout from "@/layouts/VocabularyLayout";
 import NoteNavigation from "@/components/NoteNavigation";
 import { Image } from "@/components/common";
 import { useRouter } from "next/router";
@@ -172,9 +171,7 @@ const Note = ({ user }: any) => {
               </p>
             </div>
             <div className="NoteItem__word-translate">
-              <p title={noteItem.translate}>
-                {noteItem.translate}
-              </p>
+              <p title={noteItem.translate}>{noteItem.translate}</p>
             </div>
             <div className="NoteItem__word-audio">
               <audio ref={audioRef} preload="auto" src={noteItem.audio_us} />
@@ -195,7 +192,9 @@ const Note = ({ user }: any) => {
                 <div className="NoteItem__word-content">
                   <p className="NoteItem__word-content--value">
                     {noteItem.content}{" "}
-                    <span className="NoteItem__word-type">{noteItem.type ? `(${convertType(noteItem.type)})` : ""}</span>
+                    <span className="NoteItem__word-type">
+                      {noteItem.type ? `(${convertType(noteItem.type)})` : ""}
+                    </span>
                   </p>
                   <p className="NoteItem__word-content__ipa-us">
                     {noteItem.ipa_us}
@@ -261,44 +260,36 @@ const Note = ({ user }: any) => {
   };
 
   return (
-    <Layout>
-      <Container>
-        {loading && <LoadingRing />}
-        <NoteNavigation />
-
-        <Style.Body>
-          <div ref={scrollBarRef} className="wrapper">
-            <Style.InputSearch>
-              <input
-                type="text"
-                placeholder="Gõ vào đây từ bạn muốn tìm"
-                maxLength={29}
-                value={formState}
-                onChange={handleChangeFormState}
-                onKeyDown={handleEnter}
-              />
-              <button onClick={() => handleSearch()}>
-                <Image src="/search.png" alt="search" width={30} height={30} />
-              </button>
-            </Style.InputSearch>
-            <div className="content">
-              {noteData?.length === 0 && (
-                <Style.Empty>
-                  <Image
-                    src="/note.png"
-                    alt="search"
-                    width={300}
-                    height={300}
-                  />
-                </Style.Empty>
-              )}
-              {renderData()}
-              {loadMoreLoading && <LoadingSpinner />}
-            </div>
+    <Container>
+      {loading && <LoadingRing />}
+      <NoteNavigation />
+      <Style.Body>
+        <div ref={scrollBarRef} className="wrapper">
+          <Style.InputSearch>
+            <input
+              type="text"
+              placeholder="Gõ vào đây từ bạn muốn tìm"
+              maxLength={29}
+              value={formState}
+              onChange={handleChangeFormState}
+              onKeyDown={handleEnter}
+            />
+            <button onClick={() => handleSearch()}>
+              <Image src="/search.png" alt="search" width={30} height={30} />
+            </button>
+          </Style.InputSearch>
+          <div className="content">
+            {noteData?.length === 0 && (
+              <Style.Empty>
+                <Image src="/note.png" alt="search" width={300} height={300} />
+              </Style.Empty>
+            )}
+            {renderData()}
+            {loadMoreLoading && <LoadingSpinner />}
           </div>
-        </Style.Body>
-      </Container>
-    </Layout>
+        </div>
+      </Style.Body>
+    </Container>
   );
 };
 

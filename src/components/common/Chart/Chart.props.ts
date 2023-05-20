@@ -12,7 +12,7 @@ export interface ItemFormatProps extends ItemProps {
 export default interface ChartProps {
   data: ItemProps[];
   defaultData?: ItemProps[];
-  height?: string | number;
+  height?: number | null;
   unit?: string;
   itemClick?: Function
 }

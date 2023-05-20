@@ -1,7 +1,7 @@
 import WaitDevelop from "@/components/WaitDevelop";
-import Container from "./Other.style";
+import Container from "./Course.style";
 
-const Other = () => {
+const Course = () => {
   return (
     <Container>
       <WaitDevelop />
@@ -9,4 +9,4 @@ const Other = () => {
   );
 };
 
-export default Other;
+export default Course;

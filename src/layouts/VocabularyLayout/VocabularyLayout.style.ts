@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const Container = styled.div`
   height: 100vh;
-  max-width: 500px;
+  max-width: 960px;
   margin: 0 auto;
   position: relative;
   background: linear-gradient(

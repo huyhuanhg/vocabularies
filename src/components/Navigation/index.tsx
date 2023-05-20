@@ -30,17 +30,17 @@ const Navigation = () => {
           <span className="label">Sổ tay</span>
         </Style.Item>
         <Style.Item
-          isActive={active === "/search"}
-          onClick={() => onChange("/search")}
+          isActive={active === "/course"}
+          onClick={() => onChange("/course")}
         >
-          <Image src="/search.png" alt="review" width={30} height={30} />
-          <span className="label">Tra cứu</span>
+          <Image src="/learn.png" alt="review" width={30} height={30} />
+          <span className="label">Khóa học</span>
         </Style.Item>
         <Style.Item
           isActive={active === "/other"}
           onClick={() => onChange("/other")}
         >
-          <Image src="/learn.png" alt="review" width={30} height={30} />
+          <Image src="/community.png" alt="review" width={30} height={30} />
           <span className="label">Khác</span>
         </Style.Item>
       </ul>
