@@ -78,16 +78,18 @@ export const Suggest = styled.div`
     font-size: 20px;
     font-weight: bold;
     min-height: 25px;
-    margin-bottom: 10px;
-
+    margin-bottom: 20px;
+    position: relative;
     span {
+      position: relative;
       display: inline-block;
       width: 25px;
       &.hide {
         position: relative;
-        color: rgba(0, 0, 0, 0.2);
-        font-size: 18px;
+        color: rgba(0, 0, 0, 0.3);
+        font-size: 16px;
         font-weight: normal;
+        top: calc(100% - 8px);
         &::after {
           position: absolute;
           content: "";
@@ -95,10 +97,19 @@ export const Suggest = styled.div`
           width: 10px;
           height: 3px;
           background: #7e7e7e;
-          bottom: 2px;
+          bottom: calc(100% - 2px);
           left: 50%;
           width: calc(100% - 5px);
           transform: translateX(-50%);
+        }
+        &::before {
+          position: absolute;
+          content: "?";
+          display: block;
+          bottom: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          font-size: 15px;
         }
       }
     }

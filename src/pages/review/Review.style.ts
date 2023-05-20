@@ -50,7 +50,7 @@ export const Congratulatory = styled.div`
   height: 100vh;
 
   .wrapper {
-    padding-top: 50px;
+    padding-top: 30px;
     position: relative;
     min-height: 400px;
 
@@ -61,15 +61,75 @@ export const Congratulatory = styled.div`
     }
 
     .Congratulatory__info {
+      padding: 0 20px;
       text-align: center;
+
+      &__wordDetail {
+        margin-top: 10px;
+        max-height: 200px;
+        background: #fff;
+        overflow: auto;
+        padding: 6px 4px;
+        border-radius: 5px;
+
+        &::-webkit-scrollbar {
+          width: 4px;
+        }
+
+        &::-webkit-scrollbar-track {
+          box-shadow: inset 0 0 5px #fafafa;
+          border-radius: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #bfbfbf;
+          border-radius: 10px;
+        }
+      }
     }
 
     .ButtonEffect {
       width: 250px;
-      margin-top: 3rem;
+      margin-top: 2rem;
       left: 50%;
       transform: translateX(-50%);
     }
+  }
+`;
+
+export const ResultWordDetail = styled.div<{ state: "error" | "success" }>`
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  text-align: left;
+  padding: 8px 6px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  background-color: ${(props) =>
+    props.state === "error" ? "#fff1f0" : "#f6ffed"};
+
+  .ResultWordDetail__content {
+    width: calc(45% - 21px);
+    padding-left: 18px;
+    position: relative;
+    align-self: center;
+
+    img {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+  }
+
+  .ResultWordDetail__type {
+    width: 42px;
+    align-self: center;
+  }
+
+  .ResultWordDetail__meaning {
+    width: calc(55% - 21px);
+    padding-left: 2px;
   }
 `;
 

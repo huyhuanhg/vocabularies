@@ -35,6 +35,7 @@ const Home = ({ user }: any) => {
   const {
     count: chartData,
     review: { count: reviewCount, countDown },
+    isFirstFetched,
   } = useSelector(({ reviewReducer }: Record<string, any>) => reviewReducer);
 
   const {
@@ -57,8 +58,10 @@ const Home = ({ user }: any) => {
   const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
-    dispatch(fetchReviewData({ user: user.email }));
-  }, []);
+    if (!isFirstFetched || router.query.hasOwnProperty("refresh")) {
+      dispatch(fetchReviewData({ user: user.email }));
+    }
+  }, [router.query]);
 
   useEffect(() => {
     setCountdown(countDown);
@@ -394,11 +397,16 @@ const Home = ({ user }: any) => {
         </Style.SearchWrapper>
       ) : (
         <div className="Voca-Report-Review">
-        <Chart data={chartData} unit="từ" itemClick={redirectToNote} height={chartHeight} />
+          <Chart
+            data={chartData}
+            unit="từ"
+            itemClick={redirectToNote}
+            height={chartHeight}
+          />
           <div className="Review-Info">
             {reviewCount === 0 ? (
               <Style.Message>
-                {countdown > 600000
+                {countdown - Date.now() > 600000
                   ? "Chưa có gì để ôn tập"
                   : "Nghỉ ngơi chút nhé!"}
               </Style.Message>
@@ -427,10 +435,7 @@ const Home = ({ user }: any) => {
             >
               {countDown === 0 && "Ôn tập ngay"}
               {countDown > 0 && (
-                <Countdown
-                  value={Date.now() + countdown}
-                  onChange={onCountDowned}
-                />
+                <Countdown value={countdown} onChange={onCountDowned} />
               )}
             </ButtonEffect>
           </div>

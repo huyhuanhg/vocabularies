@@ -3,13 +3,14 @@ import Container, * as Style from "./Review.style";
 import { useDispatch, useSelector } from "react-redux";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 import { fetchReviewCount } from "@/stores/review/action";
-import { Button, ButtonEffect, Modal } from "@/components/common";
+import { Button, ButtonEffect, Image, Modal } from "@/components/common";
 import { useRouter } from "next/router";
 import Question from "@/components/Question";
 import Progress from "@/components/Progress";
 import CircleProgress from "@/components/CircleProgress";
 import { LoadingRing } from "@/components/common";
 import { updateReviewedAt } from "@/stores/user/action";
+import { convertType } from "@/helpers/word";
 
 const Review = ({ user }: any) => {
   const router = useRouter();
@@ -32,6 +33,7 @@ const Review = ({ user }: any) => {
     trueCount: 0,
     falseCount: 0,
     isFinish: false,
+    resultData: [],
   });
 
   const [isShowModalClose, setIsShowModalClose] = useState(false);
@@ -60,6 +62,28 @@ const Review = ({ user }: any) => {
       ...progressInfo,
     };
 
+    const result = key === "trueCount";
+    const resultData: any = result
+      ? [
+          ...progressInfo.resultData,
+          {
+            result,
+            content: wordStorages[progressCloneData.current].vocabulary.content,
+            meaning:
+              wordStorages[progressCloneData.current].vocabulary.translate,
+            type: wordStorages[progressCloneData.current].vocabulary.type,
+          },
+        ]
+      : [
+          {
+            result,
+            content: wordStorages[progressCloneData.current].vocabulary.content,
+            meaning:
+              wordStorages[progressCloneData.current].vocabulary.translate,
+            type: wordStorages[progressCloneData.current].vocabulary.type,
+          },
+          ...progressInfo.resultData,
+        ];
     setProgressInfo({
       ...progressCloneData,
       ...(key && { [key]: progressCloneData[key] + 1 }),
@@ -68,6 +92,7 @@ const Review = ({ user }: any) => {
           ? progressCloneData.current
           : progressCloneData.current + 1,
       isFinish: !key || progressCloneData.current === reviewCount - 1,
+      resultData,
     });
   };
 
@@ -80,6 +105,36 @@ const Review = ({ user }: any) => {
     }
 
     return "Cố lên, bạn có thể làm được mà!";
+  };
+
+  const renderWordResult = () => {
+    return progressInfo.resultData.map((wordResultItem: any) => (
+      <Style.ResultWordDetail
+        state={wordResultItem.result ? "success" : "error"}
+        className="ResultWordDetail"
+        key={`ResultWordDetail_${wordResultItem.content}`}
+      >
+        <div className="ResultWordDetail__content">
+          <Image
+            src={wordResultItem.result ? "success.svg" : "error.svg"}
+            width={15}
+            height={15}
+            alt=""
+          />
+          <p className="ResultWordDetail__content--value">
+            {wordResultItem.content}
+          </p>
+        </div>
+        <div className="ResultWordDetail__type">
+          <p>
+            {wordResultItem.type ? `(${convertType(wordResultItem.type)})` : ""}
+          </p>
+        </div>
+        <div className="ResultWordDetail__meaning">
+          <p>{wordResultItem.meaning}</p>
+        </div>
+      </Style.ResultWordDetail>
+    ));
   };
 
   return (
@@ -148,11 +203,19 @@ const Review = ({ user }: any) => {
                 total={progressInfo.trueCount + progressInfo.falseCount}
                 value={progressInfo.trueCount}
               />
-              <p className="Congratulatory__info">
-                Bạn đã trả lời đúng {progressInfo.trueCount}/
-                {progressInfo.trueCount + progressInfo.falseCount} câu
-              </p>
-              <ButtonEffect state="active" click={() => router.push("/")}>
+              <div className="Congratulatory__info">
+                <p>
+                  Bạn đã trả lời đúng {progressInfo.trueCount}/
+                  {progressInfo.trueCount + progressInfo.falseCount} câu
+                </p>
+                <div className="Congratulatory__info__wordDetail">
+                  {renderWordResult()}
+                </div>
+              </div>
+              <ButtonEffect
+                state="active"
+                click={() => router.push("/?refresh")}
+              >
                 TRỞ LẠI
               </ButtonEffect>
             </div>
