@@ -10,9 +10,14 @@ import { ButtonEffect, LoadingSpinner } from "../common";
 import parse from "html-react-parser";
 import { useDispatch, useSelector } from "react-redux";
 import { ThunkDispatch } from "@reduxjs/toolkit";
-import { updateReviewWord } from "@/stores/review/action";
+import {
+  addReport,
+  removeReview,
+  updateReviewWord,
+} from "@/stores/review/action";
 import WordStorageType from "@/types/entities/WordStorageType";
 import { playSentenceAudio as playSentenceAudioHelper } from "@/helpers/sentence";
+import { Form, Switch, Input, Select } from "antd";
 
 const Question: FC<QuestionProps> = ({
   index,
@@ -30,6 +35,11 @@ const Question: FC<QuestionProps> = ({
   const [isShowResult, setIsShowResult] = useState(false);
   const [isShowTrans, setIsShowTrans] = useState(false);
   // const audioRef = useRef<HTMLAudioElement>(null);
+  const [reportMsg, setReportMsg] = useState("");
+  const [isOtherReport, setIsOtherReport] = useState(false);
+  const [isRemoveReview, setIsRemoveReview] = useState(true);
+  const [isShowReport, setIsShowReport] = useState(false);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const btnCheckRef = useRef<HTMLButtonElement>(null);
   const btnContinueRef = useRef<HTMLButtonElement>(null);
@@ -213,6 +223,87 @@ const Question: FC<QuestionProps> = ({
     };
   }, [updateLoading, isShowResult]);
 
+  const handleChangeReportMsg = (value: string) => {
+    setIsOtherReport(value === "other");
+    setReportMsg(value === "other" ? "" : value);
+  };
+
+  const handleSendReport = () => {
+    if (!reportMsg) {
+      return;
+    }
+    setIsShowReport(false);
+
+    if (isRemoveReview) {
+      dispatch(removeReview({ id: current.id }));
+    }
+
+    dispatch(
+      addReport({
+        user: current.user,
+        message: reportMsg,
+        data: current.vocabulary,
+      })
+    );
+  };
+
+  const renderFormReport = () => {
+    return (
+      <Style.FormReport>
+        <Form.Item>
+          <select
+            className="form-control"
+            onChange={(e) => {
+              handleChangeReportMsg(e.target.value);
+            }}
+            defaultValue=""
+          >
+            <option hidden disabled value="">
+              Chọn vấn đề
+            </option>
+            <option value="Không nghe thấy từ này">
+              Không nghe thấy từ này
+            </option>
+            <option value="Loại chữ không đúng">Loại từ không đúng</option>
+            <option value="Ý nghĩa của từ sai">Ý nghĩa của từ sai</option>
+            <option value="Phiên âm không đúng">Phiên âm không đúng</option>
+            <option value="Câu mẫu Tiếng Anh sai">Câu mẫu Tiếng Anh sai</option>
+            <option value="Dịch câu mẫu bị sai">Dịch câu mẫu bị sai</option>
+            <option value="other">Khác</option>
+          </select>
+        </Form.Item>
+        <Form.Item hidden={!isOtherReport}>
+          <Input.TextArea
+            value={reportMsg}
+            onChange={(e) => setReportMsg(e.target.value)}
+            placeholder="Nhập nội dung..."
+          />
+        </Form.Item>
+        <Form.Item name="switch">
+          <label>
+            <Switch
+              checked={isRemoveReview}
+              onChange={() => setIsRemoveReview(!isRemoveReview)}
+            />{" "}
+            Loại bỏ khỏi danh sách ôn tập
+          </label>
+        </Form.Item>
+
+        <div className="report-control">
+          <button className="Report-Btn-Submit" onClick={handleSendReport}>
+            Gửi
+          </button>
+          <button
+            className="Report-Btn-Cancel"
+            onClick={() => setIsShowReport(false)}
+          >
+            Hủy
+          </button>
+        </div>
+      </Style.FormReport>
+    );
+  };
+
   return (
     <Container ref={containerRef}>
       <Style.QuizWrapper>
@@ -277,18 +368,21 @@ const Question: FC<QuestionProps> = ({
                   <div className="btn-wrapper btn-sentence-audio">
                     <ButtonEffect
                       space={2}
+                      state={answerIsPass ? "active" : "error"}
                       click={() =>
                         playSentenceAudio(current.vocabulary.en_sentence)
                       }
                     >
-                      <Image
-                        className="icon-btn-answer"
-                        src="/sound-sentence.svg"
-                        width={30}
-                        height={30}
-                        alt="icon-btn-answer"
-                        title="Play sentence audio"
-                      />
+                      <div className="img-wrapper">
+                        <Image
+                          className="icon-btn-answer"
+                          src="/sound-sentence.svg"
+                          width={25}
+                          height={25}
+                          alt="icon-btn-answer"
+                          title="Play sentence audio"
+                        />
+                      </div>
                     </ButtonEffect>
                   </div>
                 )}
@@ -308,6 +402,24 @@ const Question: FC<QuestionProps> = ({
                     />
                   </ButtonEffect>
                 </div>
+                <div className="btn-wrapper btn-report">
+                  <ButtonEffect
+                    space={4}
+                    state={answerIsPass ? "active" : "error"}
+                    click={() => setIsShowReport(true)}
+                  >
+                    <div className="img-wrapper">
+                      <Image
+                        className="icon-btn-answer"
+                        src="/warning.svg"
+                        width={25}
+                        height={25}
+                        alt="icon-btn-translate"
+                        title="Translate sentence"
+                      />
+                    </div>
+                  </ButtonEffect>
+                </div>
               </div>
             </div>
           </div>
@@ -322,6 +434,14 @@ const Question: FC<QuestionProps> = ({
             </ButtonEffect>
           </div>
         </Style.QuizResult>
+        <Style.QuizReport open={isShowReport}>
+          <div className="quiz-report-modal">
+            <div className="quiz-report-modal-title">Báo cáo sự cố</div>
+            <div className="quiz-report-modal-content">
+              {renderFormReport()}
+            </div>
+          </div>
+        </Style.QuizReport>
       </Style.QuizWrapper>
     </Container>
   );

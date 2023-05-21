@@ -1,7 +1,7 @@
 import { db } from "@/configs/firebase";
 import WordStorageType from "@/types/entities/WordStorageType";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, serverTimestamp, updateDoc } from "firebase/firestore";
 
 export const fetchReviewData = createAsyncThunk(
   "review/index",
@@ -51,3 +51,33 @@ export const updateReviewWord = createAsyncThunk(
     }
   }
 );
+
+export const removeReview = createAsyncThunk(
+  "review/remove",
+  async ({ id }: { id: string }) => {
+    try {
+      return await updateDoc(doc(db, "word_storages", id), {
+        rate: 0,
+        review_flg: false,
+      });
+    } catch (e) {
+      return Promise.reject();
+    }
+  }
+)
+
+export const addReport = createAsyncThunk(
+  "review/report",
+  async ({user, message, data}: any) => {
+    try {
+      return await addDoc(collection(db, "reports"), {
+        user,
+        message,
+        data: JSON.stringify(data),
+        created_at: serverTimestamp(),
+      });
+    } catch (e) {
+      return Promise.reject();
+    }
+  }
+)
