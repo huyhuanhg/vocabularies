@@ -1,3 +1,4 @@
+import { Form } from "antd";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -173,6 +174,16 @@ export const QuizResult = styled.div<{
         .ButtonEffect__btn {
           padding: 0;
           line-height: 0;
+
+          .img-wrapper {
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+          }
         }
       }
     }
@@ -186,6 +197,76 @@ export const QuizResult = styled.div<{
       left: 50%;
       transform: translateX(-50%);
     }
+  }
+`;
+
+export const QuizReport = styled.div<{ open: boolean }>`
+  display: ${(props) => (props.open ? "block" : "none")};
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  .quiz-report-modal {
+    min-height: 300px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 180px;
+    width: 100%;
+    border-radius: 20px;
+    max-width: 960px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    padding: 20px;
+    &-title {
+      text-align: center;
+      font-weight: bold;
+      font-size: 20px;
+      margin-bottom: 30px;
+    }
+  }
+`;
+
+export const FormReport = styled(Form)`
+  .form-control {
+    width: 100%;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .report-control > button {
+    display: block;
+    cursor: pointer;
+  }
+
+  .Report-Btn-Submit {
+    background: #c3c3c3;
+    outline: none;
+    border: 0;
+    text-transform: uppercase;
+    padding: 10px 25px;
+    min-width: 200px;
+    margin: 0 auto;
+    border-radius: 12px;
+  }
+
+  .Report-Btn-Cancel {
+    background: none;
+    outline: none;
+    border: 0;
+    text-transform: uppercase;
+    text-decoration: underline;
+    padding: 10px 25px;
+    min-width: 200px;
+    margin: 0 auto;
+    border-radius: 12px;
   }
 `;
 
