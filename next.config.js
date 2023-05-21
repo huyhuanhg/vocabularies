@@ -12,6 +12,8 @@ const nextConfig = {
     NEXT_APP_FIREBASE_APP_ID: process.env.NEXT_APP_FIREBASE_APP_ID,
     NEXT_APP_MOCHI_DICTIONARY_URL: process.env.NEXT_APP_MOCHI_DICTIONARY_URL,
     NEXT_APP_GOOGLE_TRANSLATE_URL: process.env.NEXT_APP_GOOGLE_TRANSLATE_URL,
+    NEXT_APP_CHAT_GPT_URL: process.env.NEXT_APP_CHAT_GPT_URL,
+    NEXT_APP_CHAT_GPT_API_KEY: process.env.NEXT_APP_CHAT_GPT_API_KEY,
   },
   compiler: {
     // Enables the styled-components SWC transform
