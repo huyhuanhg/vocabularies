@@ -56,7 +56,7 @@ export const Popup = styled.div<{ open: boolean }>`
       padding: 1rem;
       background: #f7f7f7;
       flex-shrink: 2;
-      overflow-y: auto;
+      overflow: hidden auto;
       box-shadow: inset 0 2rem 2rem -2rem rgba(0, 0, 0, 0.05),
         inset 0 -2rem 2rem -2rem rgba(0, 0, 0, 0.05);
       height: calc(100% - 64px);
@@ -132,7 +132,8 @@ export const Popup = styled.div<{ open: boolean }>`
         border: none;
         background-image: none;
         background-color: white;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 1.8rem 0.5rem 1rem;
+        font-size: 15px;
         border-radius: 1.125rem;
         flex-grow: 2;
         box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1),
