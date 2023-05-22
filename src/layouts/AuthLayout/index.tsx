@@ -24,11 +24,11 @@ const Layout: FC<AuthLayoutProps> = ({
 
   return (
     <main>
-      {loading || (fetchReviewDataLoading && <LoadingRing full />)}
+      {(loading || fetchReviewDataLoading) && <LoadingRing full />}
       {loggedInUser &&
         loggedInUser?.email &&
         (Layout ? (
-          <Layout>
+          <Layout user={loggedInUser}>
             <Component {...pageProps} user={loggedInUser} />
           </Layout>
         ) : (
