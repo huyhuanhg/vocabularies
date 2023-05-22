@@ -25,21 +25,16 @@ const chat = createSlice({
       };
     });
     builder.addCase(sendMessage.pending, (state, { meta }: any) => {
-      const { isHello, message } = meta.arg;
-      if (isHello) {
-        return {
-          ...state,
-        };
-      }
-      const now = Date.now();
+      const { message } = meta.arg;
+
       return {
         ...state,
         msg: [
           ...state.msg,
           {
-            id: `user_${now}`,
-            created: ~~(now / 1000),
-            message,
+            id: `user`,
+            created: Date.now(),
+            content: message,
             role: "user",
           },
         ],
@@ -54,7 +49,7 @@ const chat = createSlice({
       }
       return {
         ...state,
-        msg: [...state.msg, responseMsg],
+        msg: [...state.msg, { ...responseMsg, created: Date.now() }],
         newMsg: [],
         isHello: true,
       };

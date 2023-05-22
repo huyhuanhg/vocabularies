@@ -1,4 +1,11 @@
-import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  FC,
+  KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import FillListenWordQuizProps from "./FillListenWordQuiz.props";
 import Container, * as Style from "./FillCharacterQuiz.style";
 import { Image } from "@/components/common";
@@ -115,6 +122,31 @@ const FillListenWordQuiz: FC<FillListenWordQuizProps> = ({
     setAnswerState(e.target.value);
   };
 
+  const handleRemoveVietNameseInput = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (/^Key[A-Z]$/.test(e.code)) {
+      e.preventDefault();
+
+      // Lấy vị trí con trỏ hiện tại
+      const caretStart = e.currentTarget.selectionStart;
+      const caretEnd = e.currentTarget.selectionEnd;
+
+      // Thêm key vào vị trí con trỏ
+      const currentValue = e.currentTarget.value;
+      const newValue =
+        currentValue.substring(0, caretStart as number) +
+        e.code.replace(/^Key([A-Z])$/, "$1").toLocaleLowerCase() +
+        currentValue.substring(caretEnd as number);
+
+      // Cập nhật giá trị của phần tử input
+      e.currentTarget.value = newValue;
+
+      // Di chuyển con trỏ đến vị trí sau khi chèn key
+      e.currentTarget.selectionStart = (caretStart as number) + 1;
+      e.currentTarget.selectionEnd = (caretStart as number) + 1;
+      // e.currentTarget.value += e.code.replace(/^Key([A-Z])$/, "$1").toLocaleLowerCase()
+    }
+  };
+
   return (
     <Container>
       <Style.QuizHeader>Nghe và viết lại</Style.QuizHeader>
@@ -145,6 +177,7 @@ const FillListenWordQuiz: FC<FillListenWordQuizProps> = ({
           maxLength={
             suggest.data.length > 0 ? vocabulary.content.length : undefined
           }
+          onKeyDown={handleRemoveVietNameseInput}
         />
         {answerState.length > 0 && (
           <span className="char-count">
