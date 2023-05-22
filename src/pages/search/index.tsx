@@ -1,6 +1,5 @@
 import { Image } from "@/components/common";
 import Container, * as Style from "./Search.style";
-import Layout from "@/layouts/VocabularyLayout";
 import {
   ChangeEvent,
   KeyboardEvent,
@@ -304,36 +303,34 @@ const Search = ({ user }: any) => {
   };
 
   return (
-    <Layout>
-      <Container>
-        {loading && <LoadingRing />}
-        <Style.Header>
-          <Style.InputSearch>
-            <input
-              type="text"
-              placeholder="Gõ vào đây từ bạn muốn tra cứu"
-              maxLength={29}
-              autoFocus
-              value={formState}
-              onChange={handleChangeFormState}
-              onKeyDown={handleEnter}
-            />
-            <button onClick={() => onSearch()}>
-              <Image src="/search.png" alt="search" width={30} height={30} />
-            </button>
-          </Style.InputSearch>
-        </Style.Header>
-        <Style.Body>
-          {suggests?.length === 0 && searchData?.length === 0 && (
-            <Style.Empty>
-              <Image src="/note.png" alt="search" width={300} height={300} />
-            </Style.Empty>
-          )}
-          {searchData?.length > 0 && renderSearchResult(searchData)}
-          {suggests?.length > 0 && renderSuggests(suggests)}
-        </Style.Body>
-      </Container>
-    </Layout>
+    <Container>
+      {loading && <LoadingRing />}
+      <Style.Header>
+        <Style.InputSearch>
+          <input
+            type="text"
+            placeholder="Gõ vào đây từ bạn muốn tra cứu"
+            maxLength={29}
+            autoFocus
+            value={formState}
+            onChange={handleChangeFormState}
+            onKeyDown={handleEnter}
+          />
+          <button onClick={() => onSearch()}>
+            <Image src="/search.png" alt="search" width={30} height={30} />
+          </button>
+        </Style.InputSearch>
+      </Style.Header>
+      <Style.Body>
+        {suggests?.length === 0 && searchData?.length === 0 && (
+          <Style.Empty>
+            <Image src="/note.png" alt="search" width={300} height={300} />
+          </Style.Empty>
+        )}
+        {searchData?.length > 0 && renderSearchResult(searchData)}
+        {suggests?.length > 0 && renderSuggests(suggests)}
+      </Style.Body>
+    </Container>
   );
 };
 
