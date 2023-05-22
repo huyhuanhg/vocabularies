@@ -177,7 +177,6 @@ const FillListenWordQuiz: FC<FillListenWordQuizProps> = ({
           maxLength={
             suggest.data.length > 0 ? vocabulary.content.length : undefined
           }
-          onKeyDown={handleRemoveVietNameseInput}
         />
         {answerState.length > 0 && (
           <span className="char-count">
