@@ -50,6 +50,7 @@ export const Popup = styled.div<{ open: boolean }>`
       border-radius: 50%;
       box-shadow: 1px 1px 50px 10px rgba(0, 0,0,.1);
       cursor: pointer;
+      z-index: 9;
     }
     .messages {
       padding: 1rem;
