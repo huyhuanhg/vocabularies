@@ -263,10 +263,8 @@ export const FormReport = styled(Form)`
     border: 0;
     text-transform: uppercase;
     text-decoration: underline;
-    padding: 10px 25px;
-    min-width: 200px;
-    margin: 0 auto;
-    border-radius: 12px;
+    margin: 20px auto 0;
+    font-weight: bold;
   }
 `;
 

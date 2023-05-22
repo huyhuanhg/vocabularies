@@ -1,4 +1,3 @@
-import { ButtonEffect } from "@/components/common";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -42,6 +41,9 @@ export const QuizContent = styled.div`
     .word_fill {
       display: inline-block;
       position: relative;
+      width: 40px;
+      color: #fff;
+      overflow: hidden;
 
       &::after {
         content: "";
@@ -51,8 +53,9 @@ export const QuizContent = styled.div`
         position: absolute;
         height: 100%;
         left: 0;
-        bottom: 1px;
+        bottom: 0;
         border-bottom: 1px solid;
+        color: #000;
       }
     }
   }
