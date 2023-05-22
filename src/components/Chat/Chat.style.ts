@@ -19,18 +19,38 @@ const Container = styled.div`
 `;
 
 export const Popup = styled.div<{ open: boolean }>`
-  display: ${(props) => (props.open ? "block" : "none")};
   position: absolute;
   top: 0;
   left: 0;
   z-index: 999999999;
   background: rgba(0, 0, 0, 0.2);
-  width: 100%;
-  height: 100vh;
+  width: ${(props) => (props.open ? "100%" : 0)};
+  height: ${(props) => (props.open ? "100vh" : 0)};
+  opacity: ${(props) => (props.open ? 1 : 0)};
   padding: 5px;
   .chat-wrapper {
     background: #fff;
     border-radius: 6px 6px 0 0;
+    bottom: 160px;
+    right: 5px;
+    position: absolute;
+    width: ${(props) => (props.open ? "calc(100% - 10px)" : 0)};
+    height: ${(props) => (props.open ? "calc(100vh - 165px)" : 0)};
+    opacity: ${(props) => (props.open ? 1 : 0)};
+    overflow: hidden;
+    transition: all 0.2s ease-out;
+    .btn-close {
+      line-height: 0;
+      border: none;
+      outline: none;
+      position: absolute;
+      right: 0;
+      padding: 10px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 1px 1px 50px 10px rgba(0, 0,0,.1);
+      cursor: pointer;
+    }
     .messages {
       padding: 1rem;
       background: #f7f7f7;
@@ -38,7 +58,7 @@ export const Popup = styled.div<{ open: boolean }>`
       overflow-y: auto;
       box-shadow: inset 0 2rem 2rem -2rem rgba(0, 0, 0, 0.05),
         inset 0 -2rem 2rem -2rem rgba(0, 0, 0, 0.05);
-      height: 65vh;
+      height: calc(100% - 64px);
       border-radius: 6px 6px 0 0;
 
       .message-item {
@@ -46,6 +66,15 @@ export const Popup = styled.div<{ open: boolean }>`
           padding: 0.5rem 1rem;
           width: fit-content;
           white-space: pre-line;
+          position: relative;
+          .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 3px;
+            background: #000;
+            bottom: -2px;
+            position: relative;
+          }
         }
 
         .message-time {

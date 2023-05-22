@@ -9,7 +9,7 @@ const Chat: FC<ChatProps> = ({ userName }) => {
   const [isOpenPopup, setIsOpenPopup] = useState(false);
   return (
     <Container>
-      <Popup open={isOpenPopup} userName={userName} />
+      <Popup open={isOpenPopup} userName={userName} setDisplay={setIsOpenPopup} />
       <ButtonEffect space={2} click={() => setIsOpenPopup(!isOpenPopup)}>
         <div className="img-wrapper">
           <Image src={"/chat.png"} alt="chat-icon" width={40} height={40} />

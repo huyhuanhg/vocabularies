@@ -2,10 +2,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const sendMessage = createAsyncThunk(
   "chat/send",
-  async (
-    { message, isHello }: { message: string; isHello: boolean },
-    { dispatch }
-  ) => {
+  async (_: { message: string }, { dispatch, getState }) => {
+    const { chatReducer }: any = getState();
+
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append(
@@ -16,10 +15,7 @@ export const sendMessage = createAsyncThunk(
     var raw = {
       model: "gpt-3.5-turbo",
       messages: [
-        {
-          role: "user",
-          content: message,
-        },
+        ...chatReducer.msg.map(({ role, content }: any) => ({ role, content })),
       ],
       stream: true,
     };
@@ -32,8 +28,7 @@ export const sendMessage = createAsyncThunk(
     };
 
     let responseMsg = {
-      created: null,
-      message: "",
+      content: "",
       id: "",
       role: "",
     };
@@ -55,29 +50,30 @@ export const sendMessage = createAsyncThunk(
             .filter((item) => item)
             .map((txt) => {
               try {
-                const json = JSON.parse(txt.replace(/data:\s/, ""));
-                const { id, created } = json;
-                const content = json?.choices[0]?.delta?.content || "";
-                const role = json?.choices[0]?.delta?.role;
+                if (txt !== "data: [DONE]") {
+                  const json = JSON.parse(txt.replace(/data:\s/, ""));
+                  const { id, created } = json;
+                  const content = json?.choices[0]?.delta?.content || "";
+                  const role = json?.choices[0]?.delta?.role;
 
-                if (id && !content && created && role) {
-                  responseMsg = {
-                    id,
-                    role,
-                    created,
-                    message: "",
-                  };
-                } else if (content) {
-                  responseMsg = {
-                    ...responseMsg,
-                    message: `${responseMsg.message}${content}`,
-                  };
+                  if (id && !content && created && role) {
+                    responseMsg = {
+                      id,
+                      role,
+                      content: "",
+                    };
+                  } else if (content) {
+                    responseMsg = {
+                      ...responseMsg,
+                      content: `${responseMsg.content}${content}`,
+                    };
+                  }
+
+                  dispatch({
+                    type: "chat/set_new_msg",
+                    payload: { id, role, created, content },
+                  });
                 }
-
-                dispatch({
-                  type: "chat/set_new_msg",
-                  payload: { id, role, created, content },
-                });
               } catch (e) {
                 console.error("e json :>> ", e);
               }
