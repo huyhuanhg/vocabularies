@@ -7,10 +7,11 @@ import { sendMessage } from "@/stores/chat/action";
 import { Image } from "../common";
 import moment from "moment";
 import "moment/locale/vi";
+import { Chat } from "@/helpers";
 
 const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
-  const { msg, newMsg, isHello } = useSelector(
+  const { msg, newMsg, loading } = useSelector(
     ({ chatReducer }: Record<string, any>) => chatReducer
   );
   const [msgState, setMsgState] = useState("");
@@ -26,9 +27,16 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
   }, [newMsg]);
 
   useEffect(() => {
-    if (open && !isHello) {
+    dispatch({ type: "chat/get_storage" });
+  }, []);
+
+  useEffect(() => {
+    if (open && Chat.Storage.empty()) {
       onChat(
-        `Chào bạn! Tôi là ${userName}. Bạn hãy chào tôi, và trả lời "Tôi là trợ lý học tiếng anh của bạn. Bạn cần tôi giúp gì không?"`
+        `Tôi là ${userName}.
+        Bây giờ dựa theo giờ hiện tại của tôi: ${moment().format(
+          "HH:mm"
+        )}, bạn hãy chào tôi theo buổi và trả lời "Tôi là trợ lý học tiếng Anh của bạn. Bạn cần tôi giúp gì không?"`
       );
     }
     msgRef.current?.scrollTo(0, msgRef.current?.scrollHeight);
@@ -48,8 +56,8 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
     }
   };
 
-  const renderMessage = () => {
-    return msg.slice(1).map((message: any) => (
+  const renderMessage = (msg: []) => {
+    return msg.map((message: any) => (
       <div
         className="message-item"
         data-owner={message.role === "user" ? "user" : "bot"}
@@ -75,11 +83,27 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
           />
         </button>
         <div className="messages" ref={msgRef}>
-          {renderMessage()}
+          {renderMessage(msg.slice(1))}
+          {loading && (
+            <div className="message-item" data-owner="bot">
+              <div className="message-time">Đang trả lời</div>
+              <div className="message-content">
+                <div className="lds-ellipsis">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+              </div>
+            </div>
+          )}
           {newMsg.length > 0 && (
             <div className="message-item" data-owner="bot">
               <div className="message-time">Bây giờ</div>
-              <div className="message-content">{newMsg.join("").replace(/^([\s\w\W]+\s)(.+)$/, "$1")}<span className="cursor" /></div>
+              <div className="message-content">
+                {newMsg.join("").replace(/([^\s]+)$/, "")}
+                <span className="cursor" />
+              </div>
             </div>
           )}
         </div>

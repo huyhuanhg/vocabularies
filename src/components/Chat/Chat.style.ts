@@ -1,4 +1,31 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+
+const ldsEllipsis1 = keyframes`
+0% {
+  transform: scale(0);
+}
+100% {
+  transform: scale(1);
+}
+`;
+
+const ldsEllipsis2 = keyframes`
+0% {
+  transform: translate(0, 0);
+}
+100% {
+  transform: translate(16px, 0);
+}
+`;
+
+const ldsEllipsis3 = keyframes`
+0% {
+  transform: scale(1);
+}
+100% {
+  transform: scale(0);
+}
+`;
 
 const Container = styled.div`
   .ButtonEffect {
@@ -11,9 +38,6 @@ const Container = styled.div`
       padding: 0;
       line-height: 0;
       overflow: hidden;
-      .img-wrapper {
-        /* border-radius: 50%; */
-      }
     }
   }
 `;
@@ -48,7 +72,7 @@ export const Popup = styled.div<{ open: boolean }>`
       padding: 10px;
       background: #fff;
       border-radius: 50%;
-      box-shadow: 1px 1px 50px 10px rgba(0, 0,0,.1);
+      box-shadow: 1px 1px 50px 10px rgba(0, 0, 0, 0.1);
       cursor: pointer;
       z-index: 9;
     }
@@ -75,6 +99,40 @@ export const Popup = styled.div<{ open: boolean }>`
             background: #000;
             bottom: -2px;
             position: relative;
+          }
+
+          .lds-ellipsis {
+            display: inline-block;
+            position: relative;
+            width: 46px;
+            line-height: 20px;
+            height: 20px;
+
+            div {
+              position: absolute;
+              top: calc(50% - 5px);
+              width: 10px;
+              height: 10px;
+              border-radius: 50%;
+              background: gray;
+              animation-timing-function: cubic-bezier(0, 1, 1, 0);
+              &:nth-of-type(1) {
+                left: 0px;
+                animation: ${ldsEllipsis1} 0.6s infinite;
+              }
+              &:nth-of-type(2) {
+                left: 0px;
+                animation: ${ldsEllipsis2} 0.6s infinite;
+              }
+              &:nth-of-type(3) {
+                left: 16px;
+                animation: ${ldsEllipsis2} 0.6s infinite;
+              }
+              &:nth-of-type(4) {
+                left: 32px;
+                animation: ${ldsEllipsis3} 0.6s infinite;
+              }
+            }
           }
         }
 

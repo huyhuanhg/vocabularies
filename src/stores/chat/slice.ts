@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { sendMessage } from "./action";
+import { Chat } from "@/helpers";
 
 const initialState: any = {
   loading: false,
   msg: [],
   newMsg: [],
-  isHello: false,
 };
 
 const chat = createSlice({
@@ -20,38 +20,55 @@ const chat = createSlice({
         ...state,
         loading: false,
         newMsg: [...state.newMsg, content],
-        isHello: true,
-        // msg: cloneMsg,
+      };
+    });
+    builder.addCase("chat/get_storage", (state) => {
+      const messageData = Chat.Storage.get();
+      return {
+        ...state,
+        loading: false,
+        msg: [...messageData],
       };
     });
     builder.addCase(sendMessage.pending, (state, { meta }: any) => {
       const { message } = meta.arg;
 
+      const now = Date.now();
+      const messageData = Chat.Storage.get();
+      const newMsg = [
+        ...messageData,
+        {
+          id: `user_${now}`,
+          created: now,
+          content: message,
+          role: "user",
+        },
+      ];
+
       return {
         ...state,
-        msg: [
-          ...state.msg,
-          {
-            id: `user`,
-            created: Date.now(),
-            content: message,
-            role: "user",
-          },
-        ],
+        loading: true,
+        msg: newMsg,
       };
     });
     builder.addCase(sendMessage.fulfilled, (state, { payload }: any) => {
-      const { responseMsg } = payload;
-      if (!responseMsg.id) {
+      if (!payload || !payload.responseMsg || !payload.responseMsg.id) {
         return {
           ...state,
+          loading: true,
         };
       }
+
+      const { responseMsg } = payload;
+
+      const messageData = Chat.Storage.get();
+      const newMsg = [...messageData, { ...responseMsg, created: Date.now() }];
+      Chat.Storage.set(newMsg);
       return {
         ...state,
-        msg: [...state.msg, { ...responseMsg, created: Date.now() }],
+        loading: false,
+        msg: newMsg,
         newMsg: [],
-        isHello: true,
       };
     });
   },
