@@ -14,6 +14,7 @@ const nextConfig = {
     NEXT_APP_GOOGLE_TRANSLATE_URL: process.env.NEXT_APP_GOOGLE_TRANSLATE_URL,
     NEXT_APP_CHAT_GPT_URL: process.env.NEXT_APP_CHAT_GPT_URL,
     NEXT_APP_CHAT_GPT_API_KEY: process.env.NEXT_APP_CHAT_GPT_API_KEY,
+    NEXT_APP_CHAT_GPT_MODEL: process.env.NEXT_APP_CHAT_GPT_MODEL,
   },
   compiler: {
     // Enables the styled-components SWC transform

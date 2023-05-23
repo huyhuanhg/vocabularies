@@ -13,7 +13,7 @@ const chat = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
-    builder.addCase("chat/set_new_msg", (state, { payload }: any) => {
+    builder.addCase("chat/set_stream_msg", (state, { payload }: any) => {
       const { content } = payload;
 
       return {
@@ -31,15 +31,13 @@ const chat = createSlice({
       };
     });
     builder.addCase(sendMessage.pending, (state, { meta }: any) => {
-      const { message } = meta.arg;
+      const { message, id, created } = meta.arg;
 
-      const now = Date.now();
-      const messageData = Chat.Storage.get();
       const newMsg = [
-        ...messageData,
+        ...state.msg,
         {
-          id: `user_${now}`,
-          created: now,
+          id,
+          created,
           content: message,
           role: "user",
         },
@@ -52,23 +50,41 @@ const chat = createSlice({
       };
     });
     builder.addCase(sendMessage.fulfilled, (state, { payload }: any) => {
-      if (!payload || !payload.responseMsg || !payload.responseMsg.id) {
-        return {
-          ...state,
-          loading: true,
-        };
-      }
-
       const { responseMsg } = payload;
+      const newMsg = [...state.msg, { ...responseMsg, created: Date.now() }];
 
-      const messageData = Chat.Storage.get();
-      const newMsg = [...messageData, { ...responseMsg, created: Date.now() }];
-      Chat.Storage.set(newMsg);
       return {
         ...state,
         loading: false,
         msg: newMsg,
         newMsg: [],
+      };
+    });
+
+    builder.addCase(sendMessage.rejected, (state, { meta: { arg }}: any) => {
+      const { id } = arg
+
+      const cloneMsg = [...state.msg]
+      const msgIndex = cloneMsg.findIndex((msg) => msg.id === id)
+
+      if(msgIndex === -1) {
+        return {
+          ...state,
+          loading: false,
+          newMsg: [],
+        }
+      }
+
+      cloneMsg.splice(msgIndex, 1, {
+        ...cloneMsg[msgIndex],
+        status: "fail"
+      })
+
+      return {
+        ...state,
+        loading: false,
+        newMsg: [],
+        msg: cloneMsg
       };
     });
   },

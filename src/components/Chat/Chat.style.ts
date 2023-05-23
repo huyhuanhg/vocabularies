@@ -27,6 +27,15 @@ const ldsEllipsis3 = keyframes`
 }
 `;
 
+const cursorInsert = keyframes`
+0% {
+  opacity: 1;
+}
+100% {
+  opacity: 0;
+}
+`;
+
 const Container = styled.div`
   .ButtonEffect {
     position: absolute;
@@ -87,6 +96,14 @@ export const Popup = styled.div<{ open: boolean }>`
       border-radius: 6px 6px 0 0;
 
       .message-item {
+        position: relative;
+        .message-error {
+          color: red;
+          font-size: 12px;
+          position: absolute;
+          top: calc(100% + 2px);
+          right: 0;
+        }
         .message-content {
           padding: 0.5rem 1rem;
           width: fit-content;
@@ -99,6 +116,7 @@ export const Popup = styled.div<{ open: boolean }>`
             background: #000;
             bottom: -2px;
             position: relative;
+            animation: ${cursorInsert} 0.8s infinite;
           }
 
           .lds-ellipsis {
@@ -138,7 +156,7 @@ export const Popup = styled.div<{ open: boolean }>`
 
         .message-time {
           font-size: 12px;
-          color: #bfbfbf;
+          color: #333333c9;
         }
 
         &[data-owner="bot"] {

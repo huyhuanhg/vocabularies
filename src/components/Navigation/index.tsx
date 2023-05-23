@@ -9,10 +9,15 @@ const Navigation = () => {
 
   const active = useMemo(() => router.pathname, [router.pathname]);
 
-  const onChange = (key: string) => {
+  const onChange = (key: string, canRemoveQueryString: boolean = false) => {
     if (router.pathname === key) {
-      const { query } = router;
-      router.push(`${key}?${new URLSearchParams({ ...query, refresh: "" })}`);
+      router.push(
+        `${key}?${new URLSearchParams(
+          canRemoveQueryString
+            ? { refresh: "" }
+            : { ...router.query, refresh: "" }
+        )}`
+      );
       return;
     }
 
@@ -22,7 +27,10 @@ const Navigation = () => {
   return (
     <Container>
       <ul>
-        <Style.Item isActive={active === "/"} onClick={() => onChange("/")}>
+        <Style.Item
+          isActive={active === "/"}
+          onClick={() => onChange("/", true)}
+        >
           <Image src="/review.png" alt="review" width={30} height={30} />
           <span className="label">Ôn tập</span>
         </Style.Item>

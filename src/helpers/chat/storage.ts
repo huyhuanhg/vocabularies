@@ -15,7 +15,7 @@ export const get = () => {
   }
 
   try {
-    const { expires, data } = JSON.parse(msgData);
+    const { expires, data } = JSON.parse(decodeURIComponent(msgData));
     if (moment().isAfter(moment(expires * 1000))) {
       remove();
       return [];
@@ -31,14 +31,14 @@ export const get = () => {
 export const set = (value: any[]) => {
   Storage.Local.set(
     KEY,
-    JSON.stringify({
+    encodeURIComponent(JSON.stringify({
       expires: moment()
         .add({
-          hours: 3,
+          hours: 1,
         })
         .unix(),
       data: value,
-    })
+    }))
   );
 };
 

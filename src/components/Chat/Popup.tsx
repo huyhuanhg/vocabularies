@@ -17,35 +17,34 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
   const [msgState, setMsgState] = useState("");
   const msgRef = useRef<HTMLDivElement>(null);
 
-  const onChat = (msg: string) => {
-    dispatch(sendMessage({ message: msg }));
+  const onChat = (message: string) => {
+    const now = Date.now();
+    dispatch(sendMessage({ message, id: `user_${now}`, created: now }));
     msgRef.current?.scrollTo(0, msgRef.current?.scrollHeight);
   };
 
   useEffect(() => {
     msgRef.current?.scrollTo(0, msgRef.current?.scrollHeight);
-  }, [newMsg]);
+  }, [msg, newMsg]);
 
   useEffect(() => {
-    dispatch({ type: "chat/get_storage" });
-  }, []);
+    if (open) {
+      dispatch({ type: "chat/get_storage" });
 
-  useEffect(() => {
-    if (open && Chat.Storage.empty()) {
-      onChat(
-        `Tôi là ${userName}.
-        Bây giờ dựa theo giờ hiện tại của tôi: ${moment().format(
-          "HH:mm"
-        )}, bạn hãy chào tôi theo buổi và trả lời "Tôi là trợ lý học tiếng Anh của bạn. Bạn cần tôi giúp gì không?"`
-      );
+      if(Chat.Storage.empty()) {
+        onChat(Chat.Msg.sayHello(userName));
+      }
     }
+
     msgRef.current?.scrollTo(0, msgRef.current?.scrollHeight);
   }, [open]);
 
   const handleInputEnter = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && msgState) {
-      onChat(msgState);
-      setMsgState("");
+      if(!(newMsg.length > 0 || loading)) {
+        onChat(msgState);
+        setMsgState("");
+      }
     }
   };
 
@@ -67,6 +66,9 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
           {moment(message.created).locale("vi").fromNow()}
         </div>
         <div className="message-content">{message.content}</div>
+        {message.status === "fail" && (
+          <div className="message-error">Không gửi được tin nhắn</div>
+        )}
       </div>
     ));
   };
@@ -101,7 +103,7 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
             <div className="message-item" data-owner="bot">
               <div className="message-time">Bây giờ</div>
               <div className="message-content">
-                {newMsg.join("").replace(/([^\s]+)$/, "")}
+                {newMsg.join("")}
                 <span className="cursor" />
               </div>
             </div>
