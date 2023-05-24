@@ -9,7 +9,7 @@ export const sendMessage = createAsyncThunk(
     const raw = {
       model: process.env.NEXT_APP_CHAT_GPT_MODEL,
       messages: [
-        ...messageData.map(({ role, content }: any) => ({ role, content })),
+        ...messageData.slice(messageData.length - 10).map(({ role, content }: any) => ({ role, content })),
         {
           role: "user",
           content: message,
