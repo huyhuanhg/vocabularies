@@ -15,6 +15,7 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
     ({ chatReducer }: Record<string, any>) => chatReducer
   );
   const [msgState, setMsgState] = useState("");
+  const [isAutoScroll, setIsAutoScroll] = useState(true);
   const msgRef = useRef<HTMLDivElement>(null);
 
   const onChat = (message: string) => {
@@ -24,14 +25,38 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
   };
 
   useEffect(() => {
-    msgRef.current?.scrollTo(0, msgRef.current?.scrollHeight);
-  }, [msg, newMsg]);
+    if (msg.length > 0) {
+      setIsAutoScroll(true);
+      msgRef.current?.scrollTo(0, msgRef.current?.scrollHeight);
+    }
+  }, [msg]);
+
+  useEffect(() => {
+    if (isAutoScroll) {
+      msgRef.current?.scrollTo(0, msgRef.current?.scrollHeight);
+    }
+  }, [newMsg]);
+
+  useEffect(() => {
+    if (msgRef.current) {
+      msgRef.current.addEventListener("scroll", () => {
+        const condition =
+          Number(msgRef.current?.scrollTop) +
+            Number(msgRef.current?.clientHeight) ===
+          Number(msgRef.current?.scrollHeight);
+        if (!condition && isAutoScroll) {
+          setIsAutoScroll(false);
+        }
+      });
+    }
+  }, [msgRef]);
 
   useEffect(() => {
     if (open) {
+      msgRef.current?.scrollTo(0, msgRef.current?.scrollHeight);
       dispatch({ type: "chat/get_storage" });
 
-      if(Chat.Storage.empty()) {
+      if (Chat.Storage.empty()) {
         onChat(Chat.Msg.sayHello(userName));
       }
     }
@@ -41,7 +66,7 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
 
   const handleInputEnter = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && msgState) {
-      if(!(newMsg.length > 0 || loading)) {
+      if (!(newMsg.length > 0 || loading)) {
         onChat(msgState);
         setMsgState("");
       }

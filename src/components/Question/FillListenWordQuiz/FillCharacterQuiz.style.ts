@@ -75,21 +75,19 @@ export const Suggest = styled.div`
   flex-direction: column;
   .suggest {
     text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    min-height: 25px;
+    min-height: 46px;
     margin-bottom: 20px;
     position: relative;
     span {
       position: relative;
       display: inline-block;
       width: 25px;
+      position: relative;
+      color: rgba(0, 0, 0, 0.3);
+      font-size: 16px;
+      font-weight: normal;
+      top: calc(8px);
       &.hide {
-        position: relative;
-        color: rgba(0, 0, 0, 0.3);
-        font-size: 16px;
-        font-weight: normal;
-        top: calc(100% - 8px);
         &::after {
           position: absolute;
           content: "";
@@ -111,6 +109,18 @@ export const Suggest = styled.div`
           transform: translateX(-50%);
           font-size: 15px;
         }
+      }
+
+      &.space {
+        width: 18px;
+      }
+
+      &.char-suggest::before {
+        content: attr(data-content);
+        display: block;
+        font-size: 20px;
+        font-weight: bold;
+        color: #000;
       }
     }
   }

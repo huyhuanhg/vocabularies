@@ -38,14 +38,21 @@ const FillListenWordQuiz: FC<FillListenWordQuizProps> = ({
       const arrayIndex = Array.from({ length: vocabulary.content.length }).map(
         (_, index) => index
       );
-      const indexs = Arr.except(arrayIndex, suggestIndex);
+      const indexs = Arr.except(arrayIndex, [
+        ...suggestIndex,
+        ...(Array.from(vocabulary.content.matchAll(/\s/g)).map(
+          ({ index }: any) => index
+        ) as number[]),
+      ]);
       const randomIndex: number[] = Arr.randomItems(indexs, 1);
       suggestIndex = [...suggestIndex, ...randomIndex];
 
       const suggestStr = arrayIndex.reduce((txt, index) => {
         return `${txt}${
-          suggestIndex.includes(index)
-            ? `<span>${vocabulary.content.charAt(index)}</span>`
+          vocabulary.content.charAt(index) === " "
+            ? `<span className="space">${index + 1}</span>`
+            : suggestIndex.includes(index)
+            ? `<span className="char-suggest" data-content="${vocabulary.content.charAt(index)}">${index + 1}</span>`
             : `<span className="hide">${index + 1}</span>`
         }`;
       }, "");
