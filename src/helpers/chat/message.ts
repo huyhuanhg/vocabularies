@@ -1,7 +1,7 @@
 import moment from "moment"
 
 export const sayHello = (name: string) => {
-  return `Tôi là ${name}. Bây giờ dựa theo giờ hiện tại của tôi: ${moment().format("HH:mm")}, bạn hãy chào tôi theo buổi và trả lời "Tôi là trợ lý học tiếng Anh của bạn. Bạn cần tôi giúp gì không?"`
+  return `Xin chào, Tôi là ${name}. Bây giờ dựa theo giờ hiện tại của tôi: ${moment().format("HH:mm")}, bạn hãy chào tôi theo buổi và hỏi tôi cần trợ giúp gì liên quan đến tiếng Anh không.`
 }
 
 export const templateMessage = (content: string) => {
