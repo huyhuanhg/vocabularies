@@ -12,7 +12,7 @@ export const sendMessage = createAsyncThunk(
         ...messageData.map(({ role, content }: any) => ({ role, content })),
         {
           role: "user",
-          content: Chat.Msg.templateMessage(message),
+          content: message,
         },
       ],
       stream: true,
