@@ -30,6 +30,14 @@ const chat = createSlice({
         msg: [...messageData],
       };
     });
+    builder.addCase("chat/refresh", (state) => {
+      Chat.Storage.remove();
+      return {
+        loading: false,
+        msg: [],
+        newMsg: [],
+      };
+    });
     builder.addCase(sendMessage.pending, (state, { meta }: any) => {
       const { message, id, created } = meta.arg;
 

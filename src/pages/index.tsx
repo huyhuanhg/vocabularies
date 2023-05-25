@@ -58,10 +58,10 @@ const Home = ({ user }: any) => {
   const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
-    if (!isFirstFetched || router.query.hasOwnProperty("refresh")) {
+    if(Date.now() > countDown && isFirstFetched && reviewCount === 0) {
       dispatch(fetchReviewData({ user: user.email }));
     }
-  }, [router.query]);
+  }, []);
 
   useEffect(() => {
     setCountdown(countDown);
@@ -74,10 +74,6 @@ const Home = ({ user }: any) => {
       dispatch({ type: "search/reset" });
     }
 
-    setSearchState(q);
-  }, [router.query.q]);
-
-  useEffect(() => {
     if (router.query.q) {
       const keyword = (router.query.q as string).trim().toLowerCase();
       if (caching.hasOwnProperty(keyword)) {
@@ -93,6 +89,14 @@ const Home = ({ user }: any) => {
           })
         );
       }
+    }
+
+    setSearchState(q);
+  }, [router.query.q]);
+
+  useEffect(() => {
+    if (!isFirstFetched || router.query.hasOwnProperty("refresh")) {
+      dispatch(fetchReviewData({ user: user.email }));
     }
   }, [router.query]);
 

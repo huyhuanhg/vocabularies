@@ -3,7 +3,10 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const sendMessage = createAsyncThunk(
   "chat/send",
-  async ({ message, id, created }: { message: string, id: string, created: number }, { dispatch }) => {
+  async (
+    { message, id, created }: { message: string; id: string; created: number },
+    { dispatch }
+  ) => {
     const messageData = Chat.Storage.get();
 
     const raw = {
@@ -42,15 +45,19 @@ export const sendMessage = createAsyncThunk(
       process.env.NEXT_APP_CHAT_GPT_URL as string,
       requestOptions
     ).then((response) => {
+      if (response.status !== 200 && !response.ok) {
+        throw new Error("ERROR");
+      }
+
       const reader = response.body?.getReader();
 
       const pump: any = async ({ done, value }: any) => {
-        if (!response.ok && response.status === 429) {
-          return Promise.reject();
-        }
         if (done) {
-
-      Chat.Storage.set([...messageData, { role: "user", content: message, id, created }, { ...responseMsg, created: Date.now() }]);
+          Chat.Storage.set([
+            ...messageData,
+            { role: "user", content: message, id, created },
+            { ...responseMsg, created: Date.now() },
+          ]);
           return Promise.resolve({ responseMsg });
         }
         try {

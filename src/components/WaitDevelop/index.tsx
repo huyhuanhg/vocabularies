@@ -6,8 +6,8 @@ const WaitDevelop = () => {
   const router = useRouter();
   return (
     <Container>
-      <span>Chức năng chưa được phát triển!</span>
-      <Button onClick={() => router.push("/")}>Trang chủ</Button>
+      <span>Chức năng sắp ra mắt</span>
+      <Button onClick={() => router.push("/")}>Ôn tập</Button>
     </Container>
   );
 };

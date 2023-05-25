@@ -1,6 +1,7 @@
 import Container, * as Style from "./Chart.style";
 import ChartProps, { ItemFormatProps, ItemProps } from "./Chart.props";
 import { FC, useEffect, useState } from "react";
+import { CountUp } from 'use-count-up';
 
 const Chart: FC<ChartProps> = ({
   height,
@@ -58,7 +59,7 @@ const Chart: FC<ChartProps> = ({
           <span className="chart-item-label">{resource.label}</span>
           {resource.isShowValue && (
             <span className="chart-item-value">
-              {resource.value} {unit}
+              <CountUp isCounting end={resource.value} /> {unit}
             </span>
           )}
         </Style.Item>

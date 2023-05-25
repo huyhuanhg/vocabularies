@@ -128,40 +128,6 @@ export const Popup = styled.div<{ open: boolean }>`
             position: relative;
             animation: ${cursorInsert} 0.8s infinite;
           }
-
-          .lds-ellipsis {
-            display: inline-block;
-            position: relative;
-            width: 46px;
-            line-height: 20px;
-            height: 20px;
-
-            div {
-              position: absolute;
-              top: calc(50% - 5px);
-              width: 10px;
-              height: 10px;
-              border-radius: 50%;
-              background: gray;
-              animation-timing-function: cubic-bezier(0, 1, 1, 0);
-              &:nth-of-type(1) {
-                left: 0px;
-                animation: ${ldsEllipsis1} 0.6s infinite;
-              }
-              &:nth-of-type(2) {
-                left: 0px;
-                animation: ${ldsEllipsis2} 0.6s infinite;
-              }
-              &:nth-of-type(3) {
-                left: 16px;
-                animation: ${ldsEllipsis2} 0.6s infinite;
-              }
-              &:nth-of-type(4) {
-                left: 32px;
-                animation: ${ldsEllipsis3} 0.6s infinite;
-              }
-            }
-          }
         }
 
         .message-time {
@@ -206,13 +172,13 @@ export const Popup = styled.div<{ open: boolean }>`
       }
     }
 
-    .input {
+    .control {
       position: relative;
       box-sizing: border-box;
       height: 4rem;
       display: flex;
       align-items: center;
-      padding: 0 1rem;
+      padding: 0 1rem 0 3rem;
 
       input {
         border: none;
@@ -229,18 +195,89 @@ export const Popup = styled.div<{ open: boolean }>`
         letter-spacing: 0.025em;
       }
 
-      button {
-        background: none;
-        border: none;
-        line-height: 0;
+      .loading-render-msg {
         position: absolute;
-        outline: none;
+        right: 10px;
+        top: 50%;
+        line-height: 0;
+        transform: translateY(-50%) scale(0.5);
+        background: none;
+      }
+      .submit-btn {
+        position: absolute;
         right: 25px;
         top: 50%;
         transform: translateY(-50%);
+        background: none;
+        outline: none;
+        border: none;
+        line-height: 0;
         cursor: pointer;
       }
+
+      .refresh-btn {
+        position: absolute;
+        left: calc(1.5rem - 10px);
+        top: calc(50% - 10px);
+        transition: all 0.3s;
+
+        &:hover {
+          transform: scale(1.2);
+        }
+
+        button {
+          background: none;
+          outline: none;
+          border: none;
+          line-height: 0;
+          cursor: pointer;
+        }
+      }
     }
+
+    .lds-ellipsis {
+      display: inline-block;
+      position: relative;
+      width: 46px;
+      line-height: 20px;
+      height: 20px;
+
+      div {
+        position: absolute;
+        top: calc(50% - 5px);
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: gray;
+        animation-timing-function: cubic-bezier(0, 1, 1, 0);
+        &:nth-of-type(1) {
+          left: 0px;
+          animation: ${ldsEllipsis1} 0.6s infinite;
+        }
+        &:nth-of-type(2) {
+          left: 0px;
+          animation: ${ldsEllipsis2} 0.6s infinite;
+        }
+        &:nth-of-type(3) {
+          left: 16px;
+          animation: ${ldsEllipsis2} 0.6s infinite;
+        }
+        &:nth-of-type(4) {
+          left: 32px;
+          animation: ${ldsEllipsis3} 0.6s infinite;
+        }
+      }
+    }
+  }
+`;
+
+export const PopoverBtnGroup = styled.div`
+  display: flex;
+  gap: 15px;
+  .ButtonEffect__btn {
+    padding: 5px 10px;
+    font-size: 12px;
+    text-transform: none;
   }
 `;
 

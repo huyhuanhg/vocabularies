@@ -1,13 +1,17 @@
 import { FC, KeyboardEvent, useEffect, useRef, useState } from "react";
-import { Popup as StylePopup } from "./Chat.style";
+import {
+  Popup as StylePopup,
+  PopoverBtnGroup as StylePopoverBtnGroup,
+} from "./Chat.style";
 import PopupProps from "./Popup.props";
 import { useDispatch, useSelector } from "react-redux";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 import { sendMessage } from "@/stores/chat/action";
-import { Image } from "../common";
+import { ButtonEffect, Image } from "../common";
 import moment from "moment";
 import "moment/locale/vi";
 import { Chat } from "@/helpers";
+import { Popover } from "antd";
 
 const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
@@ -16,7 +20,9 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
   );
   const [msgState, setMsgState] = useState("");
   const [isAutoScroll, setIsAutoScroll] = useState(true);
+  const [isOpenPopoverRemove, setIsOpenPopoverRemove] = useState(false);
   const msgRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const onChat = (message: string) => {
     const now = Date.now();
@@ -80,6 +86,13 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
     }
   };
 
+  const handleRefreshMsg = (e: Event) => {
+    e.stopPropagation();
+    dispatch({ type: "chat/refresh" });
+    setIsOpenPopoverRemove(false);
+    inputRef.current?.focus();
+  };
+
   const renderMessage = (msg: []) => {
     return msg.map((message: any) => (
       <div
@@ -134,22 +147,68 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
             </div>
           )}
         </div>
-        <div className="input">
+        <div className="control">
+          <div
+            className="refresh-btn"
+            onClick={() => setIsOpenPopoverRemove(true)}
+          >
+            <Popover
+              placement="right"
+              content={
+                <StylePopoverBtnGroup>
+                  <ButtonEffect
+                    space={2}
+                    cssType="text"
+                    state="error"
+                    click={(e: Event) => handleRefreshMsg(e)}
+                  >
+                    Xóa hội thoại
+                  </ButtonEffect>
+                </StylePopoverBtnGroup>
+              }
+              trigger="click"
+              zIndex={999999999}
+              open={isOpenPopoverRemove}
+            >
+              <button>
+                <Image
+                  src={"/bin.png"}
+                  alt="send-msg"
+                  height={20}
+                  width={20}
+                  title="Làm mới"
+                />
+              </button>
+            </Popover>
+          </div>
+
           <input
+            ref={inputRef}
             placeholder="Nhập tin nhắn ..."
             type="text"
             value={msgState}
             onChange={(e) => setMsgState(e.target.value)}
             onKeyDown={handleInputEnter}
           />
-          <button onClick={handleClickSend}>
-            <Image
-              src={"/send-message.png"}
-              alt="send-msg"
-              height={15}
-              width={15}
-            />
-          </button>
+          {newMsg.length > 0 ? (
+            <div className="loading-render-msg">
+              <div className="lds-ellipsis">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+          ) : (
+            <button className="submit-btn" onClick={handleClickSend}>
+              <Image
+                src={"/send-message.png"}
+                alt="send-msg"
+                height={15}
+                width={15}
+              />
+            </button>
+          )}
         </div>
       </div>
     </StylePopup>
