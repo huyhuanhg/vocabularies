@@ -102,7 +102,7 @@ export const Popup = styled.div<{ open: boolean }>`
       overflow: hidden auto;
       box-shadow: inset 0 2rem 2rem -2rem rgba(0, 0, 0, 0.05),
         inset 0 -2rem 2rem -2rem rgba(0, 0, 0, 0.05);
-      height: calc(100% - 72px);
+      height: calc(100% - 64px);
       border-radius: 6px 6px 0 0;
 
       .message-item {
@@ -175,7 +175,7 @@ export const Popup = styled.div<{ open: boolean }>`
     .control {
       position: relative;
       box-sizing: border-box;
-      height: 72px;
+      height: 64px;
       display: flex;
       align-items: center;
       padding: 0 1rem 0 3rem;
@@ -189,8 +189,6 @@ export const Popup = styled.div<{ open: boolean }>`
         border-radius: 1.125rem;
         flex-grow: 2;
         box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1),
-          0rem 1rem 1rem -1rem rgba(0, 0, 0, 0.2);
-        -webkit-box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1),
           0rem 1rem 1rem -1rem rgba(0, 0, 0, 0.2);
         font-family: Red hat Display, sans-serif;
         font-weight: 400;
