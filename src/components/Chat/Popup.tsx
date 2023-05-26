@@ -168,7 +168,7 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
           )}
           <div
             className="reset-btn"
-            onClick={() => setIsOpenPopoverRemove(true)}
+            onClick={() => setIsOpenPopoverRemove(!isOpenPopoverRemove)}
           >
             <Popover
               placement="right"
