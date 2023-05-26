@@ -24,9 +24,11 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
   const msgRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const onChat = (message: string) => {
+  const onChat = (message: string, isHello: boolean = false) => {
     const now = Date.now();
-    dispatch(sendMessage({ message, id: `user_${now}`, created: now }));
+    dispatch(
+      sendMessage({ message, id: `user_${now}`, created: now, isHello })
+    );
     msgRef.current?.scrollTo(0, msgRef.current?.scrollHeight);
   };
 
@@ -63,7 +65,7 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
       dispatch({ type: "chat/get_storage" });
 
       if (Chat.Storage.empty()) {
-        onChat(Chat.Msg.sayHello(userName));
+        onChat(Chat.Msg.sayHello(userName), true);
       }
     }
 
@@ -86,15 +88,26 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
     }
   };
 
-  const handleRefreshMsg = (e: Event) => {
+  const handleResetMsg = (e: Event) => {
     e.stopPropagation();
-    dispatch({ type: "chat/refresh" });
     setIsOpenPopoverRemove(false);
+    dispatch({ type: "chat/reset" });
     inputRef.current?.focus();
   };
 
-  const renderMessage = (msg: []) => {
-    return msg.map((message: any) => (
+  const handleStopRender = () => {
+    dispatch({ type: "chat/stop_render" });
+    inputRef.current?.focus();
+  };
+
+  const renderMessage = () => {
+    let msgRender = [...msg];
+
+    if (msg.length > 0 && msgRender[0].isHello) {
+      msgRender = msgRender.slice(1);
+    }
+
+    return msgRender.map((message: any) => (
       <div
         className="message-item"
         data-owner={message.role === "user" ? "user" : "bot"}
@@ -123,7 +136,7 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
           />
         </button>
         <div className="messages" ref={msgRef}>
-          {renderMessage(msg.slice(1))}
+          {renderMessage()}
           {loading && (
             <div className="message-item" data-owner="bot">
               <div className="message-time">Đang trả lời</div>
@@ -148,8 +161,13 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
           )}
         </div>
         <div className="control">
+          {newMsg.length > 0 && (
+            <div className="stop-render-btn">
+              <button onClick={handleStopRender}>Dừng</button>
+            </div>
+          )}
           <div
-            className="refresh-btn"
+            className="reset-btn"
             onClick={() => setIsOpenPopoverRemove(true)}
           >
             <Popover
@@ -160,7 +178,7 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
                     space={2}
                     cssType="text"
                     state="error"
-                    click={(e: Event) => handleRefreshMsg(e)}
+                    click={(e: Event) => handleResetMsg(e)}
                   >
                     Xóa hội thoại
                   </ButtonEffect>
@@ -169,6 +187,7 @@ const Popup: FC<PopupProps> = ({ open, userName, setDisplay }) => {
               trigger="click"
               zIndex={999999999}
               open={isOpenPopoverRemove}
+              onOpenChange={setIsOpenPopoverRemove}
             >
               <button>
                 <Image

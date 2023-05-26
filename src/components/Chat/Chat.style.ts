@@ -175,7 +175,7 @@ export const Popup = styled.div<{ open: boolean }>`
     .control {
       position: relative;
       box-sizing: border-box;
-      height: 4rem;
+      height: 64px;
       display: flex;
       align-items: center;
       padding: 0 1rem 0 3rem;
@@ -215,7 +215,7 @@ export const Popup = styled.div<{ open: boolean }>`
         cursor: pointer;
       }
 
-      .refresh-btn {
+      .reset-btn {
         position: absolute;
         left: calc(1.5rem - 10px);
         top: calc(50% - 10px);
@@ -231,6 +231,29 @@ export const Popup = styled.div<{ open: boolean }>`
           border: none;
           line-height: 0;
           cursor: pointer;
+        }
+      }
+      .stop-render-btn {
+        position: absolute;
+        top: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0.7;
+        transition: 0.3s;
+        background: #fff;
+
+        &:hover {
+          background: #f5f5f5;
+          opacity: 1;
+        }
+
+        button {
+          padding: 5px 15px;
+          border: 1px solid #8c8c8c;
+          border-radius: 4px;
+          color: #8c8c8c;
+          cursor: pointer;
+          background: inherit;
         }
       }
     }

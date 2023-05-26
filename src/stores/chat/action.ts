@@ -4,15 +4,22 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 export const sendMessage = createAsyncThunk(
   "chat/send",
   async (
-    { message, id, created }: { message: string; id: string; created: number },
-    { dispatch }
+    {
+      message,
+      id,
+      created,
+      isHello,
+    }: { message: string; id: string; created: number; isHello: boolean },
+    { dispatch, getState }
   ) => {
     const messageData = Chat.Storage.get();
 
     const raw = {
       model: process.env.NEXT_APP_CHAT_GPT_MODEL,
       messages: [
-        ...messageData.slice(messageData.length - 10).map(({ role, content }: any) => ({ role, content })),
+        ...messageData
+          .slice(messageData.length - 10)
+          .map(({ role, content }: any) => ({ role, content })),
         {
           role: "user",
           content: message,
@@ -52,14 +59,36 @@ export const sendMessage = createAsyncThunk(
       const reader = response.body?.getReader();
 
       const pump: any = async ({ done, value }: any) => {
-        if (done) {
+        const {
+          chatReducer: { msg, renderState },
+        }: any = getState();
+
+        if (done || !renderState) {
           Chat.Storage.set([
             ...messageData,
-            { role: "user", content: message, id, created },
+            {
+              role: "user",
+              content: message,
+              id,
+              created,
+              ...(isHello && { isHello }),
+            },
             { ...responseMsg, created: Date.now() },
           ]);
           return Promise.resolve({ responseMsg });
         }
+
+        if (msg.length === 0) {
+          return Promise.resolve({
+            responseMsg: {
+              content: "",
+              id: "",
+              role: "",
+            },
+            abortState: true,
+          });
+        }
+
         try {
           const text = new TextDecoder().decode(value);
           text
