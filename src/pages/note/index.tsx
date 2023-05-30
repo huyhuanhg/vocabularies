@@ -42,18 +42,20 @@ const Note = ({ user }: any) => {
   }, []);
 
   useEffect(() => {
-    const { level } = router.query;
-    const currentLevel = Number(level as string) || 1;
-    if (
-      !loadMoreLoading &&
-      loadMore &&
-      paginator.hasOwnProperty(currentLevel) &&
-      !paginator[currentLevel].isFetchedAll &&
-      noteData.length % 30 === 0
-    ) {
-      getLoadMore();
+    if (loadMore) {
+      const { level } = router.query;
+      const currentLevel = Number(level as string) || 1;
+      if (
+        !loadMoreLoading &&
+        loadMore &&
+        paginator.hasOwnProperty(currentLevel) &&
+        !paginator[currentLevel].isFetchedAll &&
+        noteData.length % 30 === 0
+      ) {
+        getLoadMore();
+      }
+      setLoadMore(false);
     }
-    setLoadMore(false);
   }, [loadMore]);
 
   useEffect(() => {
@@ -87,7 +89,7 @@ const Note = ({ user }: any) => {
 
   const handleLoadMore = (e: Event) => {
     const el = e.target as HTMLDivElement;
-    if (el.scrollTop + el.clientHeight > el.scrollHeight - 50) {
+    if (el.scrollTop + el.clientHeight === el.scrollHeight && !loadMore) {
       setLoadMore(true);
     }
   };
