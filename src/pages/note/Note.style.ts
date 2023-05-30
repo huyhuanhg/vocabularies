@@ -66,14 +66,15 @@ export const Body = styled.div`
 
     .content {
       min-height: calc(100% - 70px);
-      padding: 20px 10px;
+      padding: 20px 10px 140px;
+      position: relative;
     }
 
     .LoadingSpinner {
       width: 100%;
-      position: relative;
+      position: absolute;
       top: auto;
-      left: auto;
+      left: 0;
       height: auto;
       margin: 20px 0 40px;
       background: none;

@@ -40,7 +40,7 @@ const FillListenWordQuiz: FC<FillListenWordQuizProps> = ({
       );
       const indexs = Arr.except(arrayIndex, [
         ...suggestIndex,
-        ...(Array.from(vocabulary.content.matchAll(/\s/g)).map(
+        ...(Array.from(vocabulary.content.matchAll(/\W/g)).map(
           ({ index }: any) => index
         ) as number[]),
       ]);
@@ -49,8 +49,8 @@ const FillListenWordQuiz: FC<FillListenWordQuizProps> = ({
 
       const suggestStr = arrayIndex.reduce((txt, index) => {
         return `${txt}${
-          vocabulary.content.charAt(index) === " "
-            ? `<span className="space">${index + 1}</span>`
+          !/[a-z]/i.test(vocabulary.content.charAt(index))
+            ? `<span className="symbol" data-content="${vocabulary.content.charAt(index)}">${index + 1}</span>`
             : suggestIndex.includes(index)
             ? `<span className="char-suggest" data-content="${vocabulary.content.charAt(index)}">${index + 1}</span>`
             : `<span className="hide">${index + 1}</span>`

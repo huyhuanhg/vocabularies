@@ -111,8 +111,16 @@ export const Suggest = styled.div`
         }
       }
 
-      &.space {
+      &.symbol {
         width: 18px;
+
+        &::before {
+          content: attr(data-content);
+          display: block;
+          font-size: 20px;
+          font-weight: bold;
+          color: #000;
+        }
       }
 
       &.char-suggest::before {
