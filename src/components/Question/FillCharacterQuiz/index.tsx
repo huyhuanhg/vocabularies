@@ -26,11 +26,23 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
     setAnswer(null);
   }, [vocabulary]);
 
+  useEffect(() => {
+    if (elRefs.length > 0) {
+      elRefs.forEach((elRef, index) => {
+        if (elRef.current && !/[a-z]/i.test(vocabulary.content[index])) {
+          elRef.current.value = vocabulary.content[index];
+        }
+      });
+    }
+  }, [elRefs]);
+
   const handleChange = () => {
     const fillResult = elRefs.reduce(
-      (result, inputRef) =>
+      (result, inputRef, index) =>
         `${result}${
-          inputRef.current?.disabled ? " " : inputRef.current?.value[0] || ""
+          inputRef.current?.disabled
+            ? vocabulary.content[index]
+            : inputRef.current?.value[0] || ""
         }`,
       ""
     );
@@ -45,27 +57,31 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
   const handleFocus = (progress: -1 | 1, index: number) => {
     const lastIndex = vocabulary.content.length - 1;
 
-    elRefs[index].current?.blur();
     let nextIndex: number | null = null;
 
     if (elRefs[index]?.current) {
       if (progress === 1) {
-        if (lastIndex === index) {
-          nextIndex = lastIndex;
-        } else {
-          if (
-            elRefs[index + 1]?.current &&
-            !elRefs[index + 1].current?.disabled
-          ) {
-            nextIndex = index + 1;
-          } else {
-            if (elRefs[index + 2]?.current) {
-              nextIndex = index + 2;
-            }
-          }
+        nextIndex = index === lastIndex ? lastIndex : index + 1;
+
+        if (
+          elRefs[nextIndex] &&
+          elRefs[nextIndex].current &&
+          elRefs[nextIndex].current?.disabled &&
+          nextIndex !== lastIndex
+        ) {
+          nextIndex++;
         }
       } else {
         nextIndex = index === 0 ? 0 : index - 1;
+
+        if (
+          elRefs[nextIndex] &&
+          elRefs[nextIndex].current &&
+          elRefs[nextIndex].current?.disabled &&
+          nextIndex !== 0
+        ) {
+          nextIndex--;
+        }
       }
     }
 
@@ -107,9 +123,13 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
         handleFocus(1, index);
       } else {
         if (elRefs[index + 1]?.current) {
-          elRefs[index + 1].current!.value = key;
-          handleFocus(1, index + 1);
+          if(!elRefs[index + 1]?.current?.disabled) {
+            elRefs[index + 1].current!.value = key;
+          } else if(elRefs[index + 2]?.current) {
+            elRefs[index + 2].current!.value = key;
+          }
         }
+        handleFocus(1, index + 1);
       }
 
       handleChange();
@@ -117,7 +137,7 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
     }
   };
 
-  const getPlaceholderRandom = (strArr: string[]) => {
+  const getPlaceholderRandom = (strArr: string) => {
     let percent = 50;
     switch (true) {
       case rate >= 5:
@@ -136,12 +156,13 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
 
     return Arr.randomItems(
       Array.from({ length: strArr.length }, (_, index) => index),
-      Math.ceil((strArr.length * percent) / 100)
+      Math.ceil((strArr.replaceAll(/\W/g, "").length * percent) / 100),
+      Array.from(strArr.matchAll(/\W/g)).map(({ index }) => index) as number[]
     );
   };
 
   const placeholderRandom = useMemo(
-    () => getPlaceholderRandom(vocabulary.content.split("")),
+    () => getPlaceholderRandom(vocabulary.content),
     [vocabulary]
   );
 
@@ -161,10 +182,8 @@ const FillCharacterQuiz: FC<FillMissingWordQuizProps> = ({
               autoFocus={index === 0}
               tabIndex={index}
               onKeyDown={(e) => handleKeyDown(e, index)}
-              placeholder={
-                placeholderRandom.includes(index) ? wordInfo[index] : ""
-              }
-              disabled={char === " "}
+              placeholder={placeholderRandom.includes(index) ? char : ""}
+              disabled={!/[a-z]/i.test(char)}
             />
           );
         })}

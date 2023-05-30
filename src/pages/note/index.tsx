@@ -87,7 +87,7 @@ const Note = ({ user }: any) => {
 
   const handleLoadMore = (e: Event) => {
     const el = e.target as HTMLDivElement;
-    if (el.scrollTop + el.clientHeight === el.scrollHeight) {
+    if (el.scrollTop + el.clientHeight > el.scrollHeight - 50) {
       setLoadMore(true);
     }
   };
