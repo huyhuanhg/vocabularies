@@ -307,7 +307,7 @@ const Question: FC<QuestionProps> = ({
   return (
     <Container ref={containerRef}>
       <Style.QuizWrapper>
-        <div className="quiz-content">{renderSwitchType(4)}</div>
+        <div className="quiz-content">{renderSwitchType(quizType)}</div>
         <div className="quiz-control">
           <ButtonEffect
             disabled={answerIsPass === null}
